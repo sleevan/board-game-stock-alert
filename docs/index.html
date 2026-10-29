@@ -180,7 +180,6 @@ details > summary::-webkit-details-marker { display: none; }
 /* Watching header: one line - heading, filter tags, status message, buttons */
 .watchhead { flex-wrap: nowrap; align-items: center; gap: 12px; }
 .watchhead h2 { flex: none; }
-.watchhead .filters { flex: none; flex-wrap: nowrap; margin: 0; }
 .watchhead .status-line { flex: 1 1 auto; min-width: 0; flex-wrap: nowrap; justify-content: flex-end; gap: 8px; }
 .watchhead .status-line .msg { flex: 0 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: .85rem; }
 .watchhead .status-line button { flex: none; white-space: nowrap; }
@@ -190,7 +189,6 @@ details > summary::-webkit-details-marker { display: none; }
   .watchhead h2 { order: 1; }
   .watchhead #toggleAll { order: 2; margin-left: auto; }
   .watchhead #checkNow { order: 3; }
-  .watchhead .filters { order: 4; flex-basis: 100%; }
   .watchhead .status-line .msg { order: 5; flex-basis: 100%; text-align: left; }
   .watchhead .status-line .msg:empty { display: none; }
 }
@@ -227,16 +225,16 @@ footer { color: var(--muted); font-size: .85rem; }
   <section aria-labelledby="listH">
     <div class="sechead watchhead">
       <h2 id="listH">Watching</h2>
-      <div class="filters" role="group" aria-label="Show listings">
-        <button type="button" class="chip in ftag" data-filter="in_stock" aria-pressed="true" id="f-in">In Stock</button>
-        <button type="button" class="chip pre ftag" data-filter="preorder" aria-pressed="true" id="f-pre">Pre-Order</button>
-        <button type="button" class="chip out ftag" data-filter="out_of_stock" aria-pressed="true" id="f-out">Sold Out</button>
-      </div>
       <div class="status-line">
         <span class="msg" id="checkMsg" role="status"></span>
         <button type="button" class="ghost small" id="toggleAll" aria-controls="games">Expand all</button>
         <button type="button" class="ghost small" id="checkNow">Check now</button>
       </div>
+    </div>
+    <div class="filters" role="group" aria-label="Show listings">
+      <button type="button" class="chip in ftag" data-filter="in_stock" aria-pressed="true" id="f-in">In Stock</button>
+      <button type="button" class="chip pre ftag" data-filter="preorder" aria-pressed="true" id="f-pre">Pre-Order</button>
+      <button type="button" class="chip out ftag" data-filter="out_of_stock" aria-pressed="true" id="f-out">Sold Out</button>
     </div>
     <p class="banner" id="askBanner" hidden></p>
     <div class="games" id="games"><p class="empty">Loading your watch list…</p></div>
