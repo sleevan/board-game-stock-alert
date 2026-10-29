@@ -9,10 +9,12 @@
       "publisher": "Renegade Game Studios"
     },
     {
-      "title": "Blood Rage: Valhalla"
+      "title": "Blood Rage: Valhalla",
+      "publisher_lookup": "needs_token"
     },
     {
-      "title": "Yinsh"
+      "title": "Yinsh",
+      "publisher_lookup": "needs_token"
     }
   ],
   "stores": [
