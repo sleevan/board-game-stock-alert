@@ -326,5 +326,11 @@
     }
   ],
   "product_urls": [],
-  "shipping_region": "Ontario"
+  "shipping_region": "Ontario",
+  "exclude_title_words": [
+    "xbox",
+    "switch",
+    "ps4",
+    "ps5"
+  ]
 }

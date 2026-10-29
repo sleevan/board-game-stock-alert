@@ -634,6 +634,12 @@ def check_search(watch):
     except (HTTPError, URLError, TimeoutError, OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
         return UNKNOWN, None, None, f"store search failed ({type(exc).__name__}: {str(exc)[:80]})"
 
+    # Skip video-game listings (words from config "exclude_title_words") - unless the watched title itself uses the word as often.
+    def word_count(text, w):
+        return f" {normalize(text)} ".count(f" {normalize(w)} ")
+    words = watch.get("exclude_words", [])
+    candidates = [c for c in candidates
+                  if not any(word_count(c["title"], w) > word_count(watch["query"], w) for w in words)]
     real = [c for c in candidates if c["status"] != "wrong_publisher"]
     if not real:
         if candidates:
@@ -779,6 +785,9 @@ def watch_key(watch):
     return watch["url"]
 
 
+DEFAULT_EXCLUDE_WORDS = ["xbox", "switch", "ps4", "ps5"]
+
+
 def build_watches(config):
     """Every game is searched at every store; extra product URLs are checked directly."""
     watches = []
@@ -797,6 +806,7 @@ def build_watches(config):
                 # A publisher you type in filters listings. One looked up automatically is shown on the
                 # web page but doesn't filter, because stores often list a distributor instead.
                 "publisher": None if game.get("publisher_source") else (game.get("publishers") or game.get("publisher") or None),
+                "exclude_words": config.get("exclude_title_words", DEFAULT_EXCLUDE_WORDS),
                 "accept": game.get("accept", []),
                 "reject": game.get("reject", []),
             })
