@@ -1,5 +1,7 @@
-suggest plain            Kingdom Come: Deliverance - The Board Ga = 179.95 179.95
-suggest ?currency=CAD    Kingdom Come: Deliverance - The Board Ga = 179.95 179.95
-suggest cookie CA        Kingdom Come: Deliverance - The Board Ga = 179.95 179.95
-suggest country=CA       Kingdom Come: Deliverance - The Board Ga = 179.95 179.95
-rapid .js fetches: 0/12 failed
+stock_alert.fetch (real check): 12900
+UA only: 17995
+UA + Accept-Language en-CA: 12900
+UA + Accept html/json: 17995
+UA + Accept + cookie CA: 17995
+real headers + ?currency=CAD: 17995
+product.json variant price: 129.00
