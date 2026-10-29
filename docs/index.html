@@ -428,10 +428,7 @@ function render() {
 }
 
 function publisherText(g) {
-  if (g.publisher) return esc(g.publisher);
-  if (g.publisher_lookup === "not_found") return "Any publisher · Board Game Bliss doesn't list it yet";
-  if (g.publisher_lookup === "failed") return "Any publisher for now · " + esc(g.publisher_lookup_error || "lookup failed");
-  return "Publisher will be looked up on Board Game Bliss at the next check";
+  return g.publisher ? esc(g.publisher) : "Publisher TBD";
 }
 
 $("stores").addEventListener("change", async e => {
@@ -570,7 +567,7 @@ $("addForm").addEventListener("submit", async e => {
       const entry = publisher ? { title, publisher } : { title };
       await writeConfig({ ...config, games: [...(config.games || []), entry] }, `Watch ${title}`);
       $("title").value = ""; $("publisher").value = "";
-      msg.className = "msg ok"; msg.textContent = `Watching "${title}". ${publisher ? "" : "Its publisher will be looked up on Board Game Bliss. "}Every store will be searched on the next check, or press Check now.`;
+      msg.className = "msg ok"; msg.textContent = `Watching "${title}". ${publisher ? "" : ""}Every store will be searched on the next check, or press Check now.`;
       render();
     }
   } catch (err) { msg.className = "msg err"; msg.textContent = explain(err); showSetup(err); }
