@@ -128,7 +128,9 @@
   "ok": true,
   "matches": 0,
   "statuses": {},
-  "example": null
+  "example": null,
+  "raw_suggest": [],
+  "raw_search_page": "ok"
  },
  {
   "name": "Board Games N More",
@@ -176,7 +178,11 @@
   "ok": true,
   "matches": 0,
   "statuses": {},
-  "example": null
+  "example": null,
+  "raw_suggest": [
+   "Paper App Dungeon"
+  ],
+  "raw_search_page": "ok"
  },
  {
   "name": "Cardboard Memories",
@@ -233,10 +239,10 @@
    "in_stock": 9
   },
   "example": {
-   "title": "Blanche (082/078) [Pokémon GO]",
+   "title": "Pokemon 2019 ALL STAR COLLECTION Umbreon Plush",
    "status": "in_stock",
-   "price": "$5.25",
-   "link": "https://www.fusiongamingonline.com/products/blanche-082-078-pokemon-go"
+   "price": "$33.55",
+   "link": "https://www.fusiongamingonline.com/products/pokemon-2019-all-star-collection-umbreon-plush"
   }
  },
  {
@@ -298,16 +304,16 @@
   "name": "Hobbiesville",
   "platform": "shopify",
   "ok": true,
-  "matches": 5,
+  "matches": 10,
   "statuses": {
-   "out_of_stock": 3,
-   "in_stock": 2
+   "out_of_stock": 2,
+   "in_stock": 8
   },
   "example": {
-   "title": "Mew ex - 205/165 - SV2a Pokemon Card 151 Holofoil",
+   "title": "Pokemon TCG: Scarlet & Violet-151 Booster Bundle",
    "status": "out_of_stock",
-   "price": "$137.00",
-   "link": "https://hobbiesville.com/products/mew-ex-205-165-205-165-sv2a-pokemon-card-151-holofoil"
+   "price": "$179.00",
+   "link": "https://hobbiesville.com/products/pokemon-tcg-scarlet-violet-151-booster-bundle-pre-order"
   }
  },
  {
@@ -361,9 +367,17 @@
   "name": "Le Roi des Cartes Valleyfield",
   "platform": "shopify",
   "ok": true,
-  "matches": 0,
-  "statuses": {},
-  "example": null
+  "matches": 3,
+  "statuses": {
+   "in_stock": 1,
+   "out_of_stock": 2
+  },
+  "example": {
+   "title": "POKEMON 30TH CELEBRATION MINI TIN 10CT DISPLAY",
+   "status": "in_stock",
+   "price": "$314.00",
+   "link": "https://tcgandgames.myshopify.com/products/pokemon-30th-celebration-mini-tin-10ct-display"
+  }
  },
  {
   "name": "Le Valet d'Coeur",
@@ -416,10 +430,10 @@
   "name": "Mission: Fun & Games",
   "platform": "sitemap",
   "ok": true,
-  "matches": 8,
+  "matches": 7,
   "statuses": {
    "out_of_stock": 4,
-   "in_stock": 4
+   "in_stock": 3
   },
   "example": {
    "title": "Pokemon: Raikou - Quick Model Kit",
@@ -572,7 +586,13 @@
   "ok": true,
   "matches": 0,
   "statuses": {},
-  "example": null
+  "example": null,
+  "raw_suggest": [
+   "REGINE",
+   "Smash Up Big in Japan",
+   "DRAGON SHIELD SLEEVES MATTE CLEAR 100CT"
+  ],
+  "raw_search_page": "ok"
  },
  {
   "name": "The Mana Lounge",
