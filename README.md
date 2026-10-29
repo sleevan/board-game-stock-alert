@@ -24,7 +24,7 @@ Saving changes needs a GitHub token, set up once per browser under **GitHub acce
 - **Titles of 5 or more characters:** any listing that contains the whole title (as whole words) counts, ignoring capitalization, punctuation and anything in brackets, so "YINSH (New Edition)" counts for *Yinsh*. "Blood Rage: Valhalla (EN)" and "Blood Rage: Valhalla – Road to Helheim" both count for *Blood Rage: Valhalla*.
 - **Titles of 4 characters or fewer** (like *ito* or *Root*): only exact titles count, ignoring anything in brackets, language tags, pre-order tags and "Board Game". Close titles ("Yuui ito", edition wording) appear on the web page under **Is this the same game?** for you to confirm or ignore; titles mostly made of other words are skipped.
 - Titles you ignore on the web page stay ignored for that game. Hover over a listing and click its **×** to remove just that store's listing; it's saved under `"hidden"` for the game.
-- Video-game listings are skipped: any title containing **xbox**, **switch**, **ps4** or **ps5** as a whole word (unless your watched title uses that word itself). Change the list under `exclude_title_words` in `config.json`.
+- Video-game and accessory listings are skipped: any title containing **xbox**, **switch**, **ps4**, **ps5**, **insert(s)** or **folded space** as whole words (unless your watched title uses that word itself). Change the list under `exclude_title_words` in `config.json`.
 
 ## Stores
 

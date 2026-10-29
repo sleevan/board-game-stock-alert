@@ -813,7 +813,7 @@ def watch_key(watch):
     return watch["url"]
 
 
-DEFAULT_EXCLUDE_WORDS = ["xbox", "switch", "ps4", "ps5"]
+DEFAULT_EXCLUDE_WORDS = ["xbox", "switch", "ps4", "ps5", "insert", "inserts", "folded space"]
 QUOTES = "\"'\u201c\u201d\u2018\u2019\u00ab\u00bb"
 
 
