@@ -1,34 +1,41 @@
 # Board Game Stock Alert
 
-Emails you when a board game is **in stock** at a Canadian online store. Pre-orders and backorders are ignored.
+Emails you when a board game is **in stock** at a Canadian online store. Pre-orders and backorders never trigger an email.
 
-You don't need product links. You give it a title (publisher optional), and it searches each store's catalogue, so it catches the game the moment a store lists it. You get one email when a game becomes in stock, and another only if it sells out and comes back.
+You don't need product links. Give it a title (publisher optional) and it searches every store's catalogue, so it catches a game as soon as a store lists it. You get one email when a game comes into stock, and another only if it sells out and comes back.
 
-## Watching games
+## The web page
 
-```
-python stock_alert.py add "Thirty Years of Misery" --publisher "VUCA Simulations"
-python stock_alert.py add "Some Other Game"        # publisher is optional
-python stock_alert.py list
-python stock_alert.py remove "Some Other Game"
-```
+**https://sleevan.github.io/board-game-stock-alert/**
 
-The publisher stops it matching a different game with a similar name. If a store might list the title differently (e.g. "30 Years of Misery"), add that spelling too.
+- Add a game (title, plus publisher if you want to rule out similarly named games).
+- See, per game, which stores have it in stock, sold out, or on pre-order, with links and prices.
+- Stop watching a game.
+- Start a check right away with **Check now**.
+- See which stores were checked and which couldn't be.
+
+Saving changes needs a GitHub token, set up once per browser under **GitHub access** on the page. Make it a fine-grained token with access to only this repository, and these permissions: **Contents: Read and write** and **Actions: Read and write**. The token stays in that browser; it's never stored in the repo.
 
 ## Stores
 
-Stores live in `config.json` under `"stores"`. Store search works on **Shopify** stores, which most Canadian hobby-game shops use. The starter list:
+The store list comes from [Board Game Oracle's Canadian stores](https://www.boardgameoracle.com/en-CA/store), plus Black Knight Games. They live in `config.json` under `"stores"`. Each store has a `platform` that says how its catalogue is searched:
 
-| Store | URL |
+| Platform | Stores |
 |---|---|
-| Board Game Bliss (Toronto) | https://www.boardgamebliss.com |
-| 401 Games (Toronto) | https://store.401games.ca |
-| Black Knight Games | https://blackknightgames.ca |
-| Game Shack | https://www.gameshack.ca |
+| `shopify` | 30 stores, including Board Game Bliss, 401 Games, Game Shack, Dragon's Den, Wood For Sheep |
+| `woocommerce` | Across The Board, Arctic Board Games, Tadenac Games |
+| `lightspeed` | Boutique La Revanche, Owls Hollow |
+| `crystalcommerce` | Game Keeper Online, The Connection Games & Hobbies |
+| `magento` | Le Valet d'Coeur |
+| `greatboardgames` | Great Boardgames |
 
-To add a store, add a line like `{ "name": "Store Name", "url": "https://store-website.ca" }`.
+Stores without a `platform` can't be searched automatically (they block automated checks, or their search only works in a browser). Each has a `note` saying why, and the web page lists them.
 
-**First run, check the list:** `python stock_alert.py --dry-run`. Any store that shows *"store search failed – is it a Shopify store?"* can't be searched; remove it. For a non-Shopify store, you can still watch a specific product page once it exists:
+To add a store, add `{ "name": "Store Name", "url": "https://store.ca", "platform": "shopify" }`. To pause one, add `"enabled": false`.
+
+To confirm every store's search is working, run the **Test store searches** workflow in the Actions tab. It searches every store for a common game (Catan by default) and sends no email. Results are saved to `store-verify.json`.
+
+For a store that can't be searched, you can watch a single product page once it exists:
 
 ```json
 "product_urls": [
@@ -36,50 +43,37 @@ To add a store, add a line like `{ "name": "Store Name", "url": "https://store-w
 ]
 ```
 
-If it can't read the stock status on that page, add `"out_of_stock_text": "Sold Out"` (whatever the page says when unavailable).
-
 ## Email setup (Gmail)
 
 1. Turn on 2-Step Verification for your Google account.
-2. Create an App Password at https://myaccount.google.com/apppasswords (a 16-character code).
-3. Use these values (in `.env` locally, or as GitHub secrets below):
+2. Create an App Password at https://myaccount.google.com/apppasswords.
+3. In the repo: **Settings → Secrets and variables → Actions → New repository secret**, add:
 
-| Name | Value |
+| Secret | Value |
 |---|---|
-| `SMTP_USER` | your Gmail address |
-| `SMTP_PASSWORD` | the App Password |
+| `SMTP_USER` | the Gmail address that sends the alert |
+| `SMTP_PASSWORD` | that account's App Password |
 | `EMAIL_TO` | where alerts go (defaults to `SMTP_USER`) |
 | `SMTP_HOST` / `SMTP_PORT` | optional; default `smtp.gmail.com` / `465` |
 
-Test with `python stock_alert.py --test-email`.
+To test: Actions tab → **Board game stock check** → **Run workflow** → tick **Just send a test email**.
 
-## Running it automatically
+## How it runs
 
-### Option A: GitHub Actions (free, no computer needs to stay on)
+The **Board game stock check** workflow runs every 30 minutes on GitHub Actions. It searches every store for every watched game, emails you about anything that came into stock, and saves results to `state.json`, which the web page reads.
 
-1. Create a **private** GitHub repository and upload these files, keeping `.github/workflows/stock-check.yml` at that path. Don't upload `.env`.
-2. In the repo: **Settings → Secrets and variables → Actions → New repository secret**, add `SMTP_PASSWORD` (the Gmail App Password). The sending and receiving address is set to you@gmail.com in the workflow file; add `SMTP_USER` / `EMAIL_TO` secrets only to change it.
-3. **Actions** tab → *Board game stock check* → **Run workflow** to try it.
+GitHub pauses scheduled workflows in repos with no activity for 60 days. The results commits usually count as activity, but if you get a "workflow disabled" email, re-enable it in the Actions tab.
 
-It then checks every 30 minutes. If checks keep failing, the run fails and GitHub emails you. To add a game later, edit `config.json` in GitHub's web editor (copy the format of the existing entry).
+## Running it on your own computer
 
-Note: GitHub pauses scheduled workflows in repos with no activity for 60 days. The bot's state commits usually count as activity, but if you get a "workflow disabled" email, just re-enable it in the Actions tab.
-
-### Option B: your own computer
-
-Requires Python 3.9+. Copy `.env.example` to `.env`, fill it in, then:
-
-```
-python stock_alert.py --loop 30
-```
-
-Or schedule `python stock_alert.py` with Task Scheduler (Windows) or cron (Mac/Linux).
-
-## Commands
+Requires Python 3.9+. Copy `.env.example` to `.env` and fill it in.
 
 | Command | What it does |
 |---|---|
+| `python stock_alert.py add "Title" --publisher "Publisher"` | Watch a game |
+| `python stock_alert.py remove "Title"` | Stop watching |
+| `python stock_alert.py list` | Show games and stores |
 | `python stock_alert.py` | Check once; email if something came into stock |
-| `--dry-run` | Show what it finds; no email, nothing saved |
-| `--loop 30` | Keep checking every 30 minutes |
-| `--test-email` | Send a test email |
+| `python stock_alert.py --dry-run` | Show what it finds; no email, nothing saved |
+| `python stock_alert.py --loop 30` | Keep checking every 30 minutes |
+| `python stock_alert.py --test-email` | Send a test email |

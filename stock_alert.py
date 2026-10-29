@@ -23,6 +23,7 @@ Usage:
     python stock_alert.py --test-email # send a test email to confirm SMTP works
 """
 import argparse
+import html as htmllib
 import json
 import os
 import re
@@ -182,7 +183,7 @@ def search_woocommerce(base, query, publisher):
     items = fetch_json(f"{base}/wp-json/wc/store/v1/products?search={quote(query)}&per_page=20")
     out = []
     for it in items:
-        title = re.sub(r"<[^>]+>", "", it.get("name", ""))
+        title = htmllib.unescape(re.sub(r"<[^>]+>", "", it.get("name", "")))
         if normalize(query) not in normalize(title):
             continue
         meta = " ".join([it.get("description", ""), it.get("short_description", ""),
@@ -239,7 +240,7 @@ def _blocks(html, start_marker):
 
 
 def _clean(t):
-    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", t or "")).strip()
+    return htmllib.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", t or "")).strip())
 
 
 def search_crystalcommerce(base, query, publisher):
