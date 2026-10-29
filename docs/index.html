@@ -185,6 +185,7 @@ footer { color: var(--muted); font-size: .85rem; }
       <h2 id="listH">Watching</h2>
       <div class="status-line">
         <span class="msg" id="checkMsg" role="status"></span>
+        <button type="button" class="ghost small" id="toggleAll" aria-controls="games">Expand all</button>
         <button type="button" class="ghost small" id="checkNow">Check now</button>
       </div>
     </div>
@@ -282,6 +283,7 @@ const priceShip = (price, store) => {
 const priceNum = p => { const m = String(p || "").replace(/,/g, "").match(/\d+(?:\.\d+)?/); return m ? parseFloat(m[0]) : Infinity; };
 const STATUS_ORDER = ["in_stock", "preorder", "out_of_stock", "not_listed", "unknown"];
 const byStatusThenPrice = (a, b) => (STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status)) || (priceNum(a.price) - priceNum(b.price));
+const openState = new Map();   // game title -> open/closed, once you've toggled it
 const norm = s => (s || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 function ago(iso) {
@@ -327,7 +329,10 @@ function render() {
       const listed = rows.filter(r => ["in_stock", "preorder", "out_of_stock"].includes(r.status)).sort(byStatusThenPrice);
       const el = document.createElement("details");
       el.className = "game" + (inStock.length ? " hot" : "");
-      if (inStock.length || askList.length) el.open = true;
+      const remembered = openState.get(norm(g.title));
+      el.open = remembered !== undefined ? remembered : !!(inStock.length || askList.length);
+      el.dataset.title = norm(g.title);
+      el.addEventListener("toggle", () => { openState.set(el.dataset.title, el.open); updateToggleAll(); });
       let tally;
       if (!rows.length) tally = `<span class="chip wait">Waiting for next check</span>`;
       else {
@@ -371,6 +376,7 @@ function render() {
     });
   }
 
+  updateToggleAll();
   const banner = $("askBanner");
   banner.hidden = !totalAsks;
   banner.textContent = totalAsks ? `${totalAsks} possible match${totalAsks > 1 ? "es need" : " needs"} your OK. They're marked below.` : "";
@@ -517,6 +523,21 @@ $("addForm").addEventListener("submit", async e => {
     }
   } catch (err) { msg.className = "msg err"; msg.textContent = explain(err); showSetup(err); }
   $("addBtn").disabled = false;
+});
+
+function updateToggleAll() {
+  const games = [...document.querySelectorAll("#games details.game")];
+  const btn = $("toggleAll");
+  btn.hidden = games.length === 0;
+  const anyClosed = games.some(d => !d.open);
+  btn.textContent = anyClosed ? "Expand all" : "Collapse all";
+  btn.setAttribute("aria-expanded", String(!anyClosed));
+}
+$("toggleAll").addEventListener("click", () => {
+  const games = [...document.querySelectorAll("#games details.game")];
+  const open = games.some(d => !d.open);
+  games.forEach(d => { d.open = open; openState.set(d.dataset.title, open); });
+  updateToggleAll();
 });
 
 $("checkNow").addEventListener("click", async () => {
