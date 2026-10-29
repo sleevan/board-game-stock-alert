@@ -8,56 +8,56 @@
    "in_stock": 10
   },
   "example": {
-   "title": "Catan 6th Edition",
+   "title": "Pokemon - First Partner Illustration Collection - Series 2",
    "status": "in_stock",
-   "price": "$56.95",
-   "link": "https://store.401games.ca/products/catan-6th-edition"
+   "price": "$39.95",
+   "link": "https://store.401games.ca/products/pokemon-first-partner-illustration-collection-series-2"
   }
  },
  {
   "name": "A Muse N Games",
   "platform": "shopify",
   "ok": true,
-  "matches": 10,
+  "matches": 5,
   "statuses": {
-   "in_stock": 10
+   "in_stock": 5
   },
   "example": {
-   "title": "Catan - Zip!",
+   "title": "Pokemon Plush 8 inch Emolga",
    "status": "in_stock",
-   "price": "$31.00",
-   "link": "https://amusengames.ca/products/catan-zip"
+   "price": "$25.00",
+   "link": "https://amusengames.ca/products/pokemon-plush-8-inch-emolga"
   }
  },
  {
   "name": "Across The Board Game Cafe",
   "platform": "woocommerce",
   "ok": true,
-  "matches": 20,
+  "matches": 2,
   "statuses": {
-   "out_of_stock": 5,
-   "in_stock": 15
+   "out_of_stock": 1,
+   "in_stock": 1
   },
   "example": {
-   "title": "Catan: On the Road",
+   "title": "Monopoly Pokemon",
    "status": "out_of_stock",
-   "price": "$13.99",
-   "link": "https://acrosstheboardcafe.com/product/catan-on-the-road/"
+   "price": "$34.99",
+   "link": "https://acrosstheboardcafe.com/product/monopoly-pokemon/"
   }
  },
  {
   "name": "Always Games",
   "platform": "shopify",
   "ok": true,
-  "matches": 10,
+  "matches": 9,
   "statuses": {
-   "in_stock": 10
+   "in_stock": 9
   },
   "example": {
-   "title": "Catan - 6th Edition (English)",
+   "title": "Pokemon TCG: 30th Booster Bundle (French)",
    "status": "in_stock",
-   "price": "$60.99",
-   "link": "https://alwaysgames.ca/products/catan-6th-edition"
+   "price": "$119.99",
+   "link": "https://alwaysgames.ca/products/pokemon-tcg-30th-booster-bundle-french"
   }
  },
  {
@@ -66,45 +66,44 @@
   "ok": true,
   "matches": 20,
   "statuses": {
-   "in_stock": 10,
-   "out_of_stock": 10
+   "out_of_stock": 20
   },
   "example": {
-   "title": "Catan: New Energies",
-   "status": "in_stock",
-   "price": "$96.99",
-   "link": "https://arcticboardgames.ca/product/catan-new-energies/"
+   "title": "Pokemon: 30th Anniversary: Bundle",
+   "status": "out_of_stock",
+   "price": "$109.99",
+   "link": "https://arcticboardgames.ca/product/pokemon-30th-anniversary-bundle/"
   }
  },
  {
   "name": "As Des Jeux",
   "platform": "shopify",
   "ok": true,
-  "matches": 10,
+  "matches": 9,
   "statuses": {
-   "in_stock": 8,
+   "in_stock": 7,
    "out_of_stock": 2
   },
   "example": {
-   "title": "CATAN: Le Jeu de Cartes (FR)",
+   "title": "Pokemon First Partner Illustration Collection Series 3 (EN)",
    "status": "in_stock",
-   "price": "$19.99",
-   "link": "https://www.asdesjeux.com/products/catan-le-jeu-de-cartes-fr"
+   "price": "$54.99",
+   "link": "https://www.asdesjeux.com/products/pokemon-first-partner-illustration-collection-series-3-en"
   }
  },
  {
   "name": "Black Knight Games",
   "platform": "shopify",
   "ok": true,
-  "matches": 10,
+  "matches": 9,
   "statuses": {
-   "in_stock": 10
+   "in_stock": 9
   },
   "example": {
-   "title": "Catan 6E: 5-6 Player Expansion",
+   "title": "Pokemon Plush: Sleeping Pokemon (5-Inch)",
    "status": "in_stock",
-   "price": "$42.99",
-   "link": "https://blackknightgames.ca/products/catan-6e-5-6-player-expansion"
+   "price": "$25.99",
+   "link": "https://blackknightgames.ca/products/pokemon-plush-sleeping-pokemon-5-inch"
   }
  },
  {
@@ -113,14 +112,14 @@
   "ok": true,
   "matches": 10,
   "statuses": {
-   "out_of_stock": 5,
-   "in_stock": 5
+   "out_of_stock": 7,
+   "in_stock": 3
   },
   "example": {
-   "title": "Catan: Junior",
+   "title": "Pokemon - 30th Celebration Booster Bundle",
    "status": "out_of_stock",
-   "price": "$30.39",
-   "link": "https://www.boardgamebliss.com/products/catan-junior"
+   "price": "$73.64",
+   "link": "https://www.boardgamebliss.com/products/pokemon-30th-celebration-booster-bundle"
   }
  },
  {
@@ -135,33 +134,26 @@
   "name": "Board Games N More",
   "platform": "opencart",
   "ok": true,
-  "matches": 12,
+  "matches": 11,
   "statuses": {
-   "out_of_stock": 4,
-   "in_stock": 8
+   "in_stock": 6,
+   "preorder": 1,
+   "out_of_stock": 4
   },
   "example": {
-   "title": "A Game of Thrones: Catan – Brotherhood of the Watch",
-   "status": "out_of_stock",
-   "price": "$109.99",
-   "link": "https://www.boardgamesnmore.com/a-game-of-thrones-catan-brotherhood-of-the-watch.html"
+   "title": "Monopoly - Pokemon",
+   "status": "in_stock",
+   "price": "$42.99",
+   "link": "https://www.boardgamesnmore.com/monopoly-pokemon-1363486691.html"
   }
  },
  {
   "name": "Boutique La Revanche",
   "platform": "lightspeed",
   "ok": true,
-  "matches": 12,
-  "statuses": {
-   "in_stock": 1,
-   "out_of_stock": 11
-  },
-  "example": {
-   "title": "Catan [French]",
-   "status": "in_stock",
-   "price": "$74.99",
-   "link": "https://boutique.larevanche.ca/catan-french.html"
-  }
+  "matches": 0,
+  "statuses": {},
+  "example": null
  },
  {
   "name": "Brimstone Games",
@@ -172,10 +164,10 @@
    "in_stock": 10
   },
   "example": {
-   "title": "CATAN Expansion 5-6 Players - 6th Edition",
+   "title": "Brimstone Pokemon Card Bundle",
    "status": "in_stock",
-   "price": "$41.99",
-   "link": "https://brimstonegames.ca/products/catan-expansion-5-6-players-6th-edition"
+   "price": "$19.99",
+   "link": "https://brimstonegames.ca/products/brimstone-pokemon-card-bundle"
   }
  },
  {
@@ -190,9 +182,16 @@
   "name": "Cardboard Memories",
   "platform": "shopify",
   "ok": true,
-  "matches": 0,
-  "statuses": {},
-  "example": null
+  "matches": 10,
+  "statuses": {
+   "in_stock": 10
+  },
+  "example": {
+   "title": "Pokemon - Scarlet and Violet - Destined Rivals - Elite Trainer Box",
+   "status": "in_stock",
+   "price": "$132.00",
+   "link": "https://www.cardboardmemories.ca/products/pokemon-scarlet-and-violet-destined-rivials-elite-trainer-box"
+  }
  },
  {
   "name": "Dragon's Den Games",
@@ -203,55 +202,57 @@
    "in_stock": 10
   },
   "example": {
-   "title": "Catan 6th Edition: 5-6 Player Expansion",
+   "title": "Pokemon: 9-Pocket Portfolio - Pitch Black",
    "status": "in_stock",
-   "price": "$42.99",
-   "link": "https://dragonsdengames.com/products/catan-6th-edition-5-6-player-expansion"
+   "price": "$16.99",
+   "link": "https://dragonsdengames.com/products/pokemon-9-pocket-portfolio-pitch-black"
   }
  },
  {
   "name": "F.G. Bradley's",
   "platform": "woocommerce_html",
   "ok": true,
-  "matches": 11,
+  "matches": 6,
   "statuses": {
-   "in_stock": 11
+   "in_stock": 5,
+   "out_of_stock": 1
   },
   "example": {
-   "title": "CATAN – On the Road",
+   "title": "Pokemon ME05 Pitch Black Sleeved Pack",
    "status": "in_stock",
-   "price": "$12.99",
-   "link": "https://fgbradleys.com/product/catan-on-the-road/"
+   "price": "$11.99",
+   "link": "https://fgbradleys.com/product/pokemon-me05-pitch-black-sleeved-pack/"
   }
  },
  {
   "name": "Fusion Gaming",
   "platform": "shopify",
   "ok": true,
-  "matches": 10,
+  "matches": 9,
   "statuses": {
-   "in_stock": 10
+   "in_stock": 9
   },
   "example": {
-   "title": "Catan 6th Edition",
+   "title": "Blanche (082/078) [Pokémon GO]",
    "status": "in_stock",
-   "price": "$51.06",
-   "link": "https://www.fusiongamingonline.com/products/catan-6th-edition"
+   "price": "$5.25",
+   "link": "https://www.fusiongamingonline.com/products/blanche-082-078-pokemon-go"
   }
  },
  {
   "name": "Game Keeper Online",
   "platform": "crystalcommerce",
   "ok": true,
-  "matches": 17,
+  "matches": 18,
   "statuses": {
-   "out_of_stock": 17
+   "out_of_stock": 17,
+   "preorder": 1
   },
   "example": {
-   "title": "Catan: Seafarers (2015)",
+   "title": "Pokemon Communication - 152b/181 - Pokemon Trainer's Toolkit Promo",
    "status": "out_of_stock",
-   "price": "$69.99",
-   "link": "https://www.gamekeeperonline.com/catalog/board_games/catan_seafarers_2015/277013"
+   "price": "$1.99",
+   "link": "https://www.gamekeeperonline.com/catalog/pokemon_singles-pokemon_promo/pokemon_communication__152b181__pokemon_trainers_toolkit_promo/842358"
   }
  },
  {
@@ -260,14 +261,14 @@
   "ok": true,
   "matches": 10,
   "statuses": {
-   "out_of_stock": 3,
-   "in_stock": 7
+   "out_of_stock": 7,
+   "in_stock": 3
   },
   "example": {
-   "title": "Catan 3D Edition - Board Game",
+   "title": "Pokemon 30th Celebration Booster Bundle",
    "status": "out_of_stock",
-   "price": "$319.99",
-   "link": "https://www.gameshack.ca/products/catan-3d-edition-board-game-pre-order"
+   "price": "$109.99",
+   "link": "https://www.gameshack.ca/products/pok-30th-celebration-bbn-113938"
   }
  },
  {
@@ -276,45 +277,37 @@
   "ok": true,
   "matches": 10,
   "statuses": {
-   "out_of_stock": 4,
-   "in_stock": 6
+   "out_of_stock": 10
   },
   "example": {
-   "title": "BG Catan Starfarers",
+   "title": "Pokemon SV3.5 151 Booster Bundle",
    "status": "out_of_stock",
-   "price": "$139.99",
-   "link": "https://gameknight.ca/products/cn3005"
+   "price": "$59.99",
+   "link": "https://gameknight.ca/products/pokemon-sv3-5-151-booster-bundle"
   }
  },
  {
   "name": "Great Boardgames",
   "platform": "greatboardgames",
   "ok": true,
-  "matches": 3,
-  "statuses": {
-   "in_stock": 2,
-   "out_of_stock": 1
-  },
-  "example": {
-   "title": "Catan: Junior",
-   "status": "in_stock",
-   "price": "$36.95",
-   "link": "https://www.greatboardgames.ca/games/catan-junior"
-  }
+  "matches": 0,
+  "statuses": {},
+  "example": null
  },
  {
   "name": "Hobbiesville",
   "platform": "shopify",
   "ok": true,
-  "matches": 10,
+  "matches": 5,
   "statuses": {
-   "in_stock": 10
+   "out_of_stock": 3,
+   "in_stock": 2
   },
   "example": {
-   "title": "Catan Traveler",
-   "status": "in_stock",
-   "price": "$43.00",
-   "link": "https://hobbiesville.com/products/catan-traveler"
+   "title": "Mew ex - 205/165 - SV2a Pokemon Card 151 Holofoil",
+   "status": "out_of_stock",
+   "price": "$137.00",
+   "link": "https://hobbiesville.com/products/mew-ex-205-165-205-165-sv2a-pokemon-card-151-holofoil"
   }
  },
  {
@@ -323,29 +316,29 @@
   "ok": true,
   "matches": 30,
   "statuses": {
-   "in_stock": 20,
-   "out_of_stock": 10
+   "out_of_stock": 17,
+   "in_stock": 13
   },
   "example": {
-   "title": "Catan 6th Edition",
-   "status": "in_stock",
-   "price": "$54.99",
-   "link": "https://shop.jjcards.com/Catan-6th-Edition_p_39757.html"
+   "title": "Pez Pokemon Pikachu Blue",
+   "status": "out_of_stock",
+   "price": "$3.99",
+   "link": "https://shop.jjcards.com/Pez-Pokemon-Pikachu-Blue_p_41990.html"
   }
  },
  {
   "name": "La Pioche",
   "platform": "shopify",
   "ok": true,
-  "matches": 9,
+  "matches": 2,
   "statuses": {
-   "in_stock": 9
+   "in_stock": 2
   },
   "example": {
-   "title": "Catan: 6e Édition (francais)",
+   "title": "Ultra PRO: Album 2 po - Pokemon Gallery Series (Shimmering Skyline)",
    "status": "in_stock",
-   "price": "$65.99",
-   "link": "https://boutiquelapioche.com/products/catan-6e-edition-francais"
+   "price": "$15.99",
+   "link": "https://boutiquelapioche.com/products/ultra-pro-album-2-po-pokemon-gallery-series-shimmering-skyline"
   }
  },
  {
@@ -354,14 +347,14 @@
   "ok": true,
   "matches": 10,
   "statuses": {
-   "in_stock": 7,
-   "out_of_stock": 3
+   "in_stock": 6,
+   "out_of_stock": 4
   },
   "example": {
-   "title": "Catan - 6e Edition (Fr)",
+   "title": "Labyrinthe - Pokémon (Multi)",
    "status": "in_stock",
-   "price": "$69.99",
-   "link": "https://www.laribouldingue.ca/products/catan-6e-edition-fr"
+   "price": "$39.99",
+   "link": "https://www.laribouldingue.ca/products/labyrinthe-pokemon"
   }
  },
  {
@@ -376,46 +369,47 @@
   "name": "Le Valet d'Coeur",
   "platform": "magento",
   "ok": true,
-  "matches": 12,
+  "matches": 1,
   "statuses": {
-   "in_stock": 4,
-   "out_of_stock": 8
+   "out_of_stock": 1
   },
   "example": {
-   "title": "Catan 3D",
-   "status": "in_stock",
-   "price": "$419.99",
-   "link": "https://levalet.com/en/catan-3d.html"
+   "title": "Labyrinth Pokemon",
+   "status": "out_of_stock",
+   "price": "$39.99",
+   "link": "https://levalet.com/en/labyrinth-pokemon.html"
   }
  },
  {
   "name": "Legends Warehouse",
   "platform": "shopify",
   "ok": true,
-  "matches": 6,
+  "matches": 10,
   "statuses": {
-   "in_stock": 6
+   "in_stock": 10
   },
   "example": {
-   "title": "CATAN - SCENARIO - Crop Trust",
+   "title": "POKEMON 30TH CELEBRATION BOOSTER BUNDLE",
    "status": "in_stock",
-   "price": "$27.19",
-   "link": "https://legendswarehouse.ca/products/catan-scenario-crop-trust"
+   "price": "$107.99",
+   "link": "https://legendswarehouse.ca/products/pokemon-30th-celebration-booster-bundle"
   }
  },
  {
   "name": "Lvlup Games",
   "platform": "shopify",
   "ok": true,
-  "matches": 10,
+  "matches": 9,
   "statuses": {
-   "out_of_stock": 10
+   "preorder": 3,
+   "in_stock": 3,
+   "out_of_stock": 3
   },
   "example": {
-   "title": "Catan (6th Edition)",
-   "status": "out_of_stock",
-   "price": "$42.00",
-   "link": "https://lvlupgames.ca/products/catan-6th-edition"
+   "title": "RESTOCK PRE-ORDER | Pokemon 30th Celebration: Poster Collection *LIMIT 1 / PICK UP ONLY*",
+   "status": "preorder",
+   "price": "$30.00",
+   "link": "https://lvlupgames.ca/products/pkm-3othposter-3"
   }
  },
  {
@@ -424,76 +418,63 @@
   "ok": true,
   "matches": 8,
   "statuses": {
-   "in_stock": 7,
-   "out_of_stock": 1
+   "out_of_stock": 4,
+   "in_stock": 4
   },
   "example": {
-   "title": "Catan - Zip!",
-   "status": "in_stock",
-   "price": "$27.95",
-   "link": "https://boardgames.ca/products/catan-zip"
+   "title": "Pokemon: Raikou - Quick Model Kit",
+   "status": "out_of_stock",
+   "price": "$14.95",
+   "link": "https://boardgames.ca/products/pokemon-raikou-quick-model-kit"
   }
  },
  {
   "name": "Multizone Comics and Games",
   "platform": "shopify",
   "ok": true,
-  "matches": 10,
+  "matches": 8,
   "statuses": {
-   "in_stock": 10
+   "in_stock": 1,
+   "out_of_stock": 7
   },
   "example": {
-   "title": "Catan",
+   "title": "Pokemon 30th Celebration Elite Trainer Box",
    "status": "in_stock",
-   "price": "$79.99",
-   "link": "https://multizone.ca/products/catan-eng"
+   "price": "$249.99",
+   "link": "https://multizone.ca/products/pokemon-30th-celebration-elite-trainer-box"
   }
  },
  {
   "name": "Owls Hollow",
   "platform": "lightspeed",
   "ok": true,
-  "matches": 4,
-  "statuses": {
-   "out_of_stock": 2,
-   "in_stock": 2
-  },
-  "example": {
-   "title": "CATAN: Base Game: 5-6 Player Extension - 6th ed.",
-   "status": "out_of_stock",
-   "price": "$41.99",
-   "link": "https://www.owlshollow.com/catan-base-game-5-6-player-extension-6th-ed.html"
-  }
+  "matches": 0,
+  "statuses": {},
+  "example": null
  },
  {
   "name": "Pandora's Boox",
   "platform": "shopify",
   "ok": true,
-  "matches": 8,
+  "matches": 6,
   "statuses": {
-   "in_stock": 8
+   "in_stock": 4,
+   "out_of_stock": 2
   },
   "example": {
-   "title": "Catan Junior",
+   "title": "Pokemon: Labyrinth",
    "status": "in_stock",
-   "price": "$39.95",
-   "link": "https://www.pandorasboox.ca/products/catan-junior"
+   "price": "$34.95",
+   "link": "https://www.pandorasboox.ca/products/pokemon-labyrinth"
   }
  },
  {
   "name": "Pe Metawe Games",
   "platform": "square",
   "ok": true,
-  "matches": 1,
-  "statuses": {
-   "in_stock": 1
-  },
-  "example": {
-   "title": "Catan - New Energies",
-   "status": "in_stock",
-   "price": "$89.99",
-   "link": "https://shop.pemetawe.com/product/catan-new-energies/C2N3HOWYGLBOY4VN27KZHSKU"
-  }
+  "matches": 0,
+  "statuses": {},
+  "example": null
  },
  {
   "name": "Rain City Games",
@@ -501,13 +482,15 @@
   "ok": true,
   "matches": 10,
   "statuses": {
-   "in_stock": 10
+   "in_stock": 5,
+   "preorder": 3,
+   "out_of_stock": 2
   },
   "example": {
-   "title": "Catan: Dawn of Humankind",
+   "title": "Pokemon - Pitch Black - Booster Pack",
    "status": "in_stock",
-   "price": "$103.99",
-   "link": "https://www.raincity.games/products/catan-dawn-of-humankind"
+   "price": "$7.99",
+   "link": "https://www.raincity.games/products/pokemon-pitch-black-booster-pack"
   }
  },
  {
@@ -516,13 +499,15 @@
   "ok": true,
   "matches": 10,
   "statuses": {
-   "in_stock": 10
+   "in_stock": 7,
+   "preorder": 1,
+   "out_of_stock": 2
   },
   "example": {
-   "title": "Catan - 6th Edition",
+   "title": "Pokemon 30th Celebration - Poster Collection **Wave 2**",
    "status": "in_stock",
-   "price": "$54.94",
-   "link": "https://screenfreegames.com/products/catan-6th-edition-pre-order"
+   "price": "$59.94",
+   "link": "https://screenfreegames.com/products/pokemon-30th-celebration-poster-collection-pre-order"
   }
  },
  {
@@ -531,13 +516,14 @@
   "ok": true,
   "matches": 3,
   "statuses": {
-   "in_stock": 3
+   "in_stock": 1,
+   "out_of_stock": 2
   },
   "example": {
-   "title": "Catan (FR)",
+   "title": "Pink Pokémon (print) - Sweet Loots",
    "status": "in_stock",
-   "price": "$69.99",
-   "link": "https://staja.ca/products/catan-fr"
+   "price": "$50.00",
+   "link": "https://staja.ca/products/pink-pokemon-print-sweet-loots"
   }
  },
  {
@@ -550,10 +536,10 @@
    "out_of_stock": 2
   },
   "example": {
-   "title": "CATAN - 6th Edition",
+   "title": "Pokemon ME05 Pitch Black Booster Bundle",
    "status": "in_stock",
-   "price": "$69.99",
-   "link": "https://www.tabletopcafe.ca/products/catan-6th-edition"
+   "price": "$54.99",
+   "link": "https://www.tabletopcafe.ca/products/pokemon-me05-pitch-black-booster-bundle"
   }
  },
  {
@@ -568,84 +554,28 @@
   "name": "The Connection Games & Hobbies",
   "platform": "crystalcommerce",
   "ok": true,
-  "matches": 7,
+  "matches": 18,
   "statuses": {
-   "in_stock": 6,
-   "out_of_stock": 1
+   "out_of_stock": 16,
+   "in_stock": 2
   },
   "example": {
-   "title": "Catan 6th Edition",
-   "status": "in_stock",
-   "price": "$69.99",
-   "link": "https://www.theconnectiongames.com/catalog/board_games/catan_6th_edition/511799"
+   "title": "Nintendo Switch Pokemon Sword + Pokemon Sword Expansion Pass [In Box/Case Complete]",
+   "status": "out_of_stock",
+   "price": "$159.98",
+   "link": "https://www.theconnectiongames.com/catalog/used_video_games-nintendo/nintendo_switch_pokemon_sword__pokemon_sword_expansion_pass_in_boxcase_complete/437187"
   }
  },
  {
   "name": "The Gamers Table",
   "platform": "shopify",
   "ok": true,
-  "matches": 10,
-  "statuses": {
-   "in_stock": 10
-  },
-  "example": {
-   "title": "CATAN - 6th Edition Board Game | Strategy Game for 3–4 Players by Catan Studios",
-   "status": "in_stock",
-   "price": "$44.00",
-   "link": "https://gamerstable.ca/products/catan-6th-edition"
-  }
+  "matches": 0,
+  "statuses": {},
+  "example": null
  },
  {
   "name": "The Mana Lounge",
-  "platform": "shopify",
-  "ok": true,
-  "matches": 6,
-  "statuses": {
-   "in_stock": 5,
-   "out_of_stock": 1
-  },
-  "example": {
-   "title": "CATAN Expansion: Explorers & Pirates",
-   "status": "in_stock",
-   "price": "$69.99",
-   "link": "https://www.manalounge.ca/products/settlers-of-catan-explorers-and-pirates-expansion"
-  }
- },
- {
-  "name": "Toys On Fire",
-  "platform": "odoo",
-  "ok": true,
-  "matches": 36,
-  "statuses": {
-   "in_stock": 19,
-   "preorder": 1,
-   "out_of_stock": 16
-  },
-  "example": {
-   "title": "CATAN: The Struggle for Catan",
-   "status": "in_stock",
-   "price": "$17.95",
-   "link": "https://www.toysonfire.ca/shop/product/catan-the-struggle-for-catan-1891"
-  }
- },
- {
-  "name": "Victory Pints Games",
-  "platform": "square",
-  "ok": true,
-  "matches": 9,
-  "statuses": {
-   "in_stock": 5,
-   "out_of_stock": 4
-  },
-  "example": {
-   "title": "Catan Traders and Barbarians",
-   "status": "in_stock",
-   "price": "$64.99",
-   "link": "https://www.victorypints.ca/product/catan-traders-and-barbarians/2919"
-  }
- },
- {
-  "name": "WiredVillage Boardgames",
   "platform": "shopify",
   "ok": true,
   "matches": 10,
@@ -654,10 +584,49 @@
    "out_of_stock": 1
   },
   "example": {
-   "title": "Catan (Base Game)",
+   "title": "Pokémon TCG: Scarlet & Violet-Twilight Masquerade Booster Pack",
    "status": "in_stock",
-   "price": "$69.99",
-   "link": "https://wiredvillagegames.com/products/catan-board-game-base-game"
+   "price": "$17.99",
+   "link": "https://www.manalounge.ca/products/pokemon-tcg-scarlet-violet-twilight-masquerade-booster-display-pack"
+  }
+ },
+ {
+  "name": "Toys On Fire",
+  "platform": "odoo",
+  "ok": true,
+  "matches": 38,
+  "statuses": {
+   "in_stock": 38
+  },
+  "example": {
+   "title": "Pokemon Trading Card Game: 30th Celebration Elite Trainer Box",
+   "status": "in_stock",
+   "price": "$199.95",
+   "link": "https://www.toysonfire.ca/shop/product/pokemon-trading-card-game-30th-celebration-elite-trainer-box-152608"
+  }
+ },
+ {
+  "name": "Victory Pints Games",
+  "platform": "square",
+  "ok": true,
+  "matches": 0,
+  "statuses": {},
+  "example": null
+ },
+ {
+  "name": "WiredVillage Boardgames",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 9,
+  "statuses": {
+   "in_stock": 8,
+   "out_of_stock": 1
+  },
+  "example": {
+   "title": "Pokémon Scarlet And Violet Paradox Rift Sleeved Booster",
+   "status": "in_stock",
+   "price": "$14.99",
+   "link": "https://wiredvillagegames.com/products/pokemon-scarlet-and-violet-paradox-rift-sleeved-booster"
   }
  },
  {
@@ -669,10 +638,10 @@
    "in_stock": 10
   },
   "example": {
-   "title": "Catan (2025)",
+   "title": "Pokemon Mega Evolution Perfect Order Checklane Blister",
    "status": "in_stock",
-   "price": "$55.49",
-   "link": "https://www.woodforsheep.ca/products/catan-2015-copy"
+   "price": "$8.49",
+   "link": "https://www.woodforsheep.ca/products/pokemon-mega-evolution-perfect-order-checklane-blister-1-chosen-at-random"
   }
  }
 ]
