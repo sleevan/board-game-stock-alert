@@ -103,7 +103,8 @@ details > summary::-webkit-details-marker { display: none; }
 .listing { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 12px; align-items: baseline; }
 .listing .store { font-weight: 600; }
 .listing .found { color: var(--muted); font-size: .9rem; min-width: 0; overflow-wrap: anywhere; }
-.price { font: 400 .85rem var(--mono); font-variant-numeric: tabular-nums; }
+.price { font: 400 .85rem var(--mono); font-variant-numeric: tabular-nums; text-align: right; max-width: 22ch; }
+@media (max-width: 560px) { .listing { grid-template-columns: auto 1fr; } .listing .price { grid-column: 2; text-align: left; max-width: none; margin-bottom: 4px; } }
 .empty { color: var(--muted); font-size: .95rem; }
 .ask { border: 1.5px solid var(--warn); background: var(--pre-bg); border-radius: 6px; padding: 12px 14px; display: grid; gap: 8px; }
 .ask h3 { margin: 0; font: 700 1.05rem/1.2 var(--display); text-transform: uppercase; letter-spacing: .03em; color: var(--warn); }
@@ -188,7 +189,7 @@ footer { color: var(--muted); font-size: .85rem; }
       <h2 id="storesH">Stores</h2>
       <span class="meta" id="storeCount"></span>
     </div>
-    <p class="hint" style="margin:0">Switch a store off to leave it out of every check. <span class="msg" id="storeMsg" role="status"></span></p>
+    <p class="hint" style="margin:0">Switch a store off to leave it out of every check. Shipping shown is each store's published standard rate to <span id="shipRegion">Ontario</span>. <span class="msg" id="storeMsg" role="status"></span></p>
     <div class="legend">
       <span><i class="dot ok" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--in)"></i> Checked</span>
       <span><i style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--warn)"></i> Last check failed</span>
@@ -263,6 +264,8 @@ async function writeConfig(newConfig, message) {
   configSha = res.content.sha; config = newConfig;
 }
 
+const shipOf = name => ((config && config.stores) || []).find(s => s.name === name)?.shipping || "";
+const priceShip = (price, store) => { const sh = shipOf(store); return esc(price || "") + (sh ? `${price ? " | " : ""}${esc(sh)}` : ""); };
 const norm = s => (s || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 function ago(iso) {
@@ -330,7 +333,7 @@ function render() {
             <p class="hint" style="margin:0">These titles aren't an exact match for “${esc(g.title)}”, so they don't count until you confirm.</p>
             ${askList.map((a, j) => `<div class="ask-item" data-game="${idx}" data-title="${esc(a.key)}" data-label="${esc(a.title)}">
               <span class="ask-q">“${esc(a.title)}”</span>
-              <span class="ask-where">${a.where.map(w => `<span><span class="chip ${LABEL[w.status]?.[1] || "none"}">${LABEL[w.status]?.[0] || w.status}</span> ${w.link ? `<a href="${esc(w.link)}" target="_blank" rel="noopener">${esc(w.store)}</a>` : esc(w.store)} ${w.price ? `<span class="price">${esc(w.price)}</span>` : ""}</span>`).join("")}</span>
+              <span class="ask-where">${a.where.map(w => `<span><span class="chip ${LABEL[w.status]?.[1] || "none"}">${LABEL[w.status]?.[0] || w.status}</span> ${w.link ? `<a href="${esc(w.link)}" target="_blank" rel="noopener">${esc(w.store)}</a>` : esc(w.store)} <span class="price">${priceShip(w.price, w.store)}</span></span>`).join("")}</span>
               <span class="ask-btns">
                 <button type="button" class="small" data-decide="accept" id="acc-${idx}-${j}">Yes, it's this game</button>
                 <button type="button" class="ghost small" data-decide="reject" id="rej-${idx}-${j}">No, ignore it</button>
@@ -342,7 +345,7 @@ function render() {
           ${listed.length ? `<div class="listing">${listed.map(r => `
               <span class="chip ${LABEL[r.status][1]}">${LABEL[r.status][0]}</span>
               <span class="found"><span class="store">${esc(r.store)}</span> · ${r.link ? `<a href="${esc(r.link)}" target="_blank" rel="noopener">${esc((r.detail || "").replace(/^found /, "").replace(/^"|"$/g, "")) || "View listing"}</a>` : ""}</span>
-              <span class="price">${esc(r.price || "")}</span>`).join("")}</div>`
+              <span class="price">${priceShip(r.price, r.store)}</span>`).join("")}</div>`
             : `<p class="empty">${rows.length ? `No store lists it yet. Searched ${rows.length} stores ${esc(ago(state.updated))}.` : "Added. The next check will search every store for it."}</p>`}
           <div class="confirm" data-idx="${idx}">
             <button type="button" class="danger small" data-act="ask">Stop watching</button>
@@ -356,6 +359,7 @@ function render() {
   banner.hidden = !totalAsks;
   banner.textContent = totalAsks ? `${totalAsks} possible match${totalAsks > 1 ? "es need" : " needs"} your OK. They're marked below.` : "";
 
+  $("shipRegion").textContent = config.shipping_region || "Ontario";
   // Stores
   const health = state.stores || {};
   const active = stores.filter(s => s.platform && s.enabled !== false).length;

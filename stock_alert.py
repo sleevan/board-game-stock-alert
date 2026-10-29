@@ -765,6 +765,7 @@ def build_watches(config):
             watches.append({
                 "game": game["title"],
                 "store_name": store["name"],
+                "shipping": store.get("shipping"),
                 "name": f'{game["title"]} @ {store["name"]}',
                 "store": store["url"],
                 "platform": store["platform"],
@@ -909,7 +910,7 @@ def run_once(dry_run=False):
         key = watch_key(watch)
         name = watch.get("name") or watch.get("query") or watch.get("url")
         prev = old.get(key, {})
-        price_note = f" - {price}" if price else ""
+        price_note = (f" - {price}" if price else "") + (f" | {watch['shipping']}" if watch.get("shipping") else "")
         print(f"[{LABELS[status]:>20}] {name}{price_note}  ({method})")
 
         base = {"game": watch["game"], "store": watch.get("store_name") or watch.get("url"),
@@ -932,7 +933,8 @@ def run_once(dry_run=False):
         known = {p["title"] for p in prev.get("possible", []) if p.get("status") == IN_STOCK}
         for pm in possible:
             if pm["status"] == IN_STOCK and pm["title"] not in known:
-                nudges.append(f'{name}: "{pm["title"]}"' + (f' - {pm["price"]}' if pm.get("price") else "") + (f'\n{pm["link"]}' if pm.get("link") else ""))
+                nudges.append(f'{name}: "{pm["title"]}"' + (f' - {pm["price"]}' if pm.get("price") else "")
+                              + (f' | {watch["shipping"]}' if watch.get("shipping") else "") + (f'\n{pm["link"]}' if pm.get("link") else ""))
         new_watches[key] = {**base, "status": status, "price": price, "link": link,
                             "detail": method, "failures": 0, "possible": possible,
                             "since": prev.get("since") if prev.get("status") == status else now_utc()}

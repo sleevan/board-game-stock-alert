@@ -57,6 +57,10 @@ For a store that can't be searched, you can watch a single product page once it 
 ]
 ```
 
+## Shipping
+
+Each store in `config.json` has a `shipping` line: its published standard shipping rate to the region in `shipping_region` (Ontario). The web page and alert emails show it after the price, as `$95.00 | $9.95 shipping (free over $175)`. Stores that don't publish a flat rate show `No Flat Rate`. These were taken from each store's shipping policy on October 29, 2026, and won't update by themselves if a store changes its rates.
+
 ## Email setup (Gmail)
 
 1. Turn on 2-Step Verification for your Google account.

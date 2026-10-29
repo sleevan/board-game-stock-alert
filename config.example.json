@@ -9,22 +9,26 @@
     {
       "name": "401 Games",
       "url": "https://store.401games.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "A Muse N Games",
       "url": "https://amusengames.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Across The Board Game Cafe",
       "url": "https://acrosstheboardcafe.com",
-      "platform": "woocommerce"
+      "platform": "woocommerce",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Always Games",
       "url": "https://alwaysgames.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Amazing Stories",
@@ -41,82 +45,98 @@
     {
       "name": "Arctic Board Games",
       "url": "https://arcticboardgames.ca",
-      "platform": "woocommerce"
+      "platform": "woocommerce",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "As Des Jeux",
       "url": "https://www.asdesjeux.com",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Black Knight Games",
       "url": "https://blackknightgames.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Board Game Bliss",
       "url": "https://www.boardgamebliss.com",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "$9.95 shipping (free over $175)"
     },
     {
       "name": "Board Game Emporium",
       "url": "https://bgemporium.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Board Games N More",
       "url": "https://www.boardgamesnmore.com",
-      "platform": "opencart"
+      "platform": "opencart",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Boutique La Revanche",
       "url": "https://boutique.larevanche.ca",
-      "platform": "lightspeed"
+      "platform": "lightspeed",
+      "shipping": "$14.99 shipping (free over $99)"
     },
     {
       "name": "Brimstone Games",
       "url": "https://brimstonegames.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "C.D. Jeux",
       "url": "https://cdjeux.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Cardboard Memories",
       "url": "https://www.cardboardmemories.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Dragon's Den Games",
       "url": "https://dragonsdengames.com",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "F.G. Bradley's",
       "url": "https://fgbradleys.com",
-      "platform": "woocommerce_html"
+      "platform": "woocommerce_html",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Fusion Gaming",
       "url": "https://www.fusiongamingonline.com",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Game Keeper Online",
       "url": "https://www.gamekeeperonline.com",
-      "platform": "crystalcommerce"
+      "platform": "crystalcommerce",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Game Shack",
       "url": "https://www.gameshack.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "GameKnight Games",
       "url": "https://gameknight.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Geek Stop Games",
@@ -127,12 +147,14 @@
     {
       "name": "Great Boardgames",
       "url": "https://www.greatboardgames.ca",
-      "platform": "greatboardgames"
+      "platform": "greatboardgames",
+      "shipping": "$19.95 shipping ($9.95 on orders over $100)"
     },
     {
       "name": "Hobbiesville",
       "url": "https://hobbiesville.com",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Imaginaire",
@@ -143,32 +165,38 @@
     {
       "name": "J&J Cards & Collectibles",
       "url": "https://shop.jjcards.com",
-      "platform": "shift4shop"
+      "platform": "shift4shop",
+      "shipping": "$7.99 shipping ($10.99 under $30; free over $200)"
     },
     {
       "name": "La Pioche",
       "url": "https://boutiquelapioche.com",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "$16.99 shipping (free over $150)"
     },
     {
       "name": "La Ribouldingue",
       "url": "https://www.laribouldingue.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "$15.00 shipping (free over $99)"
     },
     {
       "name": "Le Roi des Cartes Valleyfield",
       "url": "https://tcgandgames.myshopify.com",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Le Valet d'Coeur",
       "url": "https://levalet.com",
-      "platform": "magento"
+      "platform": "magento",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Legends Warehouse",
       "url": "https://legendswarehouse.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "$14.99 shipping (free over $199)"
     },
     {
       "name": "Les Jeux Grillons Givrés",
@@ -179,7 +207,8 @@
     {
       "name": "Lvlup Games",
       "url": "https://lvlupgames.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Magic Stronghold Games",
@@ -196,88 +225,106 @@
     {
       "name": "Mission: Fun & Games",
       "url": "https://boardgames.ca",
-      "platform": "sitemap"
+      "platform": "sitemap",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Multizone Comics and Games",
       "url": "https://multizone.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Owls Hollow",
       "url": "https://www.owlshollow.com",
-      "platform": "lightspeed"
+      "platform": "lightspeed",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Pandora's Boox",
       "url": "https://www.pandorasboox.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Pe Metawe Games",
       "url": "https://shop.pemetawe.com",
-      "platform": "square"
+      "platform": "square",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Rain City Games",
       "url": "https://www.raincity.games",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Screen Free Games",
       "url": "https://screenfreegames.com",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "$20.00 shipping (free over $250)"
     },
     {
       "name": "Studio Staja",
       "url": "https://staja.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Table Top Cafe",
       "url": "https://www.tabletopcafe.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Tadenac Games",
       "url": "https://tadenacgames.ca",
-      "platform": "woocommerce"
+      "platform": "woocommerce",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "The Connection Games & Hobbies",
       "url": "https://www.theconnectiongames.com",
-      "platform": "crystalcommerce"
+      "platform": "crystalcommerce",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "The Gamers Table",
       "url": "https://gamerstable.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "The Mana Lounge",
       "url": "https://www.manalounge.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Toys On Fire",
       "url": "https://www.toysonfire.ca",
-      "platform": "odoo"
+      "platform": "odoo",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Victory Pints Games",
       "url": "https://www.victorypints.ca",
-      "platform": "square"
+      "platform": "square",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "WiredVillage Boardgames",
       "url": "https://wiredvillagegames.com",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "No Flat Rate"
     },
     {
       "name": "Wood For Sheep",
       "url": "https://www.woodforsheep.ca",
-      "platform": "shopify"
+      "platform": "shopify",
+      "shipping": "$15.49 shipping (free over $255)"
     }
   ],
-  "product_urls": []
+  "product_urls": [],
+  "shipping_region": "Ontario"
 }
