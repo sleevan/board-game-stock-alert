@@ -1,26 +1,729 @@
 {
-  "search:https://www.boardgamebliss.com|thirty years of misery|vuca simulations": {
-    "status": "not_listed",
-    "failures": 0,
-    "link": null,
-    "checked": "2026-10-29 15:57"
+  "updated": "2026-10-29T16:40:38Z",
+  "watches": {
+    "search:https://store.401games.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "401 Games",
+      "store_url": "https://store.401games.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": null
+    },
+    "search:https://amusengames.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "A Muse N Games",
+      "store_url": "https://amusengames.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://acrosstheboardcafe.com|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Across The Board Game Cafe",
+      "store_url": "https://acrosstheboardcafe.com",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://alwaysgames.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Always Games",
+      "store_url": "https://alwaysgames.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://arcticboardgames.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Arctic Board Games",
+      "store_url": "https://arcticboardgames.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://www.asdesjeux.com|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "As Des Jeux",
+      "store_url": "https://www.asdesjeux.com",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://blackknightgames.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Black Knight Games",
+      "store_url": "https://blackknightgames.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": null
+    },
+    "search:https://www.boardgamebliss.com|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Board Game Bliss",
+      "store_url": "https://www.boardgamebliss.com",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": null
+    },
+    "search:https://bgemporium.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Board Game Emporium",
+      "store_url": "https://bgemporium.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://boutique.larevanche.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Boutique La Revanche",
+      "store_url": "https://boutique.larevanche.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://brimstonegames.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Brimstone Games",
+      "store_url": "https://brimstonegames.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://cdjeux.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "C.D. Jeux",
+      "store_url": "https://cdjeux.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://www.cardboardmemories.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Cardboard Memories",
+      "store_url": "https://www.cardboardmemories.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://dragonsdengames.com|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Dragon's Den Games",
+      "store_url": "https://dragonsdengames.com",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://www.fusiongamingonline.com|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Fusion Gaming",
+      "store_url": "https://www.fusiongamingonline.com",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://www.gamekeeperonline.com|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Game Keeper Online",
+      "store_url": "https://www.gamekeeperonline.com",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://www.gameshack.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Game Shack",
+      "store_url": "https://www.gameshack.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": null
+    },
+    "search:https://gameknight.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "GameKnight Games",
+      "store_url": "https://gameknight.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://www.greatboardgames.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Great Boardgames",
+      "store_url": "https://www.greatboardgames.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://hobbiesville.com|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Hobbiesville",
+      "store_url": "https://hobbiesville.com",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://boutiquelapioche.com|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "La Pioche",
+      "store_url": "https://boutiquelapioche.com",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://www.laribouldingue.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "La Ribouldingue",
+      "store_url": "https://www.laribouldingue.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://levalet.com|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Le Valet d'Coeur",
+      "store_url": "https://levalet.com",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://legendswarehouse.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Legends Warehouse",
+      "store_url": "https://legendswarehouse.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://lvlupgames.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Lvlup Games",
+      "store_url": "https://lvlupgames.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://multizone.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Multizone Comics and Games",
+      "store_url": "https://multizone.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://www.owlshollow.com|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Owls Hollow",
+      "store_url": "https://www.owlshollow.com",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://www.pandorasboox.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Pandora's Boox",
+      "store_url": "https://www.pandorasboox.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://www.raincity.games|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Rain City Games",
+      "store_url": "https://www.raincity.games",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://screenfreegames.com|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Screen Free Games",
+      "store_url": "https://screenfreegames.com",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://staja.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Studio Staja",
+      "store_url": "https://staja.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://www.tabletopcafe.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Table Top Cafe",
+      "store_url": "https://www.tabletopcafe.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://tadenacgames.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Tadenac Games",
+      "store_url": "https://tadenacgames.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "in_stock",
+      "price": "$95.00",
+      "link": "https://tadenacgames.ca/shop/thirty-years-of-misery/",
+      "detail": "found \"Thirty Years of Misery\"",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://www.theconnectiongames.com|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "The Connection Games & Hobbies",
+      "store_url": "https://www.theconnectiongames.com",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://gamerstable.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "The Gamers Table",
+      "store_url": "https://gamerstable.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://www.manalounge.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "The Mana Lounge",
+      "store_url": "https://www.manalounge.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://wiredvillagegames.com|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "WiredVillage Boardgames",
+      "store_url": "https://wiredvillagegames.com",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    },
+    "search:https://www.woodforsheep.ca|thirty years of misery|vuca simulations": {
+      "game": "Thirty Years of Misery",
+      "store": "Wood For Sheep",
+      "store_url": "https://www.woodforsheep.ca",
+      "checked": "2026-10-29T16:40:37Z",
+      "status": "not_listed",
+      "price": null,
+      "link": null,
+      "detail": "searched store catalogue",
+      "failures": 0,
+      "since": "2026-10-29T16:40:37Z"
+    }
   },
-  "search:https://store.401games.ca|thirty years of misery|vuca simulations": {
-    "status": "not_listed",
-    "failures": 0,
-    "link": null,
-    "checked": "2026-10-29 15:57"
-  },
-  "search:https://blackknightgames.ca|thirty years of misery|vuca simulations": {
-    "status": "not_listed",
-    "failures": 0,
-    "link": null,
-    "checked": "2026-10-29 15:57"
-  },
-  "search:https://www.gameshack.ca|thirty years of misery|vuca simulations": {
-    "status": "not_listed",
-    "failures": 0,
-    "link": null,
-    "checked": "2026-10-29 15:57"
+  "stores": {
+    "https://store.401games.ca": {
+      "name": "401 Games",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://amusengames.ca": {
+      "name": "A Muse N Games",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://acrosstheboardcafe.com": {
+      "name": "Across The Board Game Cafe",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://alwaysgames.ca": {
+      "name": "Always Games",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://arcticboardgames.ca": {
+      "name": "Arctic Board Games",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://www.asdesjeux.com": {
+      "name": "As Des Jeux",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://blackknightgames.ca": {
+      "name": "Black Knight Games",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://www.boardgamebliss.com": {
+      "name": "Board Game Bliss",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://bgemporium.ca": {
+      "name": "Board Game Emporium",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://boutique.larevanche.ca": {
+      "name": "Boutique La Revanche",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://brimstonegames.ca": {
+      "name": "Brimstone Games",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://cdjeux.ca": {
+      "name": "C.D. Jeux",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://www.cardboardmemories.ca": {
+      "name": "Cardboard Memories",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://dragonsdengames.com": {
+      "name": "Dragon's Den Games",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://www.fusiongamingonline.com": {
+      "name": "Fusion Gaming",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://www.gamekeeperonline.com": {
+      "name": "Game Keeper Online",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://www.gameshack.ca": {
+      "name": "Game Shack",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://gameknight.ca": {
+      "name": "GameKnight Games",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://www.greatboardgames.ca": {
+      "name": "Great Boardgames",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://hobbiesville.com": {
+      "name": "Hobbiesville",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://boutiquelapioche.com": {
+      "name": "La Pioche",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://www.laribouldingue.ca": {
+      "name": "La Ribouldingue",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://levalet.com": {
+      "name": "Le Valet d'Coeur",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://legendswarehouse.ca": {
+      "name": "Legends Warehouse",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://lvlupgames.ca": {
+      "name": "Lvlup Games",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://multizone.ca": {
+      "name": "Multizone Comics and Games",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://www.owlshollow.com": {
+      "name": "Owls Hollow",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://www.pandorasboox.ca": {
+      "name": "Pandora's Boox",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://www.raincity.games": {
+      "name": "Rain City Games",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://screenfreegames.com": {
+      "name": "Screen Free Games",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://staja.ca": {
+      "name": "Studio Staja",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://www.tabletopcafe.ca": {
+      "name": "Table Top Cafe",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://tadenacgames.ca": {
+      "name": "Tadenac Games",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://www.theconnectiongames.com": {
+      "name": "The Connection Games & Hobbies",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://gamerstable.ca": {
+      "name": "The Gamers Table",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://www.manalounge.ca": {
+      "name": "The Mana Lounge",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://wiredvillagegames.com": {
+      "name": "WiredVillage Boardgames",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    },
+    "https://www.woodforsheep.ca": {
+      "name": "Wood For Sheep",
+      "ok": true,
+      "error": null,
+      "last_ok": "2026-10-29T16:40:37Z",
+      "checked": "2026-10-29T16:40:37Z"
+    }
   }
 }
