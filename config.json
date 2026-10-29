@@ -44,7 +44,10 @@
     },
     {
       "title": "Maria",
-      "exact": true
+      "exact": true,
+      "publisher": "Histogame",
+      "publisher_source": "Board Game Bliss",
+      "publisher_listing": "Maria (Second Edition) (Import)"
     }
   ],
   "stores": [
