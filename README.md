@@ -18,8 +18,8 @@ Saving changes needs a GitHub token, set up once per browser under **GitHub acce
 
 ## How titles are matched
 
-- **Titles of 5 or more characters:** any listing that contains the whole title (as whole words) counts, ignoring capitalization and punctuation. "Blood Rage: Valhalla (EN)" and "Blood Rage: Valhalla – Road to Helheim" both count for *Blood Rage: Valhalla*.
-- **Titles of 4 characters or fewer** (like *ito* or *Root*): only exact titles count, ignoring language tags, pre-order tags and "Board Game". Close titles ("Yuui ito", edition wording) appear on the web page under **Is this the same game?** for you to confirm or ignore; titles mostly made of other words are skipped.
+- **Titles of 5 or more characters:** any listing that contains the whole title (as whole words) counts, ignoring capitalization, punctuation and anything in brackets, so "YINSH (New Edition)" counts for *Yinsh*. "Blood Rage: Valhalla (EN)" and "Blood Rage: Valhalla – Road to Helheim" both count for *Blood Rage: Valhalla*.
+- **Titles of 4 characters or fewer** (like *ito* or *Root*): only exact titles count, ignoring anything in brackets, language tags, pre-order tags and "Board Game". Close titles ("Yuui ito", edition wording) appear on the web page under **Is this the same game?** for you to confirm or ignore; titles mostly made of other words are skipped.
 - Titles you ignore on the web page stay ignored for that game.
 
 ## Stores

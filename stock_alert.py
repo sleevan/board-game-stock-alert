@@ -101,9 +101,14 @@ _TITLE_EDITION = re.compile(
     r"standard|retail|kickstarter|ks|limited|special|reprint)\s+)?edition\b|\b\d+(?:st|nd|rd|th) ed\b")
 
 
+_BRACKETED = re.compile(r"[\(\[\{][^\)\]\}]*[\)\]\}]")
+
+
 def title_core(title):
-    """(core words, had_edition_words) for comparing a listing title with a watched title."""
-    t = normalize(title)
+    """(core words, had_edition_words) for comparing a listing title with a watched title.
+    Anything in brackets - (New Edition), [French], {EN} - is ignored."""
+    unbracketed = _BRACKETED.sub(" ", title or "")
+    t = normalize(unbracketed) or normalize(title)
     had_edition = bool(_TITLE_EDITION.search(t))
     t = _TITLE_EDITION.sub(" ", t)
     core = re.sub(r"\s+", " ", _TITLE_NOISE.sub(" ", t)).strip()
