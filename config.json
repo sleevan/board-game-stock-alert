@@ -22,7 +22,10 @@
     },
     {
       "title": "ito",
-      "publisher_lookup": "needs_token"
+      "publisher_lookup": "needs_token",
+      "reject": [
+        "yuui ito"
+      ]
     },
     {
       "title": "Jibber Jabble"
