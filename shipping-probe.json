@@ -2,12 +2,41 @@
  {
   "name": "401 Games",
   "url": "https://store.401games.ca",
-  "found": []
+  "found": [
+   {
+    "path": "/pages/new-shipping-policy-and-faq-august-2022",
+    "lines": [
+     "If the value of the order meets or exceeds $175.00 before taxes and shipping charges, it will be eligible for Free Shipping!",
+     "*ORDERS CONTAINING ONLY TRADING CARD GAME SINGLES Orders containing only TCG Singles in Canada are eligible for Free Shipping if the value of the order meets or exceeds $100.00 before taxes.",
+     "Orders containing only TCG Singles are eligible for flat rate $3.00 letter mail shipping if the order is under $30.00 before taxes and shipping charges and does not exceed the weight limit.",
+     "Orders containing only TCG Singles are eligible for free letter mail shipping if the order meets or exceeds $30.00 before taxes and shipping charges and does not exceed the weight limit.",
+     "SHIPPING RATES FOR THE UNITED STATES OF AMERICA We offer flat rate $17.95 CAD shipping cost on orders being delivered to addresses in most continental states .",
+     "Orders made from Coastal States are eligible for $30 UPS Standard Shipping."
+    ]
+   },
+   {
+    "path": "/pages/new-shipping-policy-faq",
+    "lines": [
+     "If the value of the order meets or exceeds $175.00 before taxes and shipping charges, it will be eligible for Free Shipping!",
+     "*ORDERS CONTAINING ONLY TRADING CARD GAME SINGLES Orders containing only TCG Singles in Canada are eligible for Free Shipping if the value of the order meets or exceeds $100.00 before taxes.",
+     "Orders containing only TCG Singles are eligible for flat rate $3.00 letter mail shipping if the order is under $30.00 before taxes and shipping charges and does not exceed the weight limit.",
+     "Orders containing only TCG Singles are eligible for free letter mail shipping if the order meets or exceeds $30.00 before taxes and shipping charges and does not exceed the weight limit.",
+     "SHIPPING RATES FOR THE UNITED STATES OF AMERICA We offer flat rate $17.95 CAD shipping cost on orders being delivered to addresses in most continental states .",
+     "Orders made from Coastal States are eligible for $30 UPS Standard Shipping."
+    ]
+   }
+  ]
  },
  {
   "name": "A Muse N Games",
   "url": "https://amusengames.ca",
   "found": [
+   {
+    "path": "/policies/shipping-policy",
+    "lines": [
+     "Add order notes Add order notes Subtotal $0.00 CAD Taxes and shipping calculated at checkout View Cart Check out Payment methods Choosing a selection results in a full page refresh."
+    ]
+   },
    {
     "path": "/policies/shipping-policy",
     "lines": [
@@ -19,7 +48,14 @@
  {
   "name": "Across The Board Game Cafe",
   "url": "https://acrosstheboardcafe.com",
-  "found": []
+  "found": [
+   {
+    "path": "/product/lost-ruins-of-arnak-surprise-shipment/",
+    "lines": [
+     "Lost Ruins of Arnak: Surprise Shipment - Across the Board Game Cafe shop Our Game Store Lost Ruins of Arnak: Surprise Shipment $ 23.99 1 in stock Lost Ruins of Arnak: Surprise Shipment quantity Add to cart Description Additional Information Reviews (0) A package with no sender—what could be inside?"
+    ]
+   }
+  ]
  },
  {
   "name": "Always Games",
@@ -46,15 +82,16 @@
   "url": "https://arcticboardgames.ca",
   "found": [
    {
-    "path": "/pages/shipping",
+    "path": "/faq/",
     "lines": [
-     "We have Gift Cards Free shipping to Canadian Provinces on orders over $200 Shipping Shields SKU: ABG10020 Category: Card Sleeves & Storage Rated 5.00 out of 5 based on 3 customer ratings ( 3 customer reviews) Description The GREEN sports & gaming card protector, specifically designed to protect collectible cards in the mail."
+     "We have Gift Cards Free shipping to Canadian Provinces on orders over $200 Frequently Asked Questions How long until my order is shipped?",
+     "Singles Store: Mailer under $25: $1.99 Mailer over $25: Free Tracked Package under $100: $14.99 Tracked Package over $100: Free To ensure optimal performance, and ease of customer experience, we have separated our inventory of games, and trading card singles."
     ]
    },
    {
-    "path": "/shipping",
+    "path": "/product/expeditions-ironclad-edition/",
     "lines": [
-     "We have Gift Cards Free shipping to Canadian Provinces on orders over $200 Shipping Shields SKU: ABG10020 Category: Card Sleeves & Storage Rated 5.00 out of 5 based on 3 customer ratings ( 3 customer reviews) Description The GREEN sports & gaming card protector, specifically designed to protect collectible cards in the mail."
+     "We have Gift Cards Free shipping to Canadian Provinces on orders over $200 Expeditions: Ironclad Edition SKU: 850032180542 Category: Board Games Tag: Base Game Description The sequel to Scythe sends players on a new adventure into Siberia, where a massive meteorite crashed near the Tunguska River, awakening ancient corruption."
     ]
    }
   ]
@@ -64,12 +101,17 @@
   "url": "https://www.asdesjeux.com",
   "found": [
    {
-    "path": "/policies/shipping-policy",
+    "path": "/policies/refund-policy",
     "lines": [
-     "Politique d’expédition – L'As des jeux x Passer au contenu Diaporama Pause Lire le diaporama LIVRAISON GRATUITE sur commande de 99$ (avant taxes).",
-     "LIVRAISON GRATUITE sur commande de 99$ (avant taxes).",
-     "Frais de livraison 13,99$ pour commande de moins de 99$ (avant taxes) pour QC et ON Frais de livraison 13,99$ pour commande de moins de 99$ (avant taxes) pour QC et ON Facebook Instagram TikTok YouTube Langue Français Français English Politique d’expédition 📦 IMPORTANT : Nos commandes ne sont pas expédiées avec Postes Canada .",
-     "Livraison gratuite : Les frais d’expédition sont entièrement couverts par L’As des jeux pour les commandes de 99 $ et plus avant taxes ."
+     "Politique de remboursement – L'As des jeux x Passer au contenu Diaporama Pause Lire le diaporama LIVRAISON GRATUITE sur commande de 99$ (avant taxes).",
+     "LIVRAISON GRATUITE sur commande de 99$ (avant taxes)."
+    ]
+   },
+   {
+    "path": "/policies/privacy-policy",
+    "lines": [
+     "Politique de confidentialité – L'As des jeux x Passer au contenu Diaporama Pause Lire le diaporama LIVRAISON GRATUITE sur commande de 99$ (avant taxes).",
+     "LIVRAISON GRATUITE sur commande de 99$ (avant taxes)."
     ]
    }
   ]
@@ -92,10 +134,11 @@
     ]
    },
    {
-    "path": "/pages/shipping",
+    "path": "/pages/faq",
     "lines": [
-     "Shipping and Return Policy – Board Game Bliss Skip to content 🇨🇦 Free shipping from $175 in ON & QC · see rates 🎲 Not sure what to play next?",
-     "Three quick questions and we’ll suggest a few ✨ New this week : games that just landed FAQ ★ Reviews Country/Region United States (USD $) United States (USD $) First Time Customer Take $10 Off Order Over $200 TAKE10OFF200 Copy code Copied Shipping and Order Information Delivery within Canada Below table shows the details for the shipping rate."
+     "FAQ – Board Game Bliss Skip to content 🇨🇦 Free shipping from $175 in ON & QC · see rates 🎲 Not sure what to play next?",
+     "Or if you don't have anything you want to add to the order you just want to pay for shipping, You can then checkout with this $0 item -> http://www.boardgamebliss.com/products/shipping .",
+     "A: You can create a new order just checkout with this $0 item -> http://www.boardgamebliss.com/products/shipping ."
     ]
    }
   ]
@@ -105,10 +148,15 @@
   "url": "https://bgemporium.ca",
   "found": [
    {
-    "path": "/policies/shipping-policy",
+    "path": "/pages/faqs",
     "lines": [
-     "Shipping policy – Board Game Emporium Skip to content Just added to your cart Qty: View cart ( ) Continue shopping Submit Close search Free Canada shipping on orders over $300 Shipping policy Standard Shipping Our standard shipping policy is once an order is complete we will ship out in between 5-9 business days.",
-     "Free Shipping Orders over $300, pre-tax, will be eligible for free shipping Canada wide."
+     "FAQs – Board Game Emporium Skip to content Just added to your cart Qty: View cart ( ) Continue shopping Submit Close search Free Canada shipping on orders over $300 FAQs Crowdfunded Games What is a Crowdfunded Game?"
+    ]
+   },
+   {
+    "path": "/policies/privacy-policy",
+    "lines": [
+     "Privacy policy – Board Game Emporium Skip to content Just added to your cart Qty: View cart ( ) Continue shopping Submit Close search Free Canada shipping on orders over $300 Privacy policy This Privacy Policy describes how bgemporium.ca (the “Site” or “we”) collects, uses, and discloses your Personal Information when you visit or make a purchase from the Site."
     ]
    }
   ]
@@ -116,18 +164,46 @@
  {
   "name": "Board Games N More",
   "url": "https://www.boardgamesnmore.com",
-  "found": []
+  "found": [
+   {
+    "path": "/add-shipping-fee-1.html",
+    "lines": [
+     "Add Shipping Fee ($1) | Add Shipping Fee ($1) Free Shipping ...",
+     "Menu Your Cart Add Shipping Fee ($1) Add Shipping Fee ($1) - Add Shipping Fee ($1) - Based on 0 reviews.",
+     "- Write a review $1.00 CAD Stock: In Stock Model: BGNM5007 In Stock : We will usually ship these items with 24-48 hrs if there are no preorder items in the order.",
+     "Email Phone Subscribe to this product Add to Cart \" class=\"btn btn-cart\" > Add to Cart Buy Now \"> Buy Now Question \"> Question Add to Wish List Compare this Product Description Reviews To add missing Shipping Fees ($1) Write a review Please login or register to review Tags: shipping , ($1) , People Also Bought Quickview Add to Wish List Add Shipping Fee ($5) To add missing Shipping Fees ($5)..",
+     "$5.00 CAD Add to Cart \"> Add to Cart Buy Now \"> Buy Now Question \"> Question Quickview Add to Wish List Add Shipping Fee ($3) To add missing Shipping Fees ($3).."
+    ]
+   },
+   {
+    "path": "/add-shipping-fee-5.html",
+    "lines": [
+     "Add Shipping Fee ($5) | Add Shipping Fee ($5) Free Shipping ...",
+     "Menu Your Cart Add Shipping Fee ($5) Add Shipping Fee ($5) - Add Shipping Fee ($5) - Based on 0 reviews.",
+     "- Write a review $5.00 CAD Stock: In Stock Model: BGNM5009 In Stock : We will usually ship these items with 24-48 hrs if there are no preorder items in the order.",
+     "Email Phone Subscribe to this product Add to Cart \" class=\"btn btn-cart\" > Add to Cart Buy Now \"> Buy Now Question \"> Question Add to Wish List Compare this Product Description Reviews To add missing Shipping Fees ($5) Write a review Please login or register to review Tags: shipping , ($5) , People Also Bought Quickview Add to Wish List Add Shipping Fee ($3) To add missing Shipping Fees ($3)..",
+     "$3.00 CAD Add to Cart \"> Add to Cart Buy Now \"> Buy Now Question \"> Question Quickview Add to Wish List Add Shipping Fee ($1) To add missing Shipping Fees ($1)..",
+     "$1.00 CAD Add to Cart \"> Add to Cart Buy Now \"> Buy Now Question \"> Question Quickview Add to Wish List Add Shipping Fee ($2) To add missing Shipping Fees ($2).."
+    ]
+   }
+  ]
  },
  {
   "name": "Boutique La Revanche",
   "url": "https://boutique.larevanche.ca",
   "found": [
    {
-    "path": "/service/shipping-returns/",
+    "path": "/en/service/shipping-returns/",
     "lines": [
      "Shipping Fees Quebec & Ontario : shipping fees are 14.99$ but are free for orders of 99$.",
      "Nunavut, Newfoundland & Labrador: shipping fees are 16.99$ but are free for orders over 139$.",
      "Rest of Canada : shipping fees are 16.99$ but are free for orders over 119$.",
+     "VAT: C$0.00 View cart (0) Proceed to checkout Continue shopping View cart (0) Order for another C$99.00 and receive free shipping Language & Currency English Français (CA) C$ CAD Continue shopping View cart Recently added Total excl."
+    ]
+   },
+   {
+    "path": "/en/service/expeditions-internationales-et-aux-etats-unis/",
+    "lines": [
      "VAT: C$0.00 View cart (0) Proceed to checkout Continue shopping View cart (0) Order for another C$99.00 and receive free shipping Language & Currency English Français (CA) C$ CAD Continue shopping View cart Recently added Total excl."
     ]
    }
@@ -138,20 +214,18 @@
   "url": "https://brimstonegames.ca",
   "found": [
    {
-    "path": "/policies/shipping-policy",
+    "path": "/pages/shipping-policy",
     "lines": [
-     "FREE *Expedited *Shipping on all orders $250+ (before tax) *New (as of June 3rd 2024!*).",
-     "Delivery Verification On orders over $225, we will add, at no additional cost to you, proof of delivery by signature through Canada Post.",
+     "FREE Expedited Shipping is available on all orders of $250 or more (before tax) .",
+     "Delivery Verification For orders over $225 , signature confirmation will be added at no additional cost using Canada Post’s proof-of-delivery service.",
      "$5.99 Title Default Title Add to cart 2025 World Championship Limited Pack Box - Yu-Gi-Oh!",
      "$49.99 Title Default Title Add to cart 2026 World Championship Limited Pack - Yu-Gi-Oh!",
      "$5.99 Title Default Title Add to cart 2026 World Championship Limited Pack Box - Yu-Gi-Oh!"
     ]
    },
    {
-    "path": "/pages/shipping-policy",
+    "path": "/blogs/news/mnt-submissions-being-accepted-for-february-ship",
     "lines": [
-     "FREE Expedited Shipping is available on all orders of $250 or more (before tax) .",
-     "Delivery Verification For orders over $225 , signature confirmation will be added at no additional cost using Canada Post’s proof-of-delivery service.",
      "$5.99 Title Default Title Add to cart 2025 World Championship Limited Pack Box - Yu-Gi-Oh!",
      "$49.99 Title Default Title Add to cart 2026 World Championship Limited Pack - Yu-Gi-Oh!",
      "$5.99 Title Default Title Add to cart 2026 World Championship Limited Pack Box - Yu-Gi-Oh!"
@@ -164,12 +238,6 @@
   "url": "https://cdjeux.ca",
   "found": [
    {
-    "path": "/policies/shipping-policy",
-    "lines": [
-     "Accept Decline Shipping policy Free shipping over 250$ Check Shipping for more info!"
-    ]
-   },
-   {
     "path": "/pages/shipping",
     "lines": [
      "Jeux offer free shipping on : - orders over 250$ before taxes for Ontario and Quebec delivery addresses.",
@@ -177,13 +245,34 @@
      "- orders over 400$ before taxes for Nova Scotia and New Brunswick delivery addresses.",
      "Free shipping over 250$ Check Shipping for more info!"
     ]
+   },
+   {
+    "path": "/policies/shipping-policy",
+    "lines": [
+     "Accept Decline Shipping policy Free shipping over 250$ Check Shipping for more info!"
+    ]
    }
   ]
  },
  {
   "name": "Cardboard Memories",
   "url": "https://www.cardboardmemories.ca",
-  "found": []
+  "found": [
+   {
+    "path": "/pages/shipping-consumption-policy",
+    "lines": [
+     "Shipping is free for website orders within Canada which exceed $299.99 (before taxes), some supply exceptions may apply.",
+     "For Quebec and Ontario the free shipping threshold is currently set at only $199.99.",
+     "Shipping for website orders under $200.00 (before taxes) is a flat rate dependent on location and regardless of how many items purchased."
+    ]
+   },
+   {
+    "path": "/products/konami-yu-gi-oh-world-championship-2026-limited-pack-booster-pack",
+    "lines": [
+     "- World Championship 2026 - Limited Pack - Booster Pack by Konami Sale Sale Original price $0.00 - Original price $0.00 Original price $0.00 $4.00 $4.00 - $4.00 Current price $4.00 | / SKU 083717873167 Not a Canadian eh?"
+    ]
+   }
+  ]
  },
  {
   "name": "Dragon's Den Games",
@@ -216,12 +305,25 @@
  {
   "name": "Game Keeper Online",
   "url": "https://www.gamekeeperonline.com",
-  "found": []
+  "found": [
+   {
+    "path": "/catalog/magic_singles-battle_for_zendikar__expeditions/2703",
+    "lines": [
+     "Wishlist CAD$ 324.99 Marsh Flats - Foil Out of stock."
+    ]
+   }
+  ]
  },
  {
   "name": "Game Shack",
   "url": "https://www.gameshack.ca",
   "found": [
+   {
+    "path": "/pages/shipping-and-payment-information",
+    "lines": [
+     "Subtotal: $0.00 CAD Taxes and shipping calculated at checkout Checkout Go to Cart Choosing a selection results in a full page refresh."
+    ]
+   },
    {
     "path": "/policies/shipping-policy",
     "lines": [
@@ -233,32 +335,58 @@
  {
   "name": "GameKnight Games",
   "url": "https://gameknight.ca",
-  "found": []
+  "found": [
+   {
+    "path": "/pages/shipping-delivery-and-pickup",
+    "lines": [
+     "Delivery : Delivery within Winnipeg usually costs $7-$20 depending how close you are to the store.",
+     "On orders over $50, we'll reduce the delivery fee by $5.00.",
+     "On orders of $200 or more, delivery will be free.",
+     "Shipping: Free on orders over $200 before tax.",
+     "ORDERS CONTAINING ONLY TRADING CARD GAME SINGLES Orders containing only TCG singles are eligible for flat rate $3.00 shipping.",
+     "If the order meets or exceeds $200.00 before taxes and shipping charges, your order will be eligible for free shipping."
+    ]
+   }
+  ]
  },
  {
   "name": "Great Boardgames",
   "url": "https://www.greatboardgames.ca",
-  "found": []
+  "found": [
+   {
+    "path": "/information/faq",
+    "lines": [
+     "There is a maximum of $300 worth of product (not including shipping charge or taxes) or a maximum of THREE (3) orders you may add together before shipping."
+    ]
+   },
+   {
+    "path": "/information/shipping-rates",
+    "lines": [
+     "--> Shipping Rates $19.95 Shipping applies to orders with a subtotal under $100.",
+     "Discounted Shipping (across Canada - except Extended Delivery addresses see below)* For residents of ON and QC, we offer a discounted shipping rate charge of $9.95 (+applicable tax) if your order is $100 or more ($19.95 shipping charge for orders under $100).",
+     "For residents of AB; MB; NB; NS; PEI and SK, we offer a discounted shipping rate of $14.95 (+applicable tax) if your order is $100 or more ($19.95 shipping charge for orders under $100).",
+     "*Extended Delivery Charge +$3 for ON/QC and +$5 AB; MB; NB; NS; PEI and SK to Addresses where Canada Post charges us hefty Surcharges NOTE: due to the high shipping costs to ship there from Ontario, we don't ship to the Northern Territories, B.C."
+    ]
+   }
+  ]
  },
  {
   "name": "Hobbiesville",
   "url": "https://hobbiesville.com",
   "found": [
    {
-    "path": "/policies/shipping-policy",
-    "lines": [
-     "SUPPORT IS OPEN support@hobbiesville.com +1 (888) 853-2057 HELP CENTRE FOLLOW US Instagram Shipping policy Free Shipping Canada - Free on orders over $175+.",
-     "United States - Free on orders before taxes and after discount of $175+.",
-     "Close Shopping Cart Your cart is empty Continue Shopping Shopping Cart No more products available for purchase Product Price Quantity Total You're $ away from free shipping!"
-    ]
-   },
-   {
-    "path": "/pages/shipping",
+    "path": "/pages/assistance-page/shipping",
     "lines": [
      "Free shipping on orders over $175 (CA/US).",
      "Shipping options Free shipping on orders over $175 (CA/US).",
      "Free shipping is also assessed per order — two orders that are each under $175 do not add up to the $175 threshold.",
      "Email support Close Shopping Cart Your cart is empty Continue Shopping Shopping Cart No more products available for purchase Product Price Quantity Total You're $ away from free shipping!"
+    ]
+   },
+   {
+    "path": "/pages/black-fridayboxing-day-shipping-cancellationsrefunds",
+    "lines": [
+     "Close Shopping Cart Your cart is empty Continue Shopping Shopping Cart No more products available for purchase Product Price Quantity Total You're $ away from free shipping!"
     ]
    }
   ]
@@ -266,7 +394,22 @@
  {
   "name": "J&J Cards & Collectibles",
   "url": "https://shop.jjcards.com",
-  "found": []
+  "found": [
+   {
+    "path": "/Shipping-Info_ep_42-1.html",
+    "lines": [
+     "Shipping Info Skip to Main Content home Shopping Cart --> ( 0 ) $0 --> Login | Register × Home Shipping Info Shipping Info For customers in the Canada - Canada Post is running again, so business mostly as usual.",
+     "Your base shipping costs will be: Ontario - Orders $30 or less - $10.99 Over $30 - $7.99 Over $200 - FREE.",
+     "Quebec - Orders $30 or less - $12.99 Over $30 - $9.99 Over $200 - FREE.",
+     "Manitoba, Saskatchewan, Alberta, British Columbia Orders $35 or less - $19.99 Over $35 - $14.99 Over $300 - FREE.",
+     "Nova Scotia, New Brunswick Orders $35 or less - $19.99 Over $35 - $14.99 Over $300 - FREE.",
+     "- $14.99 Orders $35 or less - $19.99 Over $35 - $14.99 Over $350 - FREE.",
+     "- Orders $30 or less - $26.99 Over $30 - $22.99 For customers in the USA June 30, 2025 - US shipping available again, US Customs issues resolved at least for now.",
+     "The de-minimis exemption for small orders under $800 will be assessed a 30% tariff or more starting May 2.",
+     "Order totals under threshold ($30-$35 depending on location) will have additional shipping fees."
+    ]
+   }
+  ]
  },
  {
   "name": "La Pioche",
@@ -283,6 +426,14 @@
      "Alberta, Colombie-Britannique, Île-du-Prince-Édouard, Manitoba, Nouveau-Brunswick, Nouvelle-Écosse et Saskatchewan: Les frais de livraison sont de 27.99$+tx et ils sont gratuits pour les commandes de 30 0$ et plus (avant taxes).",
      "Nunavut, Terre-Neuve-et-Labrador, Territoires du Nord-Ouest et Yukon : Les frais de livraison sont de 34.99$+tx et nous n'offrons pas la livraison gratuite."
     ]
+   },
+   {
+    "path": "/products/lost-ruins-of-arnak-surprise-shipment-anglais",
+    "lines": [
+     "Lost Ruins of Arnak: Surprise Shipment (anglais) — La Pioche - Boutique de jeux Passer au contenu Livraison gratuite : Québec = 125$ et plus avant taxes.",
+     "Livraison gratuite : Québec = 125$ et plus avant taxes.",
+     "René-Lévesque Ouest à Québec Habituellement prête en 1 heure Livraison gratuite Québec et Ontario* 125$ avant taxes (QC) et 150$ avant taxes (ON)."
+    ]
    }
   ]
  },
@@ -291,11 +442,17 @@
   "url": "https://www.laribouldingue.ca",
   "found": [
    {
-    "path": "/policies/shipping-policy",
+    "path": "/en/policies/shipping-policy",
     "lines": [
      "Shipping policy – La Ribouldingue English French English Skip to content Free* shipping with purchase of $99 or more / Language English Français English Shipping policy Shipping Fees Free shipping in Quebec and Ontario for any purchase over $99 before taxes.",
      "Flat fee of $15 plus taxes for purchases under $99 before taxes (Quebec and Ontario).",
      "Flat fee of $20 plus taxes for purchases shipped to Canadian provinces other than Quebec and Ontario."
+    ]
+   },
+   {
+    "path": "/en/policies/refund-policy",
+    "lines": [
+     "Refund policy – La Ribouldingue English French English Skip to content Free* shipping with purchase of $99 or more / Language English Français English Refund policy RETURNS Our policy lasts for 21 days."
     ]
    }
   ]
@@ -303,7 +460,20 @@
  {
   "name": "Le Roi des Cartes Valleyfield",
   "url": "https://tcgandgames.myshopify.com",
-  "found": []
+  "found": [
+   {
+    "path": "/policies/refund-policy",
+    "lines": [
+     "Refund policy – TCG and Games Skip to content FREE SHIPPING STARTING AT 250$ / LIVRAISON GRATUITE À PARTIR DE 250$ Item added to your cart View cart Check out Continue shopping Refund policy We have a 30-day return policy, which means you have 30 days after receiving your item to request a return."
+    ]
+   },
+   {
+    "path": "/policies/terms-of-service",
+    "lines": [
+     "Terms of service – TCG and Games Skip to content FREE SHIPPING STARTING AT 250$ / LIVRAISON GRATUITE À PARTIR DE 250$ Item added to your cart View cart Check out Continue shopping Terms of service OVERVIEW This website is operated by TCGandGames."
+    ]
+   }
+  ]
  },
  {
   "name": "Le Valet d'Coeur",
@@ -313,22 +483,37 @@
  {
   "name": "Legends Warehouse",
   "url": "https://legendswarehouse.ca",
-  "found": []
+  "found": [
+   {
+    "path": "/pages/customer-service-faq",
+    "lines": [
+     "DOMESTIC SHIPPING POLICY Free shipping policy Orders over $199.00 (not including taxes*) qualify for our free shipping discount.",
+     "Flat-Rate shipping policy For those orders under $199.00 (not including taxes*) LEGENDS WAREHOUSE offers a FLAT-RATE of $14.99 to all ten Canadian provinces ($24.99 for Yukon, Northwest Territories and Nunavut) ****see below ***** SHIPPING SURCHARGES ****REMOTE & ISOLATED COMMUNITIES CAN BE SUBJECT TO A DELIVERY SURCHARGE.",
+     "Single Card(s) shipping policy Orders under $15.00 containing only Single Cards are eligible for standard mail shipping for $1.50 .",
+     "Orders shipped within Canada that exceed $15.00 containing only Single Cards are eligible for standard mail shipping for FREE!",
+     "Orders shipped in Canada that exceed $199.00 containing only Single Cards are eligible for Expedited Parcel shipping for FREE!",
+     "orders will be shipped at a flat rate of $19.99 to all U.S.",
+     "Single Card(s) shipping policy Orders under $20.00 containing only Single Cards are eligible for standard mail shipping for $1.95 .",
+     "Orders shipped to the United States that exceed $20.00 containing only Single Cards are eligible for standard mail shipping for FREE!",
+     "Orders shipped to the United States that exceed $200.00 containing only Single Cards are eligible for Expedited Parcel shipping for FREE!"
+    ]
+   }
+  ]
  },
  {
   "name": "Lvlup Games",
   "url": "https://lvlupgames.ca",
   "found": [
    {
-    "path": "/policies/shipping-policy",
+    "path": "/pages/faqs",
     "lines": [
-     "Domestic (Provinces Only) We offer tracked, flat rate shipping from $12.95 - $29.95 (depending on province and shipping stored) across all provinces in Canada with the following private, express courier services: Canada Post Canpar ICS Fedex Purolator UPS Orders of $175 before taxes to Ontario and Quebec or $200 before taxes to all other provinces are eligible for FREE SHIPPING!"
+     "Currently we have 2 rates based on the day you come to play which are as follows: Adult: $8/person plus tax Child (12 and under): $5/child plus tax We've got 400+ games to choose from in our library (list coming soon)."
     ]
    },
    {
-    "path": "/pages/shipping-policy",
+    "path": "/pages/local-delivery",
     "lines": [
-     "Flat Rate Shipping to Continental USA Orders up to $149.99 before taxes Cross-boarder Eagle (3-7 business days) for $20.95 Orders $150 - $249.99 before taxes Cross-boarder Eagle (3-7 business days) for $29.95 FREE SHIPPING on orders greater than $250.00 before taxes International Shipping International orders must be sent via an email inquiry to orders@lvlupgames.ca ."
+     "Free delivery to all zones on orders of $100+ before taxes!"
     ]
    }
   ]
@@ -343,9 +528,15 @@
   "url": "https://multizone.ca",
   "found": [
    {
-    "path": "/policies/shipping-policy",
+    "path": "/policies/terms-of-service",
     "lines": [
-     "Shipping policy – Multizone: Comics And Games ${{amount}} CAD \"> $0.00 CAD \"> Shipping policy Due to global delays in shipping and processing - Please expect a slightly extended wait on receiving your order."
+     "Terms of service – Multizone: Comics And Games ${{amount}} CAD \"> $0.00 CAD \"> Terms of service TERMS OF SERVICE ----- OVERVIEW This website is operated by Multizone: Comics And Games."
+    ]
+   },
+   {
+    "path": "/policies/refund-policy",
+    "lines": [
+     "If you are shipping an item over $75, you should consider using a trackable shipping service or purchasing shipping insurance."
     ]
    }
   ]
@@ -370,7 +561,14 @@
   "url": "https://www.raincity.games",
   "found": [
    {
-    "path": "/policies/shipping-policy",
+    "path": "/products/mothership-rpg-one-shots",
+    "lines": [
+     "Mothership RPG One-Shots x Skip to content Mothership RPG One-Shots Save 0 Dates: Wednesday October 28 Wednesday October 28 Variant Wednesday October 28 - $16.00 Price: Sale price $16.00 / Stock: In stock Quantity: Add to cart More Info Mothership is an award-winning sci-fi horror RPG where you and your crew try to survive in the most inhospitable environment in the universe: outer space.",
+     "Trigger warnings: (giant) rats, severed limbs, beheading, gore, violence, mutation, blood, rot/disease View more Mothership RPG One-Shots Save 0 Dates: Wednesday October 28 Wednesday October 28 Variant Wednesday October 28 - $16.00 Price: Sale price $16.00 / Stock: In stock Quantity: Add to cart Event Policies Lateness Policy We start our events as close to the listed start time as possible."
+    ]
+   },
+   {
+    "path": "/pages/shipping-in-store-pickup",
     "lines": [
      "For $3 we can mail your MTG Singles order to you using Canada Post letter mail (snail mail), however tracking is not available for this option and Rain City Games is not responsible for lost packages.",
      "We offer free returns in-store and $10 returns online ."
@@ -426,6 +624,12 @@
     "lines": [
      "Additional shipping charges may apply , if the order item size is unusually large, heavy or in a remote location Each shipment must meet at least 1 of the below conditions A Flat Rate or pain shipping is paid for Over free shipping amount Shipping to United States Free Shipping for order between $450 to $800 CAD Otherwise, a shipping rate of $29.99 CAD within the Continental USA."
     ]
+   },
+   {
+    "path": "/pages/shipping-policy",
+    "lines": [
+     "Additional shipping charges may apply , if the order item size is unusually large, heavy or in a remote location Each shipment must meet at least 1 of the below conditions A Flat Rate or pain shipping is paid for Over free shipping amount Shipping to United States Free Shipping for order between $450 to $800 CAD Otherwise, a shipping rate of $29.99 CAD within the Continental USA."
+    ]
    }
   ]
  },
@@ -437,7 +641,24 @@
  {
   "name": "Toys On Fire",
   "url": "https://www.toysonfire.ca",
-  "found": []
+  "found": [
+   {
+    "path": "/page/website.u-s-shipping-disclaimer",
+    "lines": [
+     "UPS Pay on delivery fee: If you pay the delivery driver on delivery there may be an additional charge of USD $12."
+    ]
+   },
+   {
+    "path": "/shop/category/model-kits-model-kits-by-type-ships-716",
+    "lines": [
+     "Navy CA-35 Indianapolis #804 (31804) 4950344999477 1:700 Scale Ship Plastic Model Kit By TAMIYA $ 35.95 35.95 CAD 1.0 1.0 True 35.95 Sale DD445 Fletcher U.S.",
+     "Navy Destroyer #902 (31902) 4950344999507 1:700 Scale Ship Plastic Model Kit By TAMIYA $ 12.95 12.95 CAD 1.0 1.0 True 12.95 Sale DD-797 Cushing U.S.",
+     "Prince of Wales (05135) 4009803051352 1:1200 Scale Ship Plastic Model Kit By Revell Germany $ 12.95 12.95 CAD 0.0 0.0 12.95 Sale R.M.S.",
+     "Titanic (14217) 8809258924982 1:1000 Scale Ship Plastic Model Kit By Academy Hobby Model Kits $ 23.95 23.95 CAD 0.0 0.0 Back in Stock #428BCA True 23.95 Sale R.M.S.",
+     "Discovery NCC-1301 (POL961) 849398029961 Snap It 1:2500 Scale Ship Plastic Model Kit By Polar Lights $ 56.95 56.95 CAD 0.0 0.0 True 56.95 Sale ADMIRAL KUZNETSOV SOVIET AIRCRAFT ADMIRAL KUZNETSOV SOVIET AIRCRAFT TRU05713 Plastic Ship Model Kit By Trumpeter $ 59.95 59.95 CAD 0.0 0.0 True 59.95 ← Previous Next →"
+    ]
+   }
+  ]
  },
  {
   "name": "Victory Pints Games",
@@ -449,16 +670,16 @@
   "url": "https://wiredvillagegames.com",
   "found": [
    {
-    "path": "/policies/shipping-policy",
+    "path": "/policies/refund-policy",
     "lines": [
+     "You might like Gamegenic Andor Soft Crate Deck Box $6.99 CAD $6.99 CAD Sale Sold out Add to cart Gamegenic Ashoka Art Sleeves $6.50 CAD $6.50 CAD Sale Sold out Add to cart Gamegenic General Grievous Art Sleeves $6.50 CAD $6.50 CAD Sale Sold out Sold out Your cart is empty Continue shopping Have an account?",
      "Shopping cart (0) Spent more $150.00 CAD extra for free shipping!"
     ]
    },
    {
-    "path": "/pages/faq",
+    "path": "/policies/privacy-policy",
     "lines": [
-     "Orders over $150 qualify for free shipping.",
-     "You might like Gamegenic Andor Soft Crate Deck Box $6.99 CAD $6.99 CAD Sale Sold out Add to cart Gamegenic Ashoka Art Sleeves $6.50 CAD $6.50 CAD Sale Sold out Add to cart Gamegenic General Grievous Art Sleeves $6.50 CAD $6.50 CAD Sale Sold out Sold out Your cart is empty Continue shopping Have an account?",
+     "FOR EXAMPLE: https://ico.org.uk/make-a-complaint/ ] You might like Gamegenic Andor Soft Crate Deck Box $6.99 CAD $6.99 CAD Sale Sold out Add to cart Gamegenic Ashoka Art Sleeves $6.50 CAD $6.50 CAD Sale Sold out Add to cart Gamegenic General Grievous Art Sleeves $6.50 CAD $6.50 CAD Sale Sold out Sold out Your cart is empty Continue shopping Have an account?",
      "Shopping cart (0) Spent more $150.00 CAD extra for free shipping!"
     ]
    }
