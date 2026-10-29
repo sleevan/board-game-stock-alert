@@ -1,0 +1,668 @@
+[
+ {
+  "name": "401 Games",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "in_stock": 10
+  },
+  "example": {
+   "title": "Catan 6th Edition",
+   "status": "in_stock",
+   "price": "$56.95",
+   "link": "https://store.401games.ca/products/catan-6th-edition"
+  }
+ },
+ {
+  "name": "A Muse N Games",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "in_stock": 10
+  },
+  "example": {
+   "title": "Catan - Zip!",
+   "status": "in_stock",
+   "price": "$31.00",
+   "link": "https://amusengames.ca/products/catan-zip"
+  }
+ },
+ {
+  "name": "Across The Board Game Cafe",
+  "platform": "woocommerce",
+  "ok": true,
+  "matches": 20,
+  "statuses": {
+   "out_of_stock": 5,
+   "in_stock": 15
+  },
+  "example": {
+   "title": "Catan: On the Road",
+   "status": "out_of_stock",
+   "price": "$13.99",
+   "link": "https://acrosstheboardcafe.com/product/catan-on-the-road/"
+  }
+ },
+ {
+  "name": "Always Games",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "in_stock": 10
+  },
+  "example": {
+   "title": "Catan - 6th Edition (English)",
+   "status": "in_stock",
+   "price": "$60.99",
+   "link": "https://alwaysgames.ca/products/catan-6th-edition"
+  }
+ },
+ {
+  "name": "Arctic Board Games",
+  "platform": "woocommerce",
+  "ok": true,
+  "matches": 20,
+  "statuses": {
+   "in_stock": 10,
+   "out_of_stock": 10
+  },
+  "example": {
+   "title": "Catan: New Energies",
+   "status": "in_stock",
+   "price": "$96.99",
+   "link": "https://arcticboardgames.ca/product/catan-new-energies/"
+  }
+ },
+ {
+  "name": "As Des Jeux",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "in_stock": 8,
+   "out_of_stock": 2
+  },
+  "example": {
+   "title": "CATAN: Le Jeu de Cartes (FR)",
+   "status": "in_stock",
+   "price": "$19.99",
+   "link": "https://www.asdesjeux.com/products/catan-le-jeu-de-cartes-fr"
+  }
+ },
+ {
+  "name": "Black Knight Games",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "in_stock": 10
+  },
+  "example": {
+   "title": "Catan 6E: 5-6 Player Expansion",
+   "status": "in_stock",
+   "price": "$42.99",
+   "link": "https://blackknightgames.ca/products/catan-6e-5-6-player-expansion"
+  }
+ },
+ {
+  "name": "Board Game Bliss",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "out_of_stock": 5,
+   "in_stock": 5
+  },
+  "example": {
+   "title": "Catan: Junior",
+   "status": "out_of_stock",
+   "price": "$30.39",
+   "link": "https://www.boardgamebliss.com/products/catan-junior"
+  }
+ },
+ {
+  "name": "Board Game Emporium",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 0,
+  "statuses": {},
+  "example": null
+ },
+ {
+  "name": "Board Games N More",
+  "platform": "opencart",
+  "ok": true,
+  "matches": 12,
+  "statuses": {
+   "out_of_stock": 4,
+   "in_stock": 8
+  },
+  "example": {
+   "title": "A Game of Thrones: Catan – Brotherhood of the Watch",
+   "status": "out_of_stock",
+   "price": "$109.99",
+   "link": "https://www.boardgamesnmore.com/a-game-of-thrones-catan-brotherhood-of-the-watch.html"
+  }
+ },
+ {
+  "name": "Boutique La Revanche",
+  "platform": "lightspeed",
+  "ok": true,
+  "matches": 12,
+  "statuses": {
+   "in_stock": 1,
+   "out_of_stock": 11
+  },
+  "example": {
+   "title": "Catan [French]",
+   "status": "in_stock",
+   "price": "$74.99",
+   "link": "https://boutique.larevanche.ca/catan-french.html"
+  }
+ },
+ {
+  "name": "Brimstone Games",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "in_stock": 10
+  },
+  "example": {
+   "title": "CATAN Expansion 5-6 Players - 6th Edition",
+   "status": "in_stock",
+   "price": "$41.99",
+   "link": "https://brimstonegames.ca/products/catan-expansion-5-6-players-6th-edition"
+  }
+ },
+ {
+  "name": "C.D. Jeux",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 0,
+  "statuses": {},
+  "example": null
+ },
+ {
+  "name": "Cardboard Memories",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 0,
+  "statuses": {},
+  "example": null
+ },
+ {
+  "name": "Dragon's Den Games",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "in_stock": 10
+  },
+  "example": {
+   "title": "Catan 6th Edition: 5-6 Player Expansion",
+   "status": "in_stock",
+   "price": "$42.99",
+   "link": "https://dragonsdengames.com/products/catan-6th-edition-5-6-player-expansion"
+  }
+ },
+ {
+  "name": "F.G. Bradley's",
+  "platform": "woocommerce_html",
+  "ok": true,
+  "matches": 11,
+  "statuses": {
+   "in_stock": 11
+  },
+  "example": {
+   "title": "CATAN – On the Road",
+   "status": "in_stock",
+   "price": "$12.99",
+   "link": "https://fgbradleys.com/product/catan-on-the-road/"
+  }
+ },
+ {
+  "name": "Fusion Gaming",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "in_stock": 10
+  },
+  "example": {
+   "title": "Catan 6th Edition",
+   "status": "in_stock",
+   "price": "$51.06",
+   "link": "https://www.fusiongamingonline.com/products/catan-6th-edition"
+  }
+ },
+ {
+  "name": "Game Keeper Online",
+  "platform": "crystalcommerce",
+  "ok": true,
+  "matches": 17,
+  "statuses": {
+   "out_of_stock": 17
+  },
+  "example": {
+   "title": "Catan: Seafarers (2015)",
+   "status": "out_of_stock",
+   "price": "$69.99",
+   "link": "https://www.gamekeeperonline.com/catalog/board_games/catan_seafarers_2015/277013"
+  }
+ },
+ {
+  "name": "Game Shack",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "out_of_stock": 3,
+   "in_stock": 7
+  },
+  "example": {
+   "title": "Catan 3D Edition - Board Game",
+   "status": "out_of_stock",
+   "price": "$319.99",
+   "link": "https://www.gameshack.ca/products/catan-3d-edition-board-game-pre-order"
+  }
+ },
+ {
+  "name": "GameKnight Games",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "out_of_stock": 4,
+   "in_stock": 6
+  },
+  "example": {
+   "title": "BG Catan Starfarers",
+   "status": "out_of_stock",
+   "price": "$139.99",
+   "link": "https://gameknight.ca/products/cn3005"
+  }
+ },
+ {
+  "name": "Great Boardgames",
+  "platform": "greatboardgames",
+  "ok": true,
+  "matches": 3,
+  "statuses": {
+   "in_stock": 2,
+   "out_of_stock": 1
+  },
+  "example": {
+   "title": "Catan: Junior",
+   "status": "in_stock",
+   "price": "$36.95",
+   "link": "https://www.greatboardgames.ca/games/catan-junior"
+  }
+ },
+ {
+  "name": "Hobbiesville",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "in_stock": 10
+  },
+  "example": {
+   "title": "Catan Traveler",
+   "status": "in_stock",
+   "price": "$43.00",
+   "link": "https://hobbiesville.com/products/catan-traveler"
+  }
+ },
+ {
+  "name": "J&J Cards & Collectibles",
+  "platform": "shift4shop",
+  "ok": true,
+  "matches": 30,
+  "statuses": {
+   "in_stock": 20,
+   "out_of_stock": 10
+  },
+  "example": {
+   "title": "Catan 6th Edition",
+   "status": "in_stock",
+   "price": "$54.99",
+   "link": "https://shop.jjcards.com/Catan-6th-Edition_p_39757.html"
+  }
+ },
+ {
+  "name": "La Pioche",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 9,
+  "statuses": {
+   "in_stock": 9
+  },
+  "example": {
+   "title": "Catan: 6e Édition (francais)",
+   "status": "in_stock",
+   "price": "$65.99",
+   "link": "https://boutiquelapioche.com/products/catan-6e-edition-francais"
+  }
+ },
+ {
+  "name": "La Ribouldingue",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "in_stock": 7,
+   "out_of_stock": 3
+  },
+  "example": {
+   "title": "Catan - 6e Edition (Fr)",
+   "status": "in_stock",
+   "price": "$69.99",
+   "link": "https://www.laribouldingue.ca/products/catan-6e-edition-fr"
+  }
+ },
+ {
+  "name": "Le Roi des Cartes Valleyfield",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 0,
+  "statuses": {},
+  "example": null
+ },
+ {
+  "name": "Le Valet d'Coeur",
+  "platform": "magento",
+  "ok": true,
+  "matches": 12,
+  "statuses": {
+   "in_stock": 4,
+   "out_of_stock": 8
+  },
+  "example": {
+   "title": "Catan 3D",
+   "status": "in_stock",
+   "price": "$419.99",
+   "link": "https://levalet.com/en/catan-3d.html"
+  }
+ },
+ {
+  "name": "Legends Warehouse",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 6,
+  "statuses": {
+   "in_stock": 6
+  },
+  "example": {
+   "title": "CATAN - SCENARIO - Crop Trust",
+   "status": "in_stock",
+   "price": "$27.19",
+   "link": "https://legendswarehouse.ca/products/catan-scenario-crop-trust"
+  }
+ },
+ {
+  "name": "Lvlup Games",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "out_of_stock": 10
+  },
+  "example": {
+   "title": "Catan (6th Edition)",
+   "status": "out_of_stock",
+   "price": "$42.00",
+   "link": "https://lvlupgames.ca/products/catan-6th-edition"
+  }
+ },
+ {
+  "name": "Mission: Fun & Games",
+  "platform": "sitemap",
+  "ok": false,
+  "error": "TimeoutError: The read operation timed out"
+ },
+ {
+  "name": "Multizone Comics and Games",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "in_stock": 10
+  },
+  "example": {
+   "title": "Catan",
+   "status": "in_stock",
+   "price": "$79.99",
+   "link": "https://multizone.ca/products/catan-eng"
+  }
+ },
+ {
+  "name": "Owls Hollow",
+  "platform": "lightspeed",
+  "ok": true,
+  "matches": 4,
+  "statuses": {
+   "out_of_stock": 2,
+   "in_stock": 2
+  },
+  "example": {
+   "title": "CATAN: Base Game: 5-6 Player Extension - 6th ed.",
+   "status": "out_of_stock",
+   "price": "$41.99",
+   "link": "https://www.owlshollow.com/catan-base-game-5-6-player-extension-6th-ed.html"
+  }
+ },
+ {
+  "name": "Pandora's Boox",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 8,
+  "statuses": {
+   "in_stock": 8
+  },
+  "example": {
+   "title": "Catan Junior",
+   "status": "in_stock",
+   "price": "$39.95",
+   "link": "https://www.pandorasboox.ca/products/catan-junior"
+  }
+ },
+ {
+  "name": "Pe Metawe Games",
+  "platform": "square",
+  "ok": true,
+  "matches": 1,
+  "statuses": {
+   "in_stock": 1
+  },
+  "example": {
+   "title": "Catan - New Energies",
+   "status": "in_stock",
+   "price": "$89.99",
+   "link": "https://shop.pemetawe.com/product/catan-new-energies/C2N3HOWYGLBOY4VN27KZHSKU"
+  }
+ },
+ {
+  "name": "Rain City Games",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "in_stock": 10
+  },
+  "example": {
+   "title": "Catan: Dawn of Humankind",
+   "status": "in_stock",
+   "price": "$103.99",
+   "link": "https://www.raincity.games/products/catan-dawn-of-humankind"
+  }
+ },
+ {
+  "name": "Screen Free Games",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "in_stock": 10
+  },
+  "example": {
+   "title": "Catan - 6th Edition",
+   "status": "in_stock",
+   "price": "$54.94",
+   "link": "https://screenfreegames.com/products/catan-6th-edition-pre-order"
+  }
+ },
+ {
+  "name": "Studio Staja",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 3,
+  "statuses": {
+   "in_stock": 3
+  },
+  "example": {
+   "title": "Catan (FR)",
+   "status": "in_stock",
+   "price": "$69.99",
+   "link": "https://staja.ca/products/catan-fr"
+  }
+ },
+ {
+  "name": "Table Top Cafe",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "in_stock": 8,
+   "out_of_stock": 2
+  },
+  "example": {
+   "title": "CATAN - 6th Edition",
+   "status": "in_stock",
+   "price": "$69.99",
+   "link": "https://www.tabletopcafe.ca/products/catan-6th-edition"
+  }
+ },
+ {
+  "name": "Tadenac Games",
+  "platform": "woocommerce",
+  "ok": true,
+  "matches": 0,
+  "statuses": {},
+  "example": null
+ },
+ {
+  "name": "The Connection Games & Hobbies",
+  "platform": "crystalcommerce",
+  "ok": true,
+  "matches": 7,
+  "statuses": {
+   "in_stock": 6,
+   "out_of_stock": 1
+  },
+  "example": {
+   "title": "Catan 6th Edition",
+   "status": "in_stock",
+   "price": "$69.99",
+   "link": "https://www.theconnectiongames.com/catalog/board_games/catan_6th_edition/511799"
+  }
+ },
+ {
+  "name": "The Gamers Table",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "in_stock": 10
+  },
+  "example": {
+   "title": "CATAN - 6th Edition Board Game | Strategy Game for 3–4 Players by Catan Studios",
+   "status": "in_stock",
+   "price": "$44.00",
+   "link": "https://gamerstable.ca/products/catan-6th-edition"
+  }
+ },
+ {
+  "name": "The Mana Lounge",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 6,
+  "statuses": {
+   "in_stock": 5,
+   "out_of_stock": 1
+  },
+  "example": {
+   "title": "CATAN Expansion: Explorers & Pirates",
+   "status": "in_stock",
+   "price": "$69.99",
+   "link": "https://www.manalounge.ca/products/settlers-of-catan-explorers-and-pirates-expansion"
+  }
+ },
+ {
+  "name": "Toys On Fire",
+  "platform": "odoo",
+  "ok": true,
+  "matches": 36,
+  "statuses": {
+   "in_stock": 19,
+   "preorder": 1,
+   "out_of_stock": 16
+  },
+  "example": {
+   "title": "CATAN: The Struggle for Catan",
+   "status": "in_stock",
+   "price": "$17.95",
+   "link": "https://www.toysonfire.ca/shop/product/catan-the-struggle-for-catan-1891"
+  }
+ },
+ {
+  "name": "Victory Pints Games",
+  "platform": "square",
+  "ok": true,
+  "matches": 9,
+  "statuses": {
+   "in_stock": 5,
+   "out_of_stock": 4
+  },
+  "example": {
+   "title": "Catan Traders and Barbarians",
+   "status": "in_stock",
+   "price": "$64.99",
+   "link": "https://www.victorypints.ca/product/catan-traders-and-barbarians/2919"
+  }
+ },
+ {
+  "name": "WiredVillage Boardgames",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "in_stock": 9,
+   "out_of_stock": 1
+  },
+  "example": {
+   "title": "Catan (Base Game)",
+   "status": "in_stock",
+   "price": "$69.99",
+   "link": "https://wiredvillagegames.com/products/catan-board-game-base-game"
+  }
+ },
+ {
+  "name": "Wood For Sheep",
+  "platform": "shopify",
+  "ok": true,
+  "matches": 10,
+  "statuses": {
+   "in_stock": 10
+  },
+  "example": {
+   "title": "Catan (2025)",
+   "status": "in_stock",
+   "price": "$55.49",
+   "link": "https://www.woodforsheep.ca/products/catan-2015-copy"
+  }
+ }
+]
