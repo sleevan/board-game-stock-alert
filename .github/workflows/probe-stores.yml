@@ -1,0 +1,17 @@
+name: Probe stores
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: python tools/probe_stores.py
+      - run: |
+          git config user.name "stock-alert-bot"
+          git config user.email "stock-alert-bot@users.noreply.github.com"
+          git pull -q --rebase || true
+          git add stores-probe.json && git commit -m "Store probe results" && git push
