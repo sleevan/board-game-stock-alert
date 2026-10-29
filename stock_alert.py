@@ -152,10 +152,12 @@ def publisher_matches(product, publisher):
 # --------------------------------------------------------------------------
 def search_shopify(base, query, publisher):
     data = fetch_json(f"{base}/search/suggest.json?q={quote(query)}&resources[type]=product&resources[limit]=10")
-    handles = []
+    handles, suggested = [], {}
     for p in data["resources"]["results"]["products"]:
         if normalize(query) in normalize(p.get("title")):
-            handles.append(p.get("handle") or p.get("url", "").split("/products/")[-1].split("?")[0])
+            h = p.get("handle") or p.get("url", "").split("/products/")[-1].split("?")[0]
+            handles.append(h)
+            suggested[h] = p
     if not handles:
         # Some stores' quick search returns unrelated products; fall back to the full search page.
         try:
@@ -171,7 +173,17 @@ def search_shopify(base, query, publisher):
         try:
             product = shopify_product(base, handle)
         except (HTTPError, URLError, ValueError):
-            continue
+            if handle not in suggested:
+                continue
+            sp = suggested[handle]   # quick-search data has the same key fields
+            price = sp.get("price")
+            try:
+                price = int(round(float(price) * 100)) if isinstance(price, str) else price
+            except ValueError:
+                price = None
+            product = {"title": sp.get("title", ""), "available": sp.get("available"), "price": price,
+                       "vendor": sp.get("vendor", ""), "tags": sp.get("tags") or [], "type": sp.get("type", ""),
+                       "variants": []}
         title = product.get("title", "")
         if normalize(query) not in normalize(title):
             continue
@@ -467,7 +479,11 @@ def _sitemap_urls(base):
         if sm in seen:
             continue
         seen.add(sm)
-        body = fetch(sm)
+        try:
+            body = fetch(sm, timeout=90)
+        except (TimeoutError, URLError):
+            time.sleep(5)
+            body = fetch(sm, timeout=90)
         locs = re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", body)
         if "<sitemapindex" in body:
             todo += [htmllib.unescape(u) for u in locs]
@@ -503,7 +519,7 @@ def search_sitemap(base, query, publisher):
     out = []
     for u in hits[:8]:
         try:
-            info = _product_from_jsonld(fetch(u))
+            info = _product_from_jsonld(fetch(u, timeout=60))
         except (HTTPError, URLError, TimeoutError, OSError):
             continue
         if not info:
