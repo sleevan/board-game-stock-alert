@@ -375,10 +375,18 @@ function render() {
   if (!games.length) { box.innerHTML = `<p class="empty">Nothing on the list yet. Add a title above and the next check will search every store for it.</p>`; }
   else {
     box.innerHTML = "";
-    games.forEach((g, idx) => {
-      const known = new Set((config.stores || []).filter(s => s.enabled !== false).map(s => s.name));
-      const rows = watches.filter(w => norm(w.game) === norm(g.title) && (known.has(w.store) || !w.store_url || (config.product_urls || []).some(u => u.url === w.store_url))
+    const known = new Set((config.stores || []).filter(s => s.enabled !== false).map(s => s.name));
+    const rowsFor = g => watches.filter(w => norm(w.game) === norm(g.title) && (known.has(w.store) || !w.store_url || (config.product_urls || []).some(u => u.url === w.store_url))
         && (!g.added || !w.checked || w.checked >= g.added));
+    // Card order: any in stock, then any pre-order, then only sold out, then not listed anywhere (your order within each group).
+    const groupOf = g => {
+      const st = new Set(rowsFor(g).filter(r => !isHidden(g, r)).map(r => r.status));
+      return st.has("in_stock") ? 0 : st.has("preorder") ? 1 : st.has("out_of_stock") ? 2 : 3;
+    };
+    const order = games.map((g, i) => [groupOf(g), i]).sort((a, b) => a[0] - b[0] || a[1] - b[1]).map(p => p[1]);
+    order.forEach(idx => {
+      const g = games[idx];
+      const rows = rowsFor(g);
       const decided = new Set([...(g.accept || []), ...(g.reject || [])].map(norm));
       const asks = {};
       rows.forEach(r => (r.possible || []).forEach(pm => {
@@ -403,8 +411,8 @@ function render() {
       else {
         tally = [
           count("in_stock") && `<span class="chip in">${count("in_stock")} in stock</span>`,
-          count("out_of_stock") && `<span class="chip out">${count("out_of_stock")} sold out</span>`,
           count("preorder") && `<span class="chip pre">${count("preorder")} pre-order</span>`,
+          count("out_of_stock") && `<span class="chip out">${count("out_of_stock")} sold out</span>`,
           askList.length && `<span class="chip wait">${askList.length} to confirm</span>`,
         ].filter(Boolean).join("");
       }
