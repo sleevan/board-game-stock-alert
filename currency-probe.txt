@@ -1,7 +1,0 @@
-stock_alert.fetch (real check): 12900
-UA only: 17995
-UA + Accept-Language en-CA: 12900
-UA + Accept html/json: 17995
-UA + Accept + cookie CA: 17995
-real headers + ?currency=CAD: 17995
-product.json variant price: 129.00

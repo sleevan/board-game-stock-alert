@@ -74,6 +74,9 @@ def fetch(url, timeout=25):
         "User-Agent": USER_AGENT,
         "Accept": "text/html,application/json;q=0.9,*/*;q=0.8",
         "Accept-Language": "en-CA,en;q=0.9",
+        # Shopify stores that sell abroad can switch to US dollars by visitor location or language;
+        # this cookie (plus currency=CAD on Shopify addresses) keeps prices in Canadian dollars.
+        "Cookie": "localization=CA; cart_currency=CAD",
     })
     with urlopen(req, timeout=timeout) as resp:
         charset = resp.headers.get_content_charset() or "utf-8"
@@ -154,9 +157,14 @@ def match_kind(query, title):
 # --------------------------------------------------------------------------
 # Shopify helpers
 # --------------------------------------------------------------------------
+def cad(url):
+    """Add currency=CAD to a Shopify address."""
+    return url + ("&" if "?" in url else "?") + "currency=CAD"
+
+
 def shopify_product(base, handle):
     """Full product data from /products/<handle>.js (public on every Shopify store)."""
-    return fetch_json(f"{base}/products/{handle}.js")
+    return fetch_json(cad(f"{base}/products/{handle}.js"))
 
 
 PREORDER_TAG_RE = re.compile(r"(?i)^(?:pre[\s\-_]?orders?|pre[\s\-_]?sales?|pro[\s\-_]pre|pre|preorder[\s\-_]?item|back[\s\-_]?orders?)$|pre[\s\-_]?order")
@@ -227,7 +235,7 @@ def publisher_matches(product, publisher):
 # publisher_text is None when the platform doesn't expose it in search results.
 # --------------------------------------------------------------------------
 def search_shopify(base, query, publisher):
-    data = fetch_json(f"{base}/search/suggest.json?q={quote(query)}&resources[type]=product&resources[limit]=10")
+    data = fetch_json(cad(f"{base}/search/suggest.json?q={quote(query)}&resources[type]=product&resources[limit]=10"))
     handles, suggested = [], {}
     for p in data["resources"]["results"]["products"]:
         if title_has_words(p.get("title"), query):
@@ -237,7 +245,7 @@ def search_shopify(base, query, publisher):
     if not handles:
         # Some stores' quick search returns unrelated products; fall back to the full search page.
         try:
-            html = fetch(f"{base}/search?type=product&q={quote(query)}")
+            html = fetch(cad(f"{base}/search?type=product&q={quote(query)}"))
             for h in re.findall(r'href="(?:https?://[^"/]+)?(?:/[a-z]{2}(?:-[a-z]{2})?)?/products/([a-z0-9\-_%]+)', html, re.I):
                 if h not in handles:
                     handles.append(h)
