@@ -567,8 +567,27 @@ def check_search(watch):
             who = publisher[0] if isinstance(publisher, list) else publisher
             return NOT_LISTED, None, None, f"title found, but not by {who}"
         return NOT_LISTED, None, None, "searched store catalogue"
+
+    # Exact title matches count. Listings with extra words in the title count only once
+    # the user has confirmed that listing title on the web page; rejected titles are ignored.
+    want = normalize(watch["query"])
+    accepted = {normalize(t) for t in watch.get("accept", [])}
+    rejected = {normalize(t) for t in watch.get("reject", [])}
+    confirmed, possible = [], []
+    for c in real:
+        t = normalize(c["title"])
+        if t == want or t in accepted:
+            confirmed.append(c)
+        elif t not in rejected:
+            possible.append(c)
+    watch["_possible"] = [{"title": c["title"], "status": c["status"], "price": c.get("price"),
+                           "link": c.get("link")} for c in possible[:6]]
+    if not confirmed:
+        if possible:
+            return NOT_LISTED, None, None, f"{len(possible)} possible match(es) to confirm"
+        return NOT_LISTED, None, None, "only titles you ruled out"
     rank = {IN_STOCK: 0, OUT_OF_STOCK: 1, PREORDER: 2, UNKNOWN: 3}
-    best = min(real, key=lambda c: rank.get(c["status"], 9))
+    best = min(confirmed, key=lambda c: rank.get(c["status"], 9))
     return best["status"], best.get("price"), best.get("link"), f'found "{best["title"]}"'
 
 
@@ -700,6 +719,8 @@ def build_watches(config):
                 "platform": store["platform"],
                 "query": game["title"],
                 "publisher": game.get("publishers") or game.get("publisher") or None,
+                "accept": game.get("accept", []),
+                "reject": game.get("reject", []),
             })
     for extra in config.get("product_urls", []):
         watches.append({**extra, "game": extra.get("name", extra["url"])})
@@ -868,7 +889,7 @@ def run_once(dry_run=False):
     with ThreadPoolExecutor(max_workers=8) as pool:
         results = list(pool.map(check_watch, watches))
 
-    alerts, alert_games, new_watches = [], [], {}
+    alerts, alert_games, new_watches, nudges = [], [], {}, []
     store_ok = {}
     for watch, (status, price, link, method) in zip(watches, results):
         key = watch_key(watch)
@@ -893,8 +914,13 @@ def run_once(dry_run=False):
             alerts.append(f"{name} is IN STOCK{price_note}\n{link}")
             if watch["game"] not in alert_games:
                 alert_games.append(watch["game"])
+        possible = watch.get("_possible", [])
+        known = {p["title"] for p in prev.get("possible", []) if p.get("status") == IN_STOCK}
+        for pm in possible:
+            if pm["status"] == IN_STOCK and pm["title"] not in known:
+                nudges.append(f'{name}: "{pm["title"]}"' + (f' - {pm["price"]}' if pm.get("price") else "") + (f'\n{pm["link"]}' if pm.get("link") else ""))
         new_watches[key] = {**base, "status": status, "price": price, "link": link,
-                            "detail": method, "failures": 0,
+                            "detail": method, "failures": 0, "possible": possible,
                             "since": prev.get("since") if prev.get("status") == status else now_utc()}
 
     for url, info in store_ok.items():
@@ -906,9 +932,16 @@ def run_once(dry_run=False):
         print("\n(dry run - no email sent, state not saved)")
         return 0
 
-    if alerts:
-        subject = "In stock: " + ", ".join(alert_games)
-        send_email(subject, "\n\n".join(alerts) + "\n\nGo get it!")
+    page = "https://sleevan.github.io/board-game-stock-alert/"
+    if alerts or nudges:
+        parts = []
+        if alerts:
+            parts.append("\n\n".join(alerts) + "\n\nGo get it!")
+        if nudges:
+            parts.append("Possible matches in stock. These titles aren't an exact match, so they don't count "
+                         f"until you confirm them on the web page ({page}):\n\n" + "\n\n".join(nudges))
+        subject = ("In stock: " + ", ".join(alert_games)) if alerts else "Possible match to confirm"
+        send_email(subject, "\n\n----------\n\n".join(parts))
 
     state = {"updated": now_utc(), "watches": new_watches, "stores": stores_health}
     STATE_PATH.write_text(json.dumps(state, indent=2, ensure_ascii=False) + "\n")

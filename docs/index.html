@@ -105,6 +105,14 @@ details > summary::-webkit-details-marker { display: none; }
 .listing .found { color: var(--muted); font-size: .9rem; min-width: 0; overflow-wrap: anywhere; }
 .price { font: 400 .85rem var(--mono); font-variant-numeric: tabular-nums; }
 .empty { color: var(--muted); font-size: .95rem; }
+.ask { border: 1.5px solid var(--warn); background: var(--pre-bg); border-radius: 6px; padding: 12px 14px; display: grid; gap: 8px; }
+.ask h3 { margin: 0; font: 700 1.05rem/1.2 var(--display); text-transform: uppercase; letter-spacing: .03em; color: var(--warn); }
+.ask-item { display: grid; gap: 6px; padding-top: 8px; border-top: 1px solid var(--line); }
+.ask-item:first-of-type { border-top: 0; padding-top: 0; }
+.ask-q { font-weight: 600; overflow-wrap: anywhere; }
+.ask-where { color: var(--muted); font-size: .88rem; display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.ask-btns { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.banner { border: 1.5px solid var(--warn); background: var(--pre-bg); color: var(--ink); border-radius: 6px; padding: 10px 14px; font-weight: 600; }
 .confirm { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: .92rem; }
 
 /* Stores */
@@ -171,6 +179,7 @@ footer { color: var(--muted); font-size: .85rem; }
         <button type="button" class="ghost small" id="checkNow">Check now</button>
       </div>
     </div>
+    <p class="banner" id="askBanner" hidden></p>
     <div class="games" id="games"><p class="empty">Loading your watch list…</p></div>
   </section>
 
@@ -278,19 +287,28 @@ function render() {
     : "Waiting for the first check";
 
   // Games
+  let totalAsks = 0;
   const box = $("games");
   if (!games.length) { box.innerHTML = `<p class="empty">Nothing on the list yet. Add a title above and the next check will search every store for it.</p>`; }
   else {
     box.innerHTML = "";
     games.forEach((g, idx) => {
       const rows = watches.filter(w => norm(w.game) === norm(g.title));
+      const decided = new Set([...(g.accept || []), ...(g.reject || [])].map(norm));
+      const asks = {};
+      rows.forEach(r => (r.possible || []).forEach(pm => {
+        const k = norm(pm.title); if (decided.has(k)) return;
+        (asks[k] ||= { title: pm.title, where: [] }).where.push({ ...pm, store: r.store });
+      }));
+      const askList = Object.values(asks);
+      totalAsks += askList.length;
       const count = k => rows.filter(r => r.status === k).length;
       const inStock = rows.filter(r => r.status === "in_stock");
       const listed = rows.filter(r => ["in_stock", "preorder", "out_of_stock"].includes(r.status))
         .sort((a, b) => ["in_stock", "out_of_stock", "preorder"].indexOf(a.status) - ["in_stock", "out_of_stock", "preorder"].indexOf(b.status));
       const el = document.createElement("details");
       el.className = "game" + (inStock.length ? " hot" : "");
-      if (inStock.length) el.open = true;
+      if (inStock.length || askList.length) el.open = true;
       let tally;
       if (!rows.length) tally = `<span class="chip wait">Waiting for next check</span>`;
       else {
@@ -299,6 +317,7 @@ function render() {
           count("out_of_stock") && `<span class="chip out">${count("out_of_stock")} sold out</span>`,
           count("preorder") && `<span class="chip pre">${count("preorder")} pre-order</span>`,
           `<span class="chip none">${count("not_listed")} not listed</span>`,
+          askList.length && `<span class="chip wait">${askList.length} to confirm</span>`,
         ].filter(Boolean).join("");
       }
       el.innerHTML = `
@@ -307,6 +326,18 @@ function render() {
           <span class="tally">${tally}</span>
         </summary>
         <div class="gbody">
+          ${askList.length ? `<div class="ask"><h3>Is this the same game?</h3>
+            <p class="hint" style="margin:0">These titles aren't an exact match for “${esc(g.title)}”, so they don't count until you confirm.</p>
+            ${askList.map((a, j) => `<div class="ask-item" data-game="${idx}" data-title="${esc(a.title)}">
+              <span class="ask-q">“${esc(a.title)}”</span>
+              <span class="ask-where">${a.where.map(w => `<span><span class="chip ${LABEL[w.status]?.[1] || "none"}">${LABEL[w.status]?.[0] || w.status}</span> ${w.link ? `<a href="${esc(w.link)}" target="_blank" rel="noopener">${esc(w.store)}</a>` : esc(w.store)} ${w.price ? `<span class="price">${esc(w.price)}</span>` : ""}</span>`).join("")}</span>
+              <span class="ask-btns">
+                <button type="button" class="small" data-decide="accept" id="acc-${idx}-${j}">Yes, it's this game</button>
+                <button type="button" class="ghost small" data-decide="reject" id="rej-${idx}-${j}">No, ignore it</button>
+                <span class="msg" role="status"></span>
+              </span>
+            </div>`).join("")}
+          </div>` : ""}
           ${listed.length ? `<div class="listing">${listed.map(r => `
               <span class="chip ${LABEL[r.status][1]}">${LABEL[r.status][0]}</span>
               <span class="found"><span class="store">${esc(r.store)}</span> · ${r.link ? `<a href="${esc(r.link)}" target="_blank" rel="noopener">${esc((r.detail || "").replace(/^found /, "").replace(/^"|"$/g, "")) || "View listing"}</a>` : ""}</span>
@@ -319,6 +350,10 @@ function render() {
       box.appendChild(el);
     });
   }
+
+  const banner = $("askBanner");
+  banner.hidden = !totalAsks;
+  banner.textContent = totalAsks ? `${totalAsks} possible match${totalAsks > 1 ? "es need" : " needs"} your OK. They're marked below.` : "";
 
   // Stores
   const health = state.stores || {};
@@ -363,6 +398,32 @@ $("stores").addEventListener("change", async e => {
     msg.className = "msg ok"; msg.textContent = `${name} ${on ? "will be checked" : "switched off"}.`;
     render();
   } catch (err) { box.checked = !on; box.disabled = false; msg.className = "msg err"; msg.textContent = explain(err); showSetup(err); }
+});
+
+$("games").addEventListener("click", async e => {
+  const btn = e.target.closest("button[data-decide]"); if (!btn) return;
+  const item = btn.closest(".ask-item"), msg = item.querySelector(".msg");
+  const g = config.games[+item.dataset.game], title = item.dataset.title, kind = btn.dataset.decide;
+  if (!needToken(msg)) return;
+  item.querySelectorAll("button").forEach(b => b.disabled = true); msg.className = "msg"; msg.textContent = "Saving…";
+  try {
+    await refreshConfig();
+    const games = config.games.map(x => {
+      if (norm(x.title) !== norm(g.title)) return x;
+      const y = { ...x, accept: [...(x.accept || [])], reject: [...(x.reject || [])] };
+      y.accept = y.accept.filter(t => norm(t) !== norm(title)); y.reject = y.reject.filter(t => norm(t) !== norm(title));
+      y[kind].push(title);
+      if (!y.accept.length) delete y.accept; if (!y.reject.length) delete y.reject;
+      return y;
+    });
+    await writeConfig({ ...config, games }, `${kind === "accept" ? "Confirm" : "Rule out"} "${title}" for ${g.title}`);
+    render();
+    $("checkMsg").className = "msg ok";
+    $("checkMsg").textContent = kind === "accept" ? `Confirmed. "${title}" counts from the next check.` : `Got it. "${title}" will be ignored.`;
+  } catch (err) {
+    item.querySelectorAll("button").forEach(b => b.disabled = false);
+    msg.className = "msg err"; msg.textContent = explain(err); showSetup(err);
+  }
 });
 
 // Remove flow with inline confirmation
