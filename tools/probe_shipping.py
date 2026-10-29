@@ -15,9 +15,22 @@ def text_of(page):
 def one(st):
     base = st["url"].rstrip("/")
     found = []
-    for pth in paths:
+    try:   # follow the store's own shipping / delivery / FAQ links first
+        home = s.fetch(base + "/", timeout=20)
+        links = re.findall(r'href="([^"#]*(?:ship|livraison|deliver|expedition|faq|policies)[^"#]*)"', home, re.I)
+        own = []
+        for l in links:
+            l = html.unescape(l)
+            if l.startswith("//"): l = "https:" + l
+            if l.startswith("/"): l = base + l
+            if l.startswith(base.split("://")[1].split("/")[0]) or l.startswith(base) and l not in own:
+                own.append(l)
+    except Exception:
+        own = []
+    for pth in own[:4] + [base + x for x in paths]:
+        pth = pth[len(base):] if pth.startswith(base) else pth
         try:
-            t = text_of(s.fetch(base + pth, timeout=20))
+            t = text_of(s.fetch(base + pth if pth.startswith("/") else pth, timeout=20))
         except Exception:
             continue
         sents = [x.strip() for x in re.split(r"(?<=[.!?])\s+", t) if "$" in x and KEY.search(x) and len(x) < 400]
