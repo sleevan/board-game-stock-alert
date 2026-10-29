@@ -2,7 +2,7 @@ name: Board game stock check
 
 on:
   schedule:
-    - cron: "*/30 * * * *"   # every 30 minutes (UTC); GitHub may delay runs a little
+    - cron: "13,43 * * * *"   # every 30 minutes, off the busy :00/:30 marks (GitHub may delay runs a little)
   workflow_dispatch:          # adds a "Run workflow" button for manual checks
     inputs:
       test_email:
