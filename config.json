@@ -17,7 +17,8 @@
       "publisher_lookup": "needs_token"
     },
     {
-      "title": "ito"
+      "title": "ito",
+      "publisher_lookup": "needs_token"
     }
   ],
   "stores": [
