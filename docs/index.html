@@ -206,8 +206,9 @@ footer { color: var(--muted); font-size: .85rem; }
     <div class="meta" id="lastRun">Loading…</div>
   </header>
 
-  <section aria-labelledby="addH">
-    <div class="sechead"><h2 id="addH">Watch a game</h2></div>
+  <details class="storesec" id="addSec">
+    <summary class="sechead"><h2 id="addH"><span class="caret" aria-hidden="true"></span>Watch a game</h2></summary>
+    <div class="storebody">
     <form class="panel addform" id="addForm" autocomplete="off">
       <div>
         <label for="title">Title</label>
@@ -220,7 +221,8 @@ footer { color: var(--muted); font-size: .85rem; }
       <button type="submit" id="addBtn">Start watching</button>
       <p class="msg" id="addMsg" role="status" style="grid-column:1/-1;margin:0"></p>
     </form>
-  </section>
+    </div>
+  </details>
 
   <section aria-labelledby="listH">
     <div class="sechead watchhead">
@@ -661,6 +663,8 @@ document.querySelector(".filters").addEventListener("click", e => {
 
 new MutationObserver(() => { const m = $("checkMsg"); if (m.textContent && m.title !== m.textContent && !m.textContent.startsWith("Check started")) m.title = m.textContent; })
   .observe($("checkMsg"), { childList: true, characterData: true, subtree: true });
+
+$("addSec").addEventListener("toggle", () => { if ($("addSec").open) $("title").focus(); });
 
 function updateToggleAll() {
   const games = [...document.querySelectorAll("#games details.game")];
