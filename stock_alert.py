@@ -147,17 +147,34 @@ def publisher_matches(product, publisher):
 # --------------------------------------------------------------------------
 def search_shopify(base, query, publisher):
     data = fetch_json(f"{base}/search/suggest.json?q={quote(query)}&resources[type]=product&resources[limit]=10")
-    out = []
+    handles = []
     for p in data["resources"]["results"]["products"]:
-        if normalize(query) not in normalize(p.get("title")):
+        if normalize(query) in normalize(p.get("title")):
+            handles.append(p.get("handle") or p.get("url", "").split("/products/")[-1].split("?")[0])
+    if not handles:
+        # Some stores' quick search returns unrelated products; fall back to the full search page.
+        try:
+            html = fetch(f"{base}/search?type=product&q={quote(query)}")
+            for h in re.findall(r'href="(?:https?://[^"/]+)?(?:/[a-z]{2}(?:-[a-z]{2})?)?/products/([a-z0-9\-_%]+)', html, re.I):
+                if h not in handles:
+                    handles.append(h)
+        except (HTTPError, URLError, TimeoutError, OSError):
+            pass
+        handles = handles[:12]
+    out = []
+    for handle in handles:
+        try:
+            product = shopify_product(base, handle)
+        except (HTTPError, URLError, ValueError):
             continue
-        handle = p.get("handle") or p.get("url", "").split("/products/")[-1].split("?")[0]
-        product = shopify_product(base, handle)
+        title = product.get("title", "")
+        if normalize(query) not in normalize(title):
+            continue
         if publisher and not publisher_matches(product, publisher):
-            out.append({"title": p.get("title"), "status": "wrong_publisher"})
+            out.append({"title": title, "status": "wrong_publisher"})
             continue
         status, price = shopify_status(product)
-        out.append({"title": p.get("title"), "status": status, "price": price, "link": f"{base}/products/{handle}"})
+        out.append({"title": title, "status": status, "price": price, "link": f"{base}/products/{handle}"})
     return out
 
 
