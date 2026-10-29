@@ -42,6 +42,13 @@
       "publisher": "Histogame",
       "publisher_source": "Board Game Bliss",
       "publisher_listing": "Maria (Second Edition) (Import)"
+    },
+    {
+      "title": "Kingdome Come Deliverance",
+      "exclude": [
+        "Metal"
+      ],
+      "added": "2026-10-29T18:53:33Z"
     }
   ],
   "stores": [
