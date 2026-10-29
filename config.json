@@ -67,12 +67,6 @@
       "shipping": "No Flat Rate"
     },
     {
-      "name": "Amazing Stories",
-      "url": "https://www.amazingstoriescomics.ca",
-      "platform": null,
-      "note": "Blocks automated checks"
-    },
-    {
       "name": "Amazon CA",
       "url": "https://www.amazon.ca",
       "platform": null,
