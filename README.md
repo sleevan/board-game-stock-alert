@@ -12,7 +12,7 @@ You don't need product links. Give it a title (publisher optional) and it search
 - See, per game, which stores have it in stock, sold out, or on pre-order, with links and prices.
 - Stop watching a game.
 - Start a check right away with **Check now**.
-- Switch stores on or off, and see which couldn't be checked.
+- Switch stores on or off, remove them, and see which couldn't be checked (the Stores section opens when you click its heading).
 
 Saving changes needs a GitHub token, set up once per browser under **GitHub access** on the page. Make it a fine-grained token with access to only this repository, and these permissions: **Contents: Read and write** and **Actions: Read and write**. The token stays in that browser; it's never stored in the repo.
 

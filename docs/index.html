@@ -132,7 +132,8 @@ details > summary::-webkit-details-marker { display: none; }
 .store-row .nm { min-width: 0; overflow-wrap: anywhere; }
 .store-row .why { color: var(--muted); font-size: .8rem; display: block; }
 .store-row.is-off .nm a { color: var(--muted); text-decoration: line-through; }
-.switch { margin-left: auto; flex: none; position: relative; width: 34px; height: 20px; }
+.ctrls { margin-left: auto; display: flex; align-items: center; gap: 6px; flex: none; }
+.switch { flex: none; position: relative; width: 34px; height: 20px; }
 .switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
 .switch span { position: absolute; inset: 0; border-radius: 10px; background: var(--line); transition: background .15s; pointer-events: none; }
 .switch span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--surface); transition: transform .15s; }
@@ -141,6 +142,18 @@ details > summary::-webkit-details-marker { display: none; }
 .switch input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }
 .switch input:disabled + span { opacity: .5; }
 @media (prefers-reduced-motion: reduce) { .switch span, .switch span::after { transition: none; } }
+.storesec { display: grid; }
+.storesec > summary { list-style: none; cursor: pointer; }
+.storesec > summary::-webkit-details-marker { display: none; }
+.storesec > summary:hover h2 { color: var(--accent); }
+.storesec .caret { display: inline-block; width: 0; height: 0; margin-right: 10px; vertical-align: middle; border-left: 7px solid currentColor; border-top: 5px solid transparent; border-bottom: 5px solid transparent; transition: transform .15s; }
+.storesec[open] .caret { transform: rotate(90deg); }
+@media (prefers-reduced-motion: reduce) { .storesec .caret { transition: none; } }
+.storebody { display: grid; gap: 14px; padding-top: 14px; }
+.rm { flex: none; width: 24px; height: 24px; padding: 0; display: grid; place-items: center; border: 0; border-radius: 4px; background: transparent; color: var(--muted); font-size: 1.1rem; line-height: 1; }
+.rm:hover, .rm:focus-visible { color: var(--out); background: var(--out-bg); }
+.store-row .confirm-rm { margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: .85rem; }
+.store-row .confirm-rm button { padding: 4px 8px; font-size: .8rem; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--muted); font-size: .85rem; }
 .legend span { display: inline-flex; gap: 6px; align-items: center; }
 
@@ -193,19 +206,21 @@ footer { color: var(--muted); font-size: .85rem; }
     <div class="games" id="games"><p class="empty">Loading your watch list…</p></div>
   </section>
 
-  <section aria-labelledby="storesH">
-    <div class="sechead">
-      <h2 id="storesH">Stores</h2>
+  <details class="storesec" id="storesSec">
+    <summary class="sechead">
+      <h2 id="storesH"><span class="caret" aria-hidden="true"></span>Stores</h2>
       <span class="meta" id="storeCount"></span>
-    </div>
-    <p class="hint" style="margin:0">Switch a store off to leave it out of every check. Shipping shown is each store's published standard rate to <span id="shipRegion">Ontario</span>. <span class="msg" id="storeMsg" role="status"></span></p>
+    </summary>
+    <div class="storebody">
+    <p class="hint" style="margin:0">Switch a store off to leave it out of every check, or remove it from the list entirely. Shipping shown is each store's published standard rate to <span id="shipRegion">Ontario</span>. <span class="msg" id="storeMsg" role="status"></span></p>
     <div class="legend">
       <span><i class="dot ok" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--in)"></i> Checked</span>
       <span><i style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--warn)"></i> Last check failed</span>
       <span><i style="display:inline-block;width:9px;height:9px;border-radius:50%;border:1.5px solid var(--muted)"></i> Can't be checked automatically</span>
     </div>
     <div class="stores" id="stores"></div>
-  </section>
+    </div>
+  </details>
 
   <section aria-labelledby="setupH" id="setupSection" hidden>
     <details class="panel setup" id="setup" open>
@@ -314,7 +329,8 @@ function render() {
   else {
     box.innerHTML = "";
     games.forEach((g, idx) => {
-      const rows = watches.filter(w => norm(w.game) === norm(g.title));
+      const known = new Set((config.stores || []).filter(s => s.enabled !== false).map(s => s.name));
+      const rows = watches.filter(w => norm(w.game) === norm(g.title) && (known.has(w.store) || !w.store_url || (config.product_urls || []).some(u => u.url === w.store_url)));
       const decided = new Set([...(g.accept || []), ...(g.reject || [])].map(norm));
       const asks = {};
       rows.forEach(r => (r.possible || []).forEach(pm => {
@@ -394,7 +410,8 @@ function render() {
     else if (!on) { cls = "off"; why = "Switched off"; }
     else if (h && !h.ok) { cls = "bad"; why = "Last check failed" + (h.last_ok ? ` · worked ${ago(h.last_ok)}` : ""); }
     const sw = s.platform ? `<label class="switch" title="${on ? "Checked" : "Not checked"}"><input type="checkbox" id="store-${i}" data-store="${esc(s.name)}" ${on ? "checked" : ""} aria-label="Check ${esc(s.name)}"><span></span></label>` : "";
-    return `<div class="store-row${s.platform && !on ? " is-off" : ""}"><i class="dot ${cls}"></i><span class="nm"><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>${why ? `<span class="why">${esc(why)}</span>` : ""}</span>${sw}</div>`;
+    const rm = `<button type="button" class="rm" data-remove="${esc(s.name)}" id="rm-${i}" aria-label="Remove ${esc(s.name)}" title="Remove store">&times;</button>`;
+    return `<div class="store-row${s.platform && !on ? " is-off" : ""}"><i class="dot ${cls}"></i><span class="nm"><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>${why ? `<span class="why">${esc(why)}</span>` : ""}</span><span class="ctrls">${sw}${rm}</span></div>`;
   }).join("");
 }
 
@@ -458,6 +475,29 @@ document.addEventListener("click", e => {
   if (b) { const on = b.classList.toggle("open"); b.setAttribute("aria-expanded", String(on)); e.stopPropagation(); }
 });
 document.addEventListener("keydown", e => { if (e.key === "Escape") document.querySelectorAll(".ship.open").forEach(o => { o.classList.remove("open"); o.setAttribute("aria-expanded", "false"); }); });
+
+$("stores").addEventListener("click", async e => {
+  const b = e.target.closest("button"); if (!b) return;
+  const row = b.closest(".store-row"), msg = $("storeMsg");
+  if (b.dataset.remove) {
+    const name = b.dataset.remove;
+    row.dataset.html = row.querySelector(".ctrls").innerHTML;
+    row.querySelector(".ctrls").outerHTML = `<span class="confirm-rm">Remove? <button type="button" class="danger" data-rm-yes="${esc(name)}">Remove</button><button type="button" class="ghost" data-rm-no>Keep</button></span>`;
+    return;
+  }
+  if (b.hasAttribute("data-rm-no")) { render(); return; }
+  if (b.dataset.rmYes) {
+    const name = b.dataset.rmYes;
+    if (!getToken()) { needToken(msg); render(); return; }
+    row.querySelectorAll("button").forEach(x => x.disabled = true); msg.className = "msg"; msg.textContent = "Saving…";
+    try {
+      await refreshConfig();
+      await writeConfig({ ...config, stores: config.stores.filter(s => s.name !== name) }, `Remove store ${name}`);
+      msg.className = "msg ok"; msg.textContent = `${name} removed.`;
+      render();
+    } catch (err) { msg.className = "msg err"; msg.textContent = explain(err); showSetup(err); render(); }
+  }
+});
 
 // Remove flow with inline confirmation
 $("games").addEventListener("click", async e => {
