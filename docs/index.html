@@ -396,8 +396,9 @@ function render() {
       const askList = Object.values(asks);
       askList.forEach(a => a.where.sort(byStatusThenPrice));
       totalAsks += askList.length;
-      const count = k => rows.filter(r => r.status === k).length;
-      const inStock = rows.filter(r => r.status === "in_stock");
+      const visibleRows = rows.filter(r => !isHidden(g, r));   // listings you removed with the x don't count
+      const count = k => visibleRows.filter(r => r.status === k).length;
+      const inStock = visibleRows.filter(r => r.status === "in_stock");
       const allListed = rows.filter(r => ["in_stock", "preorder", "out_of_stock"].includes(r.status) && !isHidden(g, r));
       const listed = allListed.filter(r => shown.has(r.status)).sort(byStatusThenPrice);
       const el = document.createElement("details");
