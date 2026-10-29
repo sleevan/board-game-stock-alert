@@ -640,6 +640,8 @@ def check_search(watch):
     words = watch.get("exclude_words", [])
     candidates = [c for c in candidates
                   if not any(word_count(c["title"], w) > word_count(watch["query"], w) for w in words)]
+    # Your own -word exclusions for this game.
+    candidates = [c for c in candidates if not any(title_has_words(c["title"], t) for t in watch.get("exclude_terms", []))]
     real = [c for c in candidates if c["status"] != "wrong_publisher"]
     if not real:
         if candidates:
@@ -786,7 +788,8 @@ def watch_key(watch):
         pub = watch.get("publisher")
         pub = pub[0] if isinstance(pub, list) else pub
         key = f'search:{watch["store"].rstrip("/")}|{normalize(watch["query"])}|{normalize(pub)}'
-        return key + ("|exact" if watch.get("exact") else "")
+        key += "|exact" if watch.get("exact") else ""
+        return key + ("|-" + ",".join(sorted(normalize(t) for t in watch["exclude_terms"])) if watch.get("exclude_terms") else "")
     return watch["url"]
 
 
@@ -794,18 +797,35 @@ DEFAULT_EXCLUDE_WORDS = ["xbox", "switch", "ps4", "ps5"]
 QUOTES = "\"'\u201c\u201d\u2018\u2019\u00ab\u00bb"
 
 
+EXCLUDE_TERM_RE = re.compile(r'(?:^|\s)-(?:["\u201c\u201d]([^"\u201c\u201d]+)["\u201c\u201d]|([^\s"\u201c\u201d-][^\s]*))')
+
+
+def split_excludes(title):
+    """'Kingdom Come: Deliverance -Metal -"Gold Coins"' -> ('Kingdom Come: Deliverance', ['Metal', 'Gold Coins']).
+    A dash only counts when it follows a space (or starts the text) and is directly followed by the word,
+    so 'X-Wing' and 'Blood Rage - Valhalla' are left alone."""
+    terms = []
+    def grab(m):
+        terms.append((m.group(1) or m.group(2)).strip())
+        return " "
+    rest = EXCLUDE_TERM_RE.sub(grab, title or "")
+    return re.sub(r"\s+", " ", rest).strip(), [t for t in terms if t]
+
+
 def parse_title(title):
-    """'"Root"' -> ('Root', True): a title in quotation marks means exact-title matching."""
-    t = (title or "").strip()
+    """'"Root" -Riverfolk' -> ('Root', True, ['Riverfolk']). Quotation marks mean exact-title matching;
+    -word (or -"two words") excludes listings containing it."""
+    t, excludes = split_excludes((title or "").strip())
     if len(t) >= 2 and t[0] in QUOTES and t[-1] in QUOTES:
-        return t[1:-1].strip(), True
-    return t, False
+        return t[1:-1].strip(), True, excludes
+    return t, False, excludes
 
 
 def game_title(game):
-    """(clean title, exact?) for a game entry; supports "exact": true or a quoted title."""
-    t, quoted = parse_title(game.get("title", ""))
-    return t, bool(game.get("exact")) or quoted
+    """(clean title, exact?, excluded terms) for a game entry; supports "exact": true / "exclude": [...]
+    as well as quotes and -words typed into the title."""
+    t, quoted, excludes = parse_title(game.get("title", ""))
+    return t, bool(game.get("exact")) or quoted, list(dict.fromkeys(excludes + list(game.get("exclude", []))))
 
 
 def build_watches(config):
@@ -815,7 +835,7 @@ def build_watches(config):
         for store in config.get("stores", []):
             if not store.get("platform") or store.get("enabled") is False:
                 continue  # store can't be searched automatically, or switched off
-            title, exact = game_title(game)
+            title, exact, excludes = game_title(game)
             watches.append({
                 "game": game["title"],
                 "store_name": store["name"],
@@ -825,6 +845,7 @@ def build_watches(config):
                 "platform": store["platform"],
                 "query": title,
                 "exact": exact,
+                "exclude_terms": excludes,
                 # A publisher you type in filters listings. One looked up automatically is shown on the
                 # web page but doesn't filter, because stores often list a distributor instead.
                 "publisher": None if game.get("publisher_source") else (game.get("publishers") or game.get("publisher") or None),
@@ -919,7 +940,7 @@ def fill_missing_publishers(config):
         if last and now - calendar.timegm(time.strptime(last, "%Y-%m-%dT%H:%M:%SZ")) < LOOKUP_RETRY_HOURS * 3600:
             continue
         try:
-            vendor, listing = bliss_publisher(game_title(g)[0])
+            vendor, listing = bliss_publisher(game_title(g)[0])   # clean title, without quotes or -words
         except Exception as exc:
             print(f'Board Game Bliss lookup failed for "{g["title"]}": {exc}')
             g.update(publisher_lookup="failed", publisher_checked=now_utc(),
@@ -1031,11 +1052,11 @@ def manage_games(args):
     config = load_json(CONFIG_PATH, {"games": [], "stores": []})
     games = config.setdefault("games", [])
     if args.command == "add":
-        title, exact = parse_title(" ".join(args.title))
+        title, exact, excludes = parse_title(" ".join(args.title))
         if any(normalize(g["title"]) == normalize(title) for g in games):
             print(f'Already watching "{title}".')
             return 0
-        entry = {"title": title, **({"exact": True} if exact else {})}
+        entry = {"title": title, **({"exact": True} if exact else {}), **({"exclude": excludes} if excludes else {})}
         if args.publisher:
             entry["publisher"] = args.publisher
         games.append(entry)

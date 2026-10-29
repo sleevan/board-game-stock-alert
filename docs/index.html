@@ -204,7 +204,7 @@ footer { color: var(--muted); font-size: .85rem; }
     <form class="panel addform" id="addForm" autocomplete="off">
       <div>
         <label for="title">Title</label>
-        <input type="text" id="title" placeholder='e.g. Thirty Years of Misery, or "Root" for exact title only' required>
+        <input type="text" id="title" placeholder='e.g. Thirty Years of Misery · "Root" for exact title · -Metal to exclude' required>
       </div>
       <div>
         <label for="publisher">Publisher <span class="hint">(optional)</span></label>
@@ -327,6 +327,11 @@ const byStatusThenPrice = (a, b) => (STATUS_ORDER.indexOf(a.status) - STATUS_ORD
 const shown = (() => { try { const v = JSON.parse(localStorage.getItem("gsw_filters") || "null"); if (v) return new Set(v); } catch {} return new Set(["in_stock", "preorder", "out_of_stock"]); })();
 const openState = new Map();   // game title -> open/closed, once you've toggled it
 const QUOTE_CHARS = "\"'\u201c\u201d\u2018\u2019\u00ab\u00bb";
+const splitExcludes = t => {
+  const terms = [];
+  const rest = t.replace(/(^|\s)-(?:["\u201c\u201d]([^"\u201c\u201d]+)["\u201c\u201d]|([^\s"\u201c\u201d-]\S*))/g, (m, sp, q, w) => { terms.push((q || w).trim()); return " "; });
+  return { rest: rest.replace(/\s+/g, " ").trim(), terms: terms.filter(Boolean) };
+};
 const isQuoted = t => t.length >= 2 && QUOTE_CHARS.includes(t[0]) && QUOTE_CHARS.includes(t[t.length - 1]);
 const cleanTitle = g => isQuoted(g.title) ? g.title.slice(1, -1).trim() : g.title;
 const isExact = g => !!g.exact || isQuoted(g.title);
@@ -394,7 +399,7 @@ function render() {
       }
       el.innerHTML = `
         <summary class="ghead">
-          <span class="gtitle"><strong>${esc(cleanTitle(g))}</strong><small>${publisherText(g)}${isExact(g) ? " · exact title only" : ""}</small></span>
+          <span class="gtitle"><strong>${esc(cleanTitle(g))}</strong><small>${publisherText(g)}${isExact(g) ? " · exact title only" : ""}${(g.exclude || []).length ? ` · excluding ${g.exclude.map(t => esc(t)).join(", ")}` : ""}</small></span>
           <span class="tally">${tally}</span>
         </summary>
         <div class="gbody">
@@ -575,7 +580,8 @@ function explain(err) {
 
 $("addForm").addEventListener("submit", async e => {
   e.preventDefault();
-  let title = $("title").value.trim(); const publisher = $("publisher").value.trim();
+  const parsed = splitExcludes($("title").value.trim());
+  let title = parsed.rest; const publisher = $("publisher").value.trim(); const excludes = parsed.terms;
   const exact = isQuoted(title);
   if (exact) title = title.slice(1, -1).trim();
   const msg = $("addMsg");
@@ -587,10 +593,10 @@ $("addForm").addEventListener("submit", async e => {
     if ((config.games || []).some(g => norm(g.title) === norm(title))) {
       msg.className = "msg err"; msg.textContent = `"${title}" is already on the list.`;
     } else {
-      const entry = { title, ...(publisher ? { publisher } : {}), ...(exact ? { exact: true } : {}) };
+      const entry = { title, ...(publisher ? { publisher } : {}), ...(exact ? { exact: true } : {}), ...(excludes.length ? { exclude: excludes } : {}) };
       await writeConfig({ ...config, games: [...(config.games || []), entry] }, `Watch ${title}`);
       $("title").value = ""; $("publisher").value = "";
-      msg.className = "msg ok"; msg.textContent = `Watching "${title}"${exact ? " (exact title only)" : ""}. Every store will be searched on the next check, or press Check now.`;
+      msg.className = "msg ok"; msg.textContent = `Watching "${title}"${exact ? " (exact title only)" : ""}${excludes.length ? `, excluding ${excludes.map(t => `"${t}"`).join(", ")}` : ""}. Every store will be searched on the next check, or press Check now.`;
       render();
     }
   } catch (err) { msg.className = "msg err"; msg.textContent = explain(err); showSetup(err); }
