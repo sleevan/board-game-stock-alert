@@ -400,7 +400,7 @@ function render() {
       }
       el.innerHTML = `
         <summary class="ghead">
-          <span class="gtitle"><strong>${esc(cleanTitle(g))}</strong><small>${publisherText(g)}${isExact(g) ? " · exact title only" : ""}${(g.exclude || []).length ? ` · excluding ${g.exclude.map(t => esc(t)).join(", ")}` : ""}</small></span>
+          <span class="gtitle"><strong>${esc(cleanTitle(g))}</strong><small>${publisherText(g)}</small></span>
           <span class="tally">${tally}</span>
         </summary>
         <div class="gbody">
