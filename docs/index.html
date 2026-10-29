@@ -330,7 +330,7 @@ function render() {
       const el = document.createElement("details");
       el.className = "game" + (inStock.length ? " hot" : "");
       const remembered = openState.get(norm(g.title));
-      el.open = remembered !== undefined ? remembered : !!(inStock.length || askList.length);
+      el.open = remembered !== undefined ? remembered : true;   // all game sections open by default
       el.dataset.title = norm(g.title);
       el.addEventListener("toggle", () => { openState.set(el.dataset.title, el.open); updateToggleAll(); });
       let tally;

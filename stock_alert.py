@@ -150,14 +150,27 @@ def shopify_product(base, handle):
     return fetch_json(f"{base}/products/{handle}.js")
 
 
+PREORDER_TAG_RE = re.compile(r"(?i)^(?:pre[\s\-_]?orders?|pre[\s\-_]?sales?|pro[\s\-_]pre|pre|preorder[\s\-_]?item|back[\s\-_]?orders?)$|pre[\s\-_]?order")
+PLAN_PREORDER_RE = re.compile(r"(?i)pre[\s\-]?order|pre[\s\-]?sale|back[\s\-]?order|ships? (?:upon|on|after|when|later)|release|deposit|pr[ée]commande")
+
+
 def shopify_is_preorder(product):
-    """Shopify has no built-in pre-order flag; stores signal it in the title, tags, type or variant names."""
+    """Shopify has no single pre-order flag. Stores signal it in the title, type or variant names, in tags
+    (e.g. "Pre-Order", "PRO-PRE"), or through a pre-order selling plan ("PREORDER: Ships Upon Release")."""
     tags = product.get("tags") or []
     if isinstance(tags, str):
         tags = tags.split(",")
     variant_titles = [v.get("title", "") for v in product.get("variants", [])]
-    haystack = " | ".join([product.get("title", ""), product.get("type", ""), *tags, *variant_titles])
-    return bool(PREORDER_RE.search(haystack))
+    haystack = " | ".join([product.get("title", ""), product.get("type", ""), *variant_titles])
+    if PREORDER_RE.search(haystack):
+        return True
+    if any(PREORDER_TAG_RE.search(t.strip()) for t in tags):
+        return True
+    for group in product.get("selling_plan_groups") or []:
+        texts = [group.get("name", "")] + [f'{sp.get("name", "")} {sp.get("description", "")}' for sp in group.get("selling_plans", [])]
+        if any(PLAN_PREORDER_RE.search(t or "") for t in texts):
+            return True
+    return False
 
 
 def shopify_status(product, variant_id=None):
