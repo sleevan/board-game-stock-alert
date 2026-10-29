@@ -115,6 +115,15 @@ def title_core(title):
     return (core or t), had_edition
 
 
+def excluded_by(title, term):
+    """-word exclusions match whole words and words starting with the term: -coin also drops 'Coins'."""
+    words = normalize(term).split()
+    if not words:
+        return False
+    pattern = r"\b" + r"\s+".join(re.escape(w) for w in words[:-1]) + (r"\s+" if len(words) > 1 else "") + re.escape(words[-1]) + r"\w*\b"
+    return re.search(pattern, normalize(title)) is not None
+
+
 def title_has_words(title, query):
     """Whole-word containment: 'ito' is in 'Ito (EN)' but not in 'Splito'."""
     return f" {normalize(query)} " in f" {normalize(title)} "
@@ -641,7 +650,7 @@ def check_search(watch):
     candidates = [c for c in candidates
                   if not any(word_count(c["title"], w) > word_count(watch["query"], w) for w in words)]
     # Your own -word exclusions for this game.
-    candidates = [c for c in candidates if not any(title_has_words(c["title"], t) for t in watch.get("exclude_terms", []))]
+    candidates = [c for c in candidates if not any(excluded_by(c["title"], t) for t in watch.get("exclude_terms", []))]
     real = [c for c in candidates if c["status"] != "wrong_publisher"]
     if not real:
         if candidates:
