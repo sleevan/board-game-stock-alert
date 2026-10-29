@@ -38,6 +38,7 @@
   }
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0; background: var(--bg); color: var(--ink);
@@ -107,12 +108,22 @@ details > summary::-webkit-details-marker { display: none; }
 .confirm { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: .92rem; }
 
 /* Stores */
-.stores { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 6px 18px; }
+.stores { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 6px 22px; }
 .store-row { display: flex; gap: 8px; align-items: baseline; font-size: .92rem; min-width: 0; padding: 3px 0; border-bottom: 1px dotted var(--line); }
 .store-row .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; transform: translateY(-1px); }
 .dot.ok { background: var(--in); } .dot.bad { background: var(--warn); } .dot.off { background: transparent; border: 1.5px solid var(--muted); }
 .store-row .nm { min-width: 0; overflow-wrap: anywhere; }
 .store-row .why { color: var(--muted); font-size: .8rem; display: block; }
+.store-row.is-off .nm a { color: var(--muted); text-decoration: line-through; }
+.switch { margin-left: auto; flex: none; position: relative; width: 34px; height: 20px; }
+.switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.switch span { position: absolute; inset: 0; border-radius: 10px; background: var(--line); transition: background .15s; pointer-events: none; }
+.switch span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--surface); transition: transform .15s; }
+.switch input:checked + span { background: var(--in); }
+.switch input:checked + span::after { transform: translateX(14px); }
+.switch input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }
+.switch input:disabled + span { opacity: .5; }
+@media (prefers-reduced-motion: reduce) { .switch span, .switch span::after { transition: none; } }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--muted); font-size: .85rem; }
 .legend span { display: inline-flex; gap: 6px; align-items: center; }
 
@@ -168,6 +179,7 @@ footer { color: var(--muted); font-size: .85rem; }
       <h2 id="storesH">Stores</h2>
       <span class="meta" id="storeCount"></span>
     </div>
+    <p class="hint" style="margin:0">Switch a store off to leave it out of every check. <span class="msg" id="storeMsg" role="status"></span></p>
     <div class="legend">
       <span><i class="dot ok" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--in)"></i> Checked</span>
       <span><i style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--warn)"></i> Last check failed</span>
@@ -176,8 +188,8 @@ footer { color: var(--muted); font-size: .85rem; }
     <div class="stores" id="stores"></div>
   </section>
 
-  <section aria-labelledby="setupH">
-    <details class="panel setup" id="setup">
+  <section aria-labelledby="setupH" id="setupSection" hidden>
+    <details class="panel setup" id="setup" open>
       <summary><h2 id="setupH" style="display:inline">GitHub access</h2> <span class="hint" id="tokenState"></span></summary>
       <p>Saving changes needs a GitHub token limited to this one repository. It's stored only in this browser.</p>
       <ol>
@@ -291,7 +303,7 @@ function render() {
       }
       el.innerHTML = `
         <summary class="ghead">
-          <span class="gtitle"><strong>${esc(g.title)}</strong><small>${g.publisher ? esc(g.publisher) : "Any publisher"}</small></span>
+          <span class="gtitle"><strong>${esc(g.title)}</strong><small>${publisherText(g)}</small></span>
           <span class="tally">${tally}</span>
         </summary>
         <div class="gbody">
@@ -310,16 +322,46 @@ function render() {
 
   // Stores
   const health = state.stores || {};
-  const ok = stores.filter(s => s.platform && (health[s.url]?.ok ?? true)).length;
-  $("storeCount").textContent = `${ok} of ${stores.length} checked`;
-  $("stores").innerHTML = stores.map(s => {
+  const active = stores.filter(s => s.platform && s.enabled !== false).length;
+  $("storeCount").textContent = `${active} of ${stores.length} checked`;
+  $("stores").innerHTML = stores.map((s, i) => {
     const h = health[s.url];
+    const on = s.enabled !== false;
     let cls = "ok", why = "";
     if (!s.platform) { cls = "off"; why = s.note || "Can't be checked automatically"; }
+    else if (!on) { cls = "off"; why = "Switched off"; }
     else if (h && !h.ok) { cls = "bad"; why = "Last check failed" + (h.last_ok ? ` · worked ${ago(h.last_ok)}` : ""); }
-    return `<div class="store-row"><i class="dot ${cls}"></i><span class="nm"><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>${why ? `<span class="why">${esc(why)}</span>` : ""}</span></div>`;
+    const sw = s.platform ? `<label class="switch" title="${on ? "Checked" : "Not checked"}"><input type="checkbox" id="store-${i}" data-store="${esc(s.name)}" ${on ? "checked" : ""} aria-label="Check ${esc(s.name)}"><span></span></label>` : "";
+    return `<div class="store-row${s.platform && !on ? " is-off" : ""}"><i class="dot ${cls}"></i><span class="nm"><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>${why ? `<span class="why">${esc(why)}</span>` : ""}</span>${sw}</div>`;
   }).join("");
 }
+
+function publisherText(g) {
+  if (g.publisher && g.publisher_source === "BoardGameGeek") {
+    const more = (g.publishers || []).length - 1;
+    return `${esc(g.publisher)}${more > 0 ? ` and ${more} other edition publisher${more > 1 ? "s" : ""}` : ""} · from <a href="https://boardgamegeek.com/boardgame/${esc(g.bgg_id)}" target="_blank" rel="noopener">BoardGameGeek</a>`;
+  }
+  if (g.publisher) return esc(g.publisher);
+  if (g.publisher_lookup === "not_found") return "Any publisher · not found on BoardGameGeek";
+  return "Publisher will be looked up on BoardGameGeek";
+}
+
+$("stores").addEventListener("change", async e => {
+  const box = e.target.closest("input[data-store]"); if (!box) return;
+  const name = box.dataset.store, on = box.checked, msg = $("storeMsg");
+  if (!getToken()) { box.checked = !on; needToken(msg); return; }
+  box.disabled = true; msg.className = "msg"; msg.textContent = "Saving…";
+  try {
+    await refreshConfig();
+    const stores = config.stores.map(s => {
+      if (s.name !== name) return s;
+      const c = { ...s }; if (on) delete c.enabled; else c.enabled = false; return c;
+    });
+    await writeConfig({ ...config, stores }, `${on ? "Check" : "Stop checking"} ${name}`);
+    msg.className = "msg ok"; msg.textContent = `${name} ${on ? "will be checked" : "switched off"}.`;
+    render();
+  } catch (err) { box.checked = !on; box.disabled = false; msg.className = "msg err"; msg.textContent = explain(err); showSetup(err); }
+});
 
 // Remove flow with inline confirmation
 $("games").addEventListener("click", async e => {
@@ -340,15 +382,21 @@ $("games").addEventListener("click", async e => {
       const next = { ...config, games: config.games.filter(x => norm(x.title) !== norm(g.title)) };
       await writeConfig(next, `Stop watching ${g.title}`);
       render();
-    } catch (err) { wrap.innerHTML = `<span class="msg err">${esc(explain(err))}</span>`; }
+    } catch (err) { wrap.innerHTML = `<span class="msg err">${esc(explain(err))}</span>`; showSetup(err); }
   }
 });
 
+function showSetup(err) {
+  if (err && ![401, 403, 404].includes(err.status)) return;
+  $("setupSection").hidden = false; $("setup").open = true;
+  if (err) { $("tokenMsg").className = "msg err"; $("tokenMsg").textContent = explain(err); }
+  $("setupSection").scrollIntoView({ behavior: "smooth", block: "start" }); $("token").focus();
+}
 function needToken(where) {
   if (getToken()) return true;
-  $("setup").open = true; $("token").focus();
-  const msg = `Add your GitHub token below first.`;
-  if (where.id === "addMsg") { where.className = "msg err"; where.textContent = msg; }
+  showSetup();
+  const msg = `Saving changes needs a GitHub token. Set it up below.`;
+  if (where.id === "addMsg" || where.id === "storeMsg") { where.className = "msg err"; where.textContent = msg; }
   else where.insertAdjacentHTML("beforeend", `<span class="msg err">${msg}</span>`);
   return false;
 }
@@ -374,16 +422,16 @@ $("addForm").addEventListener("submit", async e => {
       const entry = publisher ? { title, publisher } : { title };
       await writeConfig({ ...config, games: [...(config.games || []), entry] }, `Watch ${title}`);
       $("title").value = ""; $("publisher").value = "";
-      msg.className = "msg ok"; msg.textContent = `Watching "${title}". It will be searched on the next check, or press Check now.`;
+      msg.className = "msg ok"; msg.textContent = `Watching "${title}". ${publisher ? "" : "Its publisher will be looked up on BoardGameGeek. "}Every store will be searched on the next check, or press Check now.`;
       render();
     }
-  } catch (err) { msg.className = "msg err"; msg.textContent = explain(err); }
+  } catch (err) { msg.className = "msg err"; msg.textContent = explain(err); showSetup(err); }
   $("addBtn").disabled = false;
 });
 
 $("checkNow").addEventListener("click", async () => {
   const msg = $("checkMsg");
-  if (!getToken()) { $("setup").open = true; $("token").focus(); msg.className = "msg err"; msg.textContent = "Add your GitHub token first."; return; }
+  if (!getToken()) { msg.className = "msg err"; msg.textContent = "Starting a check needs a GitHub token. Set it up below."; showSetup(); return; }
   $("checkNow").disabled = true; msg.className = "msg"; msg.textContent = "Starting…";
   try {
     await gh(`/actions/workflows/${WORKFLOW}/dispatches`, { method: "POST", body: JSON.stringify({ ref: BRANCH }) });
@@ -392,6 +440,7 @@ $("checkNow").addEventListener("click", async () => {
   } catch (err) {
     msg.className = "msg err";
     msg.textContent = err.status === 403 ? "The token needs Actions: Read and write to start a check." : explain(err);
+    showSetup(err);
   }
   setTimeout(() => { $("checkNow").disabled = false; }, 15000);
 });
@@ -402,7 +451,10 @@ $("saveToken").addEventListener("click", async () => {
   setToken(t); msg.className = "msg"; msg.textContent = "Checking token…";
   try {
     const repo = await gh("");
-    if (repo.permissions && repo.permissions.push) { msg.className = "msg ok"; msg.textContent = "Token saved. You can add and remove games."; $("token").value = ""; }
+    if (repo.permissions && repo.permissions.push) {
+      msg.className = "msg ok"; msg.textContent = "Token saved. You can add and remove games and stores now."; $("token").value = "";
+      setTimeout(() => { $("setupSection").hidden = true; }, 2500);
+    }
     else { msg.className = "msg err"; msg.textContent = "Token works, but it can't save changes. Give it Contents: Read and write."; }
   } catch (err) { setToken(""); msg.className = "msg err"; msg.textContent = explain(err); }
   showTokenState();
@@ -410,7 +462,6 @@ $("saveToken").addEventListener("click", async () => {
 $("forgetToken").addEventListener("click", () => { setToken(""); $("tokenMsg").className = "msg"; $("tokenMsg").textContent = "Token removed from this browser."; showTokenState(); });
 function showTokenState() {
   $("tokenState").textContent = getToken() ? "· connected" : "· needed to save changes";
-  if (!getToken()) $("setup").open = true;
 }
 
 async function refreshConfig() { const c = await readFile("config.json"); config = c.data; configSha = c.sha; }

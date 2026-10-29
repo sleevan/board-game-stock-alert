@@ -1,7 +1,0 @@
-magic plain: ok 66
-magic origin: ok 66
-mission sitemap urls: 15495
-mission catan urls: https://boardgames.ca/products/catan-zip https://boardgames.ca/products/catan-on-the-road https://boardgames.ca/products/spot-it-catan https://boardgames.ca/products/sleeves-56x82mm-gamegenic-154-pk-art-sleeves-catan https://boardgames.ca/products/catan-6th-edition-explorers--pirates-5-6-player-expansion https://boardgames.ca/products/catan-6th-edition-explorers--pirates-expansion https://boardgames.ca/products/catan-6th-edition-traders--barbarians-replacement-cards https://boardgames.ca/products/catan-6th-edition-traders--barbarians-expansion https://boardgames.ca/products/catan-6th-edition-traders--barbarians-5-6-player-expansion https://boardgames.ca/products/catan-6th-edition-seafarers-5-6-player-expansion https://boardgames.ca/products/catan-6th-edition-seafarers-expansion https://boardgames.ca/products/catan-6th-edition-cities--knights-replacement-cards https://boardgames.ca/products/catan-6th-edition-cities--knights-5-6-player-expansion https://boardgames.ca/products/catan-6th-edition-cities--knights-expansion https://boardgames.ca/products/catan-6th-edition-replacement-cards
-saved https://boardgames.ca/products/catan-zip 414703
-saved https://boardgames.ca/products/catan-on-the-road 415026
-saved https://boardgames.ca/products/spot-it-catan 415466

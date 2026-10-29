@@ -127,9 +127,13 @@ def publisher_words(publisher):
 
 
 def text_has_publisher(text, publisher):
-    words = publisher_words(publisher)
+    """True if the text names the publisher. `publisher` may be a list: any one of them counts."""
     have = normalize(text).split()
-    return all(w in have for w in words)
+    for pub in (publisher if isinstance(publisher, list) else [publisher]):
+        words = publisher_words(pub)
+        if words and all(w in have for w in words):
+            return True
+    return False
 
 
 def publisher_matches(product, publisher):
@@ -450,6 +454,71 @@ def search_square(base, query, publisher):
     return out
 
 
+_sitemap_cache = {}
+
+
+def _sitemap_urls(base):
+    """All page addresses from a store's sitemap (follows sitemap indexes). Cached for the run."""
+    if base in _sitemap_cache:
+        return _sitemap_cache[base]
+    urls, todo, seen = [], [f"{base}/sitemap.xml"], set()
+    while todo and len(seen) < 30:
+        sm = todo.pop(0)
+        if sm in seen:
+            continue
+        seen.add(sm)
+        body = fetch(sm)
+        locs = re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", body)
+        if "<sitemapindex" in body:
+            todo += [htmllib.unescape(u) for u in locs]
+        else:
+            urls += [htmllib.unescape(u) for u in locs]
+    _sitemap_cache[base] = urls
+    return urls
+
+
+def _product_from_jsonld(page):
+    for block in LD_JSON_RE.findall(page):
+        try:
+            data = json.loads(block.strip())
+        except ValueError:
+            continue
+        for node in _walk(data):
+            if node.get("@type") in ("Product", ["Product"]):
+                offers = node.get("offers") or {}
+                if isinstance(offers, list):
+                    offers = offers[0] if offers else {}
+                return node.get("name", ""), str(offers.get("availability", "")), offers.get("price")
+    return None
+
+
+def search_sitemap(base, query, publisher):
+    """Stores without a usable search: find product pages by address in the sitemap, then read their product data."""
+    words = normalize(query).split()
+    hits = []
+    for u in _sitemap_urls(base):
+        slug = normalize(u.rstrip("/").rsplit("/", 1)[-1])
+        if f" {' '.join(words)} " in f" {slug} ":
+            hits.append(u)
+    out = []
+    for u in hits[:8]:
+        try:
+            info = _product_from_jsonld(fetch(u))
+        except (HTTPError, URLError, TimeoutError, OSError):
+            continue
+        if not info:
+            continue
+        title, availability, price = info
+        title = htmllib.unescape(title or "")
+        if normalize(query) not in normalize(title):
+            continue
+        status = PREORDER if PREORDER_RE.search(title) else (classify([availability]) or OUT_OF_STOCK)
+        out.append({"title": title, "status": status,
+                    "price": f"${float(price):.2f}" if isinstance(price, (int, float, str)) and str(price).replace(".", "", 1).isdigit() else None,
+                    "link": u})
+    return out
+
+
 SEARCHERS = {
     "shopify": search_shopify,
     "woocommerce": search_woocommerce,
@@ -462,6 +531,7 @@ SEARCHERS = {
     "opencart": search_opencart,
     "odoo": search_odoo,
     "square": search_square,
+    "sitemap": search_sitemap,
 }
 
 
@@ -478,7 +548,8 @@ def check_search(watch):
     real = [c for c in candidates if c["status"] != "wrong_publisher"]
     if not real:
         if candidates:
-            return NOT_LISTED, None, None, f"title found, but not by {publisher}"
+            who = publisher[0] if isinstance(publisher, list) else publisher
+            return NOT_LISTED, None, None, f"title found, but not by {who}"
         return NOT_LISTED, None, None, "searched store catalogue"
     rank = {IN_STOCK: 0, OUT_OF_STOCK: 1, PREORDER: 2, UNKNOWN: 3}
     best = min(real, key=lambda c: rank.get(c["status"], 9))
@@ -592,7 +663,9 @@ def check_watch(watch):
 
 def watch_key(watch):
     if watch.get("store"):
-        return f'search:{watch["store"].rstrip("/")}|{normalize(watch["query"])}|{normalize(watch.get("publisher"))}'
+        pub = watch.get("publisher")
+        pub = pub[0] if isinstance(pub, list) else pub
+        return f'search:{watch["store"].rstrip("/")}|{normalize(watch["query"])}|{normalize(pub)}'
     return watch["url"]
 
 
@@ -610,7 +683,7 @@ def build_watches(config):
                 "store": store["url"],
                 "platform": store["platform"],
                 "query": game["title"],
-                "publisher": game.get("publisher") or None,
+                "publisher": game.get("publishers") or game.get("publisher") or None,
             })
     for extra in config.get("product_urls", []):
         watches.append({**extra, "game": extra.get("name", extra["url"])})
@@ -664,12 +737,86 @@ def send_email(subject, body):
     print(f"Email sent to {to}: {subject}")
 
 
+# --------------------------------------------------------------------------
+# Publisher lookup on BoardGameGeek (official XML API; needs BGG_TOKEN)
+# --------------------------------------------------------------------------
+BGG_API = "https://boardgamegeek.com/xmlapi2"
+
+
+def bgg_get(path, token):
+    import xml.etree.ElementTree as ET
+    for attempt in range(3):
+        req = Request(f"{BGG_API}/{path}", headers={"Authorization": f"Bearer {token}", "User-Agent": "board-game-stock-alert"})
+        with urlopen(req, timeout=30) as r:
+            body = r.read()
+            if r.status == 202:      # BGG queued the request; ask again shortly
+                time.sleep(3)
+                continue
+        return ET.fromstring(body)
+    raise TimeoutError("BoardGameGeek kept the request queued")
+
+
+def bgg_publishers(title, token):
+    """Return (bgg_id, [publishers]) for the best match, or (None, [])."""
+    ids = []
+    for exact in ("1", "0"):
+        root = bgg_get(f"search?query={quote(title)}&type=boardgame&exact={exact}", token)
+        items = root.findall("item")
+        if exact == "0":
+            items = [i for i in items
+                     if normalize((i.find("name").get("value") if i.find("name") is not None else "")) == normalize(title)] or items[:5]
+        ids = [i.get("id") for i in items][:20]
+        if ids:
+            break
+    if not ids:
+        return None, []
+    root = bgg_get(f"thing?id={','.join(ids)}&stats=1", token)
+    best, best_votes = None, -1
+    for item in root.findall("item"):
+        votes = item.find("statistics/ratings/usersrated")
+        n = int(votes.get("value")) if votes is not None and votes.get("value", "").isdigit() else 0
+        if n > best_votes:
+            best, best_votes = item, n
+    if best is None:
+        return None, []
+    pubs = [l.get("value") for l in best.findall("link") if l.get("type") == "boardgamepublisher"]
+    pubs = [p for p in pubs if p and not p.startswith("(")]       # drop "(Unknown)", "(Self-Published)"
+    return best.get("id"), pubs[:25]
+
+
+def fill_missing_publishers(config):
+    """Look up publishers for games added without one. Returns True if config changed."""
+    token = os.environ.get("BGG_TOKEN", "").strip()
+    pending = [g for g in config.get("games", []) if not g.get("publisher") and not g.get("publisher_lookup")]
+    if not pending or not token:
+        if pending:
+            print("Publisher lookup skipped: add a BGG_TOKEN secret to look publishers up on BoardGameGeek.")
+        return False
+    changed = False
+    for g in pending:
+        try:
+            bgg_id, pubs = bgg_publishers(g["title"], token)
+        except Exception as exc:  # network trouble or bad token: try again next run
+            print(f'BoardGameGeek lookup failed for "{g["title"]}": {exc}')
+            continue
+        if pubs:
+            g.update(publisher=pubs[0], publishers=pubs, publisher_source="BoardGameGeek", bgg_id=bgg_id)
+            print(f'Publisher for "{g["title"]}" from BoardGameGeek: {pubs[0]}' + (f" (+{len(pubs) - 1} more)" if len(pubs) > 1 else ""))
+        else:
+            g["publisher_lookup"] = "not_found"
+            print(f'No BoardGameGeek publisher found for "{g["title"]}"; matching any publisher.')
+        changed = True
+    return changed
+
+
 def now_utc():
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
 
 def run_once(dry_run=False):
     config = load_json(CONFIG_PATH, None)
+    if config and not dry_run and fill_missing_publishers(config):
+        save_config(config)
     watches = build_watches(config or {})
     if not watches:
         raise SystemExit('Nothing to watch yet. Add a game:  python stock_alert.py add "Game Title" --publisher "Publisher"')

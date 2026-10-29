@@ -73,8 +73,7 @@
     {
       "name": "Board Games N More",
       "url": "https://www.boardgamesnmore.com",
-      "platform": null,
-      "note": "Store search can't be read automatically"
+      "platform": "opencart"
     },
     {
       "name": "Boutique La Revanche",
@@ -103,9 +102,8 @@
     },
     {
       "name": "F.G. Bradley's",
-      "url": "https://www.fgbradleys.com",
-      "platform": null,
-      "note": "Store search can't be read automatically"
+      "url": "https://fgbradleys.com",
+      "platform": "woocommerce_html"
     },
     {
       "name": "Fusion Gaming",
@@ -131,7 +129,7 @@
       "name": "Geek Stop Games",
       "url": "https://geekstopgames.com",
       "platform": null,
-      "note": "Refuses automated connections"
+      "note": "Blocks automated checks"
     },
     {
       "name": "Great Boardgames",
@@ -152,8 +150,7 @@
     {
       "name": "J&J Cards & Collectibles",
       "url": "https://shop.jjcards.com",
-      "platform": null,
-      "note": "Store search can't be read automatically"
+      "platform": "shift4shop"
     },
     {
       "name": "La Pioche",
@@ -167,9 +164,8 @@
     },
     {
       "name": "Le Roi des Cartes Valleyfield",
-      "url": "https://leroidescartesvalley.com",
-      "platform": null,
-      "note": "Store search can't be read automatically"
+      "url": "https://tcgandgames.myshopify.com",
+      "platform": "shopify"
     },
     {
       "name": "Le Valet d'Coeur",
@@ -185,7 +181,7 @@
       "name": "Les Jeux Grillons Givrés",
       "url": "https://en.crazycrickets.games",
       "platform": null,
-      "note": "Website's secure connection fails"
+      "note": "Website isn't working (secure connection fails)"
     },
     {
       "name": "Lvlup Games",
@@ -196,19 +192,18 @@
       "name": "Magic Stronghold Games",
       "url": "https://www.magicstronghold.com",
       "platform": null,
-      "note": "Store search only works in a browser"
+      "note": "Its catalogue only answers the store's own website"
     },
     {
       "name": "Meeples and Milkshakes",
       "url": "https://meeples.ca",
       "platform": null,
-      "note": "Online store currently unavailable"
+      "note": "Online store is currently offline"
     },
     {
       "name": "Mission: Fun & Games",
-      "url": "https://www.boardgames.ca",
-      "platform": null,
-      "note": "Store search only works in a browser"
+      "url": "https://boardgames.ca",
+      "platform": "sitemap"
     },
     {
       "name": "Multizone Comics and Games",
@@ -228,19 +223,12 @@
     {
       "name": "Pe Metawe Games",
       "url": "https://shop.pemetawe.com",
-      "platform": null,
-      "note": "Store search can't be read automatically"
+      "platform": "square"
     },
     {
       "name": "Rain City Games",
       "url": "https://www.raincity.games",
       "platform": "shopify"
-    },
-    {
-      "name": "Samko and Miko Toy Warehouse",
-      "url": "https://www.samkoandmiko.com",
-      "platform": null,
-      "note": "Store website address not found"
     },
     {
       "name": "Screen Free Games",
@@ -280,14 +268,12 @@
     {
       "name": "Toys On Fire",
       "url": "https://www.toysonfire.ca",
-      "platform": null,
-      "note": "Store search can't be read automatically"
+      "platform": "odoo"
     },
     {
       "name": "Victory Pints Games",
       "url": "https://www.victorypints.ca",
-      "platform": null,
-      "note": "Store search can't be read automatically"
+      "platform": "square"
     },
     {
       "name": "WiredVillage Boardgames",
