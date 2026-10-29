@@ -366,7 +366,8 @@ function render() {
     box.innerHTML = "";
     games.forEach((g, idx) => {
       const known = new Set((config.stores || []).filter(s => s.enabled !== false).map(s => s.name));
-      const rows = watches.filter(w => norm(w.game) === norm(g.title) && (known.has(w.store) || !w.store_url || (config.product_urls || []).some(u => u.url === w.store_url)));
+      const rows = watches.filter(w => norm(w.game) === norm(g.title) && (known.has(w.store) || !w.store_url || (config.product_urls || []).some(u => u.url === w.store_url))
+        && (!g.added || !w.checked || w.checked >= g.added));
       const decided = new Set([...(g.accept || []), ...(g.reject || [])].map(norm));
       const asks = {};
       rows.forEach(r => (r.possible || []).forEach(pm => {
@@ -593,10 +594,12 @@ $("addForm").addEventListener("submit", async e => {
     if ((config.games || []).some(g => norm(g.title) === norm(title))) {
       msg.className = "msg err"; msg.textContent = `"${title}" is already on the list.`;
     } else {
-      const entry = { title, ...(publisher ? { publisher } : {}), ...(exact ? { exact: true } : {}), ...(excludes.length ? { exclude: excludes } : {}) };
+      const entry = { title, ...(publisher ? { publisher } : {}), ...(exact ? { exact: true } : {}), ...(excludes.length ? { exclude: excludes } : {}),
+                      added: new Date().toISOString().replace(/\.\d+Z$/, "Z") };
       await writeConfig({ ...config, games: [...(config.games || []), entry] }, `Watch ${title}`);
       $("title").value = ""; $("publisher").value = "";
-      msg.className = "msg ok"; msg.textContent = `Watching "${title}"${exact ? " (exact title only)" : ""}${excludes.length ? `, excluding ${excludes.map(t => `"${t}"`).join(", ")}` : ""}. Every store will be searched on the next check, or press Check now.`;
+      startCheck(true);
+      msg.className = "msg ok"; msg.textContent = `Watching "${title}"${exact ? " (exact title only)" : ""}${excludes.length ? `, excluding ${excludes.map(t => `"${t}"`).join(", ")}` : ""}. Searching every store now; results appear in about 2 minutes.`;
       render();
     }
   } catch (err) { msg.className = "msg err"; msg.textContent = explain(err); showSetup(err); }
@@ -631,7 +634,8 @@ $("toggleAll").addEventListener("click", () => {
   updateToggleAll();
 });
 
-$("checkNow").addEventListener("click", async () => {
+$("checkNow").addEventListener("click", () => startCheck(false));
+async function startCheck(quiet) {
   const msg = $("checkMsg");
   if (!getToken()) { msg.className = "msg err"; msg.textContent = "Starting a check needs a GitHub token. Set it up below."; showSetup(); return; }
   $("checkNow").disabled = true; msg.className = "msg"; msg.textContent = "Starting…";
@@ -640,12 +644,15 @@ $("checkNow").addEventListener("click", async () => {
     msg.className = "msg ok"; msg.textContent = "Check started · results in ~2 min"; msg.title = "Results appear here in about 2 minutes.";
     setTimeout(load, 120000); setTimeout(load, 200000);
   } catch (err) {
-    msg.className = "msg err";
-    msg.textContent = err.status === 403 ? "The token needs Actions: Read and write to start a check." : explain(err);
-    showSetup(err);
+    if (quiet) { msg.className = "msg"; msg.textContent = "Added. It will be searched on the next scheduled check."; }
+    else {
+      msg.className = "msg err";
+      msg.textContent = err.status === 403 ? "The token needs Actions: Read and write to start a check." : explain(err);
+      showSetup(err);
+    }
   }
   setTimeout(() => { $("checkNow").disabled = false; }, 15000);
-});
+}
 
 $("saveToken").addEventListener("click", async () => {
   const t = $("token").value.trim(), msg = $("tokenMsg");
