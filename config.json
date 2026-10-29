@@ -14,24 +14,33 @@
     },
     {
       "title": "Blood Rage: Valhalla",
-      "publisher_lookup": "needs_token"
+      "publisher": "Tycoon Games",
+      "publisher_source": "Board Game Bliss",
+      "publisher_listing": "Blood Rage: Valhalla *PRE-ORDER*"
     },
     {
       "title": "Yinsh",
-      "publisher_lookup": "needs_token"
+      "publisher": "Rio Grande Games",
+      "publisher_source": "Board Game Bliss",
+      "publisher_listing": "YINSH (New Edition)"
     },
     {
       "title": "ito",
-      "publisher_lookup": "needs_token",
       "reject": [
         "yuui ito",
         "ito mizuki",
         "ito kaihime",
         "ito masunagi"
-      ]
+      ],
+      "publisher": "Arcane Wonders",
+      "publisher_source": "Board Game Bliss",
+      "publisher_listing": "ito"
     },
     {
-      "title": "Jibber Jabble"
+      "title": "Jibber Jabble",
+      "publisher": "Allplay",
+      "publisher_source": "Board Game Bliss",
+      "publisher_listing": "Jibber Jabble"
     }
   ],
   "stores": [
