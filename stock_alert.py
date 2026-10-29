@@ -310,6 +310,146 @@ def search_greatboardgames(base, query, publisher):
     return out
 
 
+def search_woocommerce_html(base, query, publisher):
+    """WooCommerce stores whose product API is closed: read the normal search page (incl. lazy-load templates)."""
+    page = fetch(f"{base}/?s={quote(query)}&post_type=product")
+    chunks = [page]
+    for tpl in re.findall(r'<script type="text/template">(.*?)</script>', page, re.S):
+        try:
+            chunks.append(json.loads(tpl))
+        except ValueError:
+            pass
+    out, seen = [], set()
+    for chunk in chunks:
+        for cls, body in re.findall(r'<li[^>]*class="([^"]*\btype-product\b[^"]*)"[^>]*>(.*?)(?=<li[^>]*class="[^"]*\btype-product\b|</ul>)', chunk, re.S):
+            m = re.search(r'woocommerce-loop-product__title[^>]*>(.*?)</', body, re.S)
+            title = _clean(m.group(1)) if m else ""
+            if not title or normalize(query) not in normalize(title) or title in seen:
+                continue
+            seen.add(title)
+            classes = cls.split()
+            if PREORDER_RE.search(title) or "onbackorder" in classes:
+                status = PREORDER
+            elif "instock" in classes and "purchasable" in classes:
+                status = IN_STOCK
+            else:
+                status = OUT_OF_STOCK
+            link = re.search(r'href="(https?://[^"]+/product/[^"]+)"', body)
+            pm = re.findall(r'<bdi>(?:<span[^>]*>[^<]*</span>)?\s*([\d.,]+)\s*</bdi>', body)
+            out.append({"title": title, "status": status, "price": f"${pm[-1]}" if pm else None,
+                        "link": link.group(1) if link else None})
+    return out
+
+
+def search_shift4shop(base, query, publisher):
+    page = fetch(f"{base}/search.asp?keyword={quote(query)}")
+    out = []
+    for blk in _blocks(page, '<div class="product-item"'):
+        m = re.search(r'<div class="name">\s*<a href="([^"]+)">(.*?)</a>', blk, re.S)
+        if not m:
+            continue
+        title = _clean(m.group(2))
+        if normalize(query) not in normalize(title):
+            continue
+        avail = re.search(r'class="availability"[^>]*>(.*?)</span>', blk, re.S)
+        avail = _clean(avail.group(1)) if avail else ""
+        if PREORDER_RE.search(title) or PREORDER_RE.search(avail):
+            status = PREORDER
+        elif re.search(r"\bin stock", avail, re.I) or ("add-to-cart" in blk and not re.search(r"out of stock", avail, re.I)):
+            status = IN_STOCK
+        else:
+            status = OUT_OF_STOCK
+        pm = re.search(r'class="regular-price"[^>]*>\s*([^<]+)<', blk)
+        out.append({"title": title, "status": status, "price": _clean(pm.group(1)) if pm else None,
+                    "link": f'{base}/{m.group(1).lstrip("/")}'})
+    return out
+
+
+def search_opencart(base, query, publisher):
+    page = fetch(f"{base}/index.php?route=product/search&search={quote(query)}")
+    out, seen = [], set()
+    for blk in re.split(r'<div class="product-layout', re.sub(r"<!--.*?-->", "", page, flags=re.S))[1:]:
+        m = re.search(r'<div class="name"><a href="([^"]+)">(.*?)</a>', blk, re.S)
+        if not m:
+            continue
+        title, link = _clean(m.group(2)), m.group(1).split("?")[0]
+        if normalize(query) not in normalize(title) or link in seen:
+            continue
+        seen.add(link)
+        layout_class = blk.split('"', 1)[0]
+        labels = " ".join(_clean(x) for x in re.findall(r'class="product-label[^"]*"[^>]*>(.*?)</span>', blk, re.S))
+        if PREORDER_RE.search(title) or PREORDER_RE.search(labels):
+            status = PREORDER
+        elif "out-of-stock" in layout_class or re.search(r"out of stock", labels, re.I):
+            status = OUT_OF_STOCK
+        else:
+            status = IN_STOCK
+        pm = re.search(r'class="price-(?:new|normal)">([^<]+)<', blk)
+        out.append({"title": title, "status": status, "price": _clean(pm.group(1)).replace(" CAD", "") if pm else None, "link": link})
+    return out
+
+
+def search_odoo(base, query, publisher):
+    page = fetch(f"{base}/shop?search={quote(query)}")
+    out = []
+    for blk in _blocks(page, '<div class="oe_product_cart"'):
+        m = re.search(r'itemprop="name"[^>]*>(.*?)</span>', blk, re.S)
+        title = _clean(m.group(1)) if m else ""
+        if not title or normalize(query) not in normalize(title):
+            continue
+        if publisher:
+            by = re.search(r'<span>By <span>(.*?)</span>', blk)
+            if by and not text_has_publisher(_clean(by.group(1)), publisher):
+                out.append({"title": title, "status": "wrong_publisher"})
+                continue
+        av = re.search(r'itemprop="availability" href="([^"]+)"', blk)
+        pre_date = re.search(r'itemprop="preorder_release_date"[^>]*>([^<]+)<', blk)
+        avail = classify([av.group(1)]) if av else None
+        if PREORDER_RE.search(title) or avail == PREORDER or pre_date:
+            status = PREORDER
+        else:
+            status = avail or OUT_OF_STOCK
+        link = re.search(r'href="(/shop/product/[^"?]+)', blk)
+        pm = re.search(r'itemprop="price"[^>]*>([\d.]+)<', blk)
+        out.append({"title": title, "status": status, "price": f"${float(pm.group(1)):.2f}" if pm else None,
+                    "link": base + link.group(1) if link else None})
+    return out
+
+
+_square_ids = {}
+
+
+def search_square(base, query, publisher):
+    """Square Online: the storefront's own product feed; store IDs are read from the homepage."""
+    if base not in _square_ids:
+        home = fetch(base + "/")
+        u = re.search(r"user_id:\s*'(\d+)'", home)
+        st = re.search(r"site_id:\s*'(\d+)'", home)
+        if not (u and st):
+            raise ValueError("Square store IDs not found on homepage")
+        _square_ids[base] = (u.group(1), st.group(1))
+    user, site = _square_ids[base]
+    data = fetch_json(f"{base}/app/store/api/v28/editor/users/{user}/sites/{site}/products?q={quote(query)}&per_page=30")
+    out = []
+    for p in data.get("data", []):
+        title = htmllib.unescape(p.get("name", ""))
+        if normalize(query) not in normalize(title) or p.get("visibility") not in (None, "visible"):
+            continue
+        if publisher and not text_has_publisher(title + " " + re.sub(r"<[^>]+>", " ", p.get("short_description") or ""), publisher):
+            out.append({"title": title, "status": "wrong_publisher"})
+            continue
+        inv = p.get("inventory") or {}
+        if PREORDER_RE.search(title) or any((p.get("preordering") or {}).values()):
+            status = PREORDER
+        elif (p.get("badges") or {}).get("out_of_stock") or inv.get("all_variations_sold_out"):
+            status = OUT_OF_STOCK
+        else:
+            status = IN_STOCK
+        out.append({"title": title, "status": status, "price": (p.get("price") or {}).get("low_formatted"),
+                    "link": p.get("absolute_site_link")})
+    return out
+
+
 SEARCHERS = {
     "shopify": search_shopify,
     "woocommerce": search_woocommerce,
@@ -317,6 +457,11 @@ SEARCHERS = {
     "crystalcommerce": search_crystalcommerce,
     "magento": search_magento,
     "greatboardgames": search_greatboardgames,
+    "woocommerce_html": search_woocommerce_html,
+    "shift4shop": search_shift4shop,
+    "opencart": search_opencart,
+    "odoo": search_odoo,
+    "square": search_square,
 }
 
 
