@@ -1,0 +1,17 @@
+name: Probe store formats
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: python tools/probe_formats.py
+      - run: |
+          git config user.name "stock-alert-bot"
+          git config user.email "stock-alert-bot@users.noreply.github.com"
+          git checkout -b probe-results
+          git add -f probe && git commit -qm "Raw store responses" && git push -f origin probe-results
