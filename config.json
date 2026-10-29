@@ -51,7 +51,13 @@
       "added": "2026-10-29T19:04:23Z",
       "publisher": "Czech Games Edition (CGE)",
       "publisher_source": "Board Game Bliss",
-      "publisher_listing": "Kingdom Come: Deliverance – The Board Game *PRE-ORDER*"
+      "publisher_listing": "Kingdom Come: Deliverance – The Board Game *PRE-ORDER*",
+      "hidden": [
+        {
+          "store": "401 Games",
+          "title": "Kingdom Come: Deliverance Met Coin Set (Pre-Order)"
+        }
+      ]
     }
   ],
   "stores": [
