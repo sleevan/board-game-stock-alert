@@ -59,7 +59,7 @@ Test with `python stock_alert.py --test-email`.
 ### Option A: GitHub Actions (free, no computer needs to stay on)
 
 1. Create a **private** GitHub repository and upload these files, keeping `.github/workflows/stock-check.yml` at that path. Don't upload `.env`.
-2. In the repo: **Settings → Secrets and variables → Actions → New repository secret**, add `SMTP_USER`, `SMTP_PASSWORD`, `EMAIL_TO`.
+2. In the repo: **Settings → Secrets and variables → Actions → New repository secret**, add `SMTP_PASSWORD` (the Gmail App Password). The sending and receiving address is set to you@gmail.com in the workflow file; add `SMTP_USER` / `EMAIL_TO` secrets only to change it.
 3. **Actions** tab → *Board game stock check* → **Run workflow** to try it.
 
 It then checks every 30 minutes. If checks keep failing, the run fails and GitHub emails you. To add a game later, edit `config.json` in GitHub's web editor (copy the format of the existing entry).
