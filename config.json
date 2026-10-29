@@ -66,6 +66,13 @@
     {
       "title": "Men of Iron Tri-Pack",
       "added": "2026-10-29T20:34:42Z"
+    },
+    {
+      "title": "The White Castle",
+      "exclude": [
+        "Duel"
+      ],
+      "added": "2026-10-29T20:36:48Z"
     }
   ],
   "stores": [
