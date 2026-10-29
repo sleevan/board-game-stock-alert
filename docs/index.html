@@ -343,7 +343,9 @@ function publisherText(g) {
   }
   if (g.publisher) return esc(g.publisher);
   if (g.publisher_lookup === "not_found") return "Any publisher · not found on BoardGameGeek";
-  return "Publisher will be looked up on BoardGameGeek";
+  if (g.publisher_lookup === "needs_token") return "Any publisher for now · BoardGameGeek lookup needs a BGG_TOKEN secret";
+  if (g.publisher_lookup === "failed") return "Any publisher for now · " + esc(g.publisher_lookup_error || "BoardGameGeek lookup failed");
+  return "Publisher will be looked up on BoardGameGeek at the next check";
 }
 
 $("stores").addEventListener("change", async e => {

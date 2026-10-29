@@ -801,26 +801,48 @@ def bgg_publishers(title, token):
 
 
 def fill_missing_publishers(config):
-    """Look up publishers for games added without one. Returns True if config changed."""
+    """Look up publishers for games added without one. Records the outcome on each game.
+    Returns True if config changed."""
     token = os.environ.get("BGG_TOKEN", "").strip()
-    pending = [g for g in config.get("games", []) if not g.get("publisher") and not g.get("publisher_lookup")]
-    if not pending or not token:
-        if pending:
-            print("Publisher lookup skipped: add a BGG_TOKEN secret to look publishers up on BoardGameGeek.")
-        return False
+    pending = [g for g in config.get("games", [])
+               if not g.get("publisher") and g.get("publisher_lookup") != "not_found"]
     changed = False
+
+    def mark(g, status, error=None):
+        nonlocal changed
+        if g.get("publisher_lookup") != status or g.get("publisher_lookup_error") != error:
+            g["publisher_lookup"] = status
+            if error:
+                g["publisher_lookup_error"] = error
+            else:
+                g.pop("publisher_lookup_error", None)
+            changed = True
+
     for g in pending:
+        if not token:
+            print(f'Publisher lookup for "{g["title"]}" skipped: no BGG_TOKEN secret.')
+            mark(g, "needs_token")
+            continue
         try:
             bgg_id, pubs = bgg_publishers(g["title"], token)
-        except Exception as exc:  # network trouble or bad token: try again next run
-            print(f'BoardGameGeek lookup failed for "{g["title"]}": {exc}')
+        except HTTPError as exc:
+            why = {401: "BoardGameGeek rejected the token (401). Check the BGG_TOKEN secret.",
+                   403: "BoardGameGeek refused access (403). The application may not be approved yet."}.get(
+                exc.code, f"BoardGameGeek answered with an error ({exc.code}).")
+            print(f'Lookup failed for "{g["title"]}": {why}')
+            mark(g, "failed", why)
+            continue
+        except Exception as exc:  # network trouble: try again next run
+            print(f'Lookup failed for "{g["title"]}": {exc}')
+            mark(g, "failed", f"Couldn't reach BoardGameGeek ({type(exc).__name__}). Will retry.")
             continue
         if pubs:
             g.update(publisher=pubs[0], publishers=pubs, publisher_source="BoardGameGeek", bgg_id=bgg_id)
+            g.pop("publisher_lookup", None); g.pop("publisher_lookup_error", None)
             print(f'Publisher for "{g["title"]}" from BoardGameGeek: {pubs[0]}' + (f" (+{len(pubs) - 1} more)" if len(pubs) > 1 else ""))
         else:
-            g["publisher_lookup"] = "not_found"
-            print(f'No BoardGameGeek publisher found for "{g["title"]}"; matching any publisher.')
+            mark(g, "not_found")
+            print(f'No BoardGameGeek match for "{g["title"]}"; matching any publisher.')
         changed = True
     return changed
 
