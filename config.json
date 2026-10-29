@@ -6,7 +6,10 @@
     },
     {
       "title": "Dungeon Crawler Carl: Unstoppable",
-      "publisher": "Renegade Game Studios"
+      "publisher": "Renegade Game Studios",
+      "reject": [
+        "dungeon crawler carl unstoppable crawler chaos"
+      ]
     },
     {
       "title": "Blood Rage: Valhalla",
