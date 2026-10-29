@@ -104,7 +104,8 @@ details > summary::-webkit-details-marker { display: none; }
 .listing .store { font-weight: 600; }
 .listing .found { color: var(--muted); font-size: .9rem; min-width: 0; overflow-wrap: anywhere; }
 .price { font: 400 .85rem var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.pricewrap { display: inline-flex; align-items: center; gap: 6px; }
+.pricewrap { display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px; }
+.listing .price { justify-self: end; text-align: right; }
 .ship { position: relative; display: inline-grid; place-items: center; width: 26px; height: 26px; padding: 0; border: 0; border-radius: 4px; background: transparent; color: var(--muted); cursor: help; }
 .ship:hover, .ship:focus-visible, .ship.open { color: var(--ink); background: var(--none-bg); }
 .ship .tip { position: absolute; right: 0; bottom: calc(100% + 6px); z-index: 5; width: max-content; max-width: min(260px, 70vw); white-space: normal; text-align: left;
