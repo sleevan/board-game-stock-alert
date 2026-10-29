@@ -100,13 +100,16 @@ a { color: var(--accent); }
 details > summary { list-style: none; cursor: pointer; }
 details > summary::-webkit-details-marker { display: none; }
 .gbody { border-top: 1px solid var(--line); padding: 10px 16px 14px; display: grid; gap: 10px; }
-.listing { display: grid; grid-template-columns: auto 1fr auto 24px; gap: 4px 12px; align-items: baseline; }
-.lrow { display: contents; }
-.xrm { width: 24px; height: 24px; padding: 0; border: 0; border-radius: 4px; background: transparent; color: var(--muted);
-  font-size: 1.05rem; line-height: 1; display: grid; place-items: center; align-self: center; cursor: pointer; visibility: hidden; }
-.lrow:hover .xrm, .xrm:focus-visible { visibility: visible; }
-.xrm:hover, .xrm:focus-visible { color: var(--ink); background: var(--none-bg); }
+.listing { display: grid; grid-template-columns: auto 1fr auto 14px; column-gap: 12px; }
+/* each listing line is a real row (subgrid keeps the columns aligned), so hovering anywhere on it counts */
+.lrow { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; align-items: baseline; padding: 3px 0; border-radius: 4px; }
+.lrow:hover { background: color-mix(in srgb, var(--none-bg) 55%, transparent); }
+.xrm { width: 14px; height: 18px; margin-left: -6px; padding: 0; border: 0; border-radius: 3px; background: transparent; color: var(--muted);
+  font-size: 1rem; line-height: 1; display: grid; place-items: center; align-self: center; cursor: pointer; visibility: hidden; }
+.lrow:hover .xrm, .lrow:focus-within .xrm { visibility: visible; }
+.xrm:hover, .xrm:focus-visible { color: var(--ink); }
 @media (hover: none) { .xrm { visibility: visible; } }
+@supports not (grid-template-columns: subgrid) { .lrow { grid-template-columns: auto 1fr auto 14px; column-gap: 12px; } }
 .listing .store { font-weight: 600; }
 .listing .found { color: var(--muted); font-size: .9rem; min-width: 0; overflow-wrap: anywhere; }
 .price { font: 400 .85rem var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
