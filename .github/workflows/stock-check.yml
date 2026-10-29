@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "*/30 * * * *"   # every 30 minutes (UTC); GitHub may delay runs a little
   workflow_dispatch:          # adds a "Run workflow" button for manual checks
+    inputs:
+      test_email:
+        description: "Just send a test email (no stock check)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write             # lets the job save state.json back to the repo
@@ -23,7 +28,12 @@ jobs:
           python-version: "3.12"
 
       - name: Check stock
-        run: python stock_alert.py
+        run: |
+          if [ "${{ inputs.test_email }}" = "true" ]; then
+            python stock_alert.py --test-email
+          else
+            python stock_alert.py
+          fi
         env:
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
