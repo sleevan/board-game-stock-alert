@@ -25,7 +25,6 @@ Stores live in `config.json` under `"stores"`. Store search works on **Shopify**
 | 401 Games (Toronto) | https://store.401games.ca |
 | Black Knight Games | https://blackknightgames.ca |
 | Game Shack | https://www.gameshack.ca |
-| Meeple Mart | https://www.meeplemart.com |
 
 To add a store, add a line like `{ "name": "Store Name", "url": "https://store-website.ca" }`.
 
