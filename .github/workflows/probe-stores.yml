@@ -1,17 +1,24 @@
-name: Probe stores
-on: workflow_dispatch
+name: Test store searches
+on:
+  workflow_dispatch:
+    inputs:
+      query:
+        description: "Game to search every store for (no email is sent)"
+        default: "Catan"
 permissions:
   contents: write
 jobs:
-  probe:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - run: python tools/probe_stores.py
+      - run: python tools/verify_stores.py "${{ inputs.query }}"
       - run: |
           git config user.name "stock-alert-bot"
           git config user.email "stock-alert-bot@users.noreply.github.com"
-          git pull -q --rebase || true
-          git add stores-probe.json && git commit -m "Store probe results" && git push
+          git add store-verify.json
+          git diff --cached --quiet && exit 0
+          git commit -qm "Store search test results"
+          for i in 1 2 3; do git pull -q --rebase && git push -q && break; sleep 5; done

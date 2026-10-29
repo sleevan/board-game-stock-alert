@@ -29,6 +29,8 @@ import re
 import smtplib
 import sys
 import time
+import unicodedata
+from concurrent.futures import ThreadPoolExecutor
 from email.message import EmailMessage
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -59,10 +61,6 @@ LABELS = {
     UNKNOWN: "check failed",
 }
 
-# Failed checks in a row before the run exits with an error
-# (on GitHub Actions, a failed run sends you GitHub's own failure email).
-FAILURES_BEFORE_ALERT = 6
-
 PREORDER_RE = re.compile(r"\bpre[\s\-]?order|\bpre[\s\-]?sale|\bback[\s\-]?order|\bcoming soon\b", re.I)
 
 
@@ -85,7 +83,8 @@ def fetch_json(url):
 
 
 def normalize(text):
-    return re.sub(r"[^a-z0-9]+", " ", (text or "").lower()).strip()
+    text = unicodedata.normalize("NFKD", text or "").encode("ascii", "ignore").decode()  # Trône -> Trone
+    return re.sub(r"[^a-z0-9]+", " ", text.lower()).strip()
 
 
 # --------------------------------------------------------------------------
@@ -121,52 +120,206 @@ def shopify_status(product, variant_id=None):
     return (IN_STOCK if available else OUT_OF_STOCK), price_str
 
 
+def publisher_words(publisher):
+    return [w for w in normalize(publisher).split()
+            if w not in ("games", "game", "simulations", "publishing", "inc", "ltd", "llc", "the")]
+
+
+def text_has_publisher(text, publisher):
+    words = publisher_words(publisher)
+    have = normalize(text).split()
+    return all(w in have for w in words)
+
+
 def publisher_matches(product, publisher):
-    """Loose check that the product is from the given publisher (vendor, tags, type or description)."""
-    words = [w for w in normalize(publisher).split() if w not in ("games", "game", "simulations", "publishing", "inc", "ltd", "llc")]
-    if not words:
-        return True
+    """Loose check that a Shopify product is from the given publisher (vendor, tags, type or description)."""
     tags = product.get("tags") or []
     if isinstance(tags, str):
         tags = tags.split(",")
-    text = normalize(" ".join([product.get("vendor", ""), product.get("type", ""), product.get("title", ""),
-                               product.get("description", ""), *tags]))
-    return all(w in text.split() for w in words)
+    return text_has_publisher(" ".join([product.get("vendor", ""), product.get("type", ""), product.get("title", ""),
+                                        product.get("description", ""), *tags]), publisher)
+
+
+# --------------------------------------------------------------------------
+# Store search, one function per shop platform.
+# Each returns a list of candidates: dict(title, status, price, link, publisher_text)
+# publisher_text is None when the platform doesn't expose it in search results.
+# --------------------------------------------------------------------------
+def search_shopify(base, query, publisher):
+    data = fetch_json(f"{base}/search/suggest.json?q={quote(query)}&resources[type]=product&resources[limit]=10")
+    out = []
+    for p in data["resources"]["results"]["products"]:
+        if normalize(query) not in normalize(p.get("title")):
+            continue
+        handle = p.get("handle") or p.get("url", "").split("/products/")[-1].split("?")[0]
+        product = shopify_product(base, handle)
+        if publisher and not publisher_matches(product, publisher):
+            out.append({"title": p.get("title"), "status": "wrong_publisher"})
+            continue
+        status, price = shopify_status(product)
+        out.append({"title": p.get("title"), "status": status, "price": price, "link": f"{base}/products/{handle}"})
+    return out
+
+
+def search_woocommerce(base, query, publisher):
+    items = fetch_json(f"{base}/wp-json/wc/store/v1/products?search={quote(query)}&per_page=20")
+    out = []
+    for it in items:
+        title = re.sub(r"<[^>]+>", "", it.get("name", ""))
+        if normalize(query) not in normalize(title):
+            continue
+        meta = " ".join([it.get("description", ""), it.get("short_description", ""),
+                         *[c.get("name", "") for c in it.get("categories", [])],
+                         *[t.get("name", "") for t in it.get("tags", [])],
+                         *[b.get("name", "") for b in it.get("brands", [])],
+                         *[" ".join(t.get("name", "") for t in a.get("terms", [])) for a in it.get("attributes", [])]])
+        meta_txt = re.sub(r"<[^>]+>", " ", meta)
+        if publisher and not text_has_publisher(meta_txt + " " + title, publisher):
+            out.append({"title": title, "status": "wrong_publisher"})
+            continue
+        avail = (it.get("stock_availability") or {})
+        if PREORDER_RE.search(title) or "backorder" in str(avail.get("class", "")) or PREORDER_RE.search(str(avail.get("text", ""))):
+            status = PREORDER
+        elif it.get("is_in_stock") and it.get("is_purchasable", True):
+            status = IN_STOCK
+        else:
+            status = OUT_OF_STOCK
+        prices = it.get("prices") or {}
+        price = None
+        if prices.get("price"):
+            minor = int(prices.get("currency_minor_unit", 2))
+            price = f"${int(prices['price']) / 10 ** minor:.2f}"
+        out.append({"title": title, "status": status, "price": price, "link": it.get("permalink")})
+    return out
+
+
+def search_lightspeed(base, query, publisher):
+    data = fetch_json(f"{base}/search/{quote(query)}/?format=json")
+    prods = (data.get("collection") or {}).get("products") or {}
+    out = []
+    for p in (prods.values() if isinstance(prods, dict) else prods):
+        title = p.get("title", "")
+        if normalize(query) not in normalize(title):
+            continue
+        brand = (p.get("brand") or {}).get("title", "") if isinstance(p.get("brand"), dict) else ""
+        if publisher and not text_has_publisher(f'{brand} {p.get("fulltitle", "")} {p.get("description", "")}', publisher):
+            out.append({"title": title, "status": "wrong_publisher"})
+            continue
+        if PREORDER_RE.search(title):
+            status = PREORDER
+        else:
+            status = IN_STOCK if p.get("available") else OUT_OF_STOCK
+        price = (p.get("price") or {}).get("price")
+        out.append({"title": title, "status": status, "price": f"${price:.2f}" if isinstance(price, (int, float)) else None,
+                    "link": f'{base}/{p.get("url", "").lstrip("/")}'})
+    return out
+
+
+def _blocks(html, start_marker):
+    html = re.sub(r"<!--.*?-->", "", html, flags=re.S)  # comments can mention "preorder" etc.
+    parts = html.split(start_marker)
+    return parts[1:]
+
+
+def _clean(t):
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", t or "")).strip()
+
+
+def search_crystalcommerce(base, query, publisher):
+    html = fetch(f"{base}/products/search?q={quote(query)}")
+    out = []
+    for blk in _blocks(html, 'class="product" itemscope'):
+        m = re.search(r'itemprop="name"[^>]*title="([^"]+)"', blk) or re.search(r'itemprop="name"[^>]*>(.*?)<', blk, re.S)
+        title = _clean(m.group(1)) if m else ""
+        if not title or normalize(query) not in normalize(title):
+            continue
+        link = re.search(r'href="(/catalog/[^"]+)"', blk)
+        if PREORDER_RE.search(title) or re.search(r"pre-?order", blk, re.I):
+            status = PREORDER
+        elif "variant-row in-stock" in blk:
+            status = IN_STOCK
+        else:
+            status = OUT_OF_STOCK
+        pm = (re.search(r'variant-row in-stock.*?itemprop="price"[^>]*>\s*([^<]*\d[^<]*)<', blk, re.S)
+              or re.search(r'itemprop="price"[^>]*>\s*([^<]*\d[^<]*)<', blk))
+        out.append({"title": title, "status": status, "price": _clean(pm.group(1)).replace("CAD$ ", "$") if pm else None,
+                    "link": base + link.group(1) if link else None})
+    return out
+
+
+def search_magento(base, query, publisher):
+    html = fetch(f"{base}/en/catalogsearch/result/?q={quote(query)}")
+    out = []
+    for blk in _blocks(html, '<li class="item product product-item">'):
+        m = re.search(r'class="product-item-link"\s+href="([^"]+)"[^>]*>(.*?)</a>', blk, re.S)
+        if not m:
+            continue
+        title, link = _clean(m.group(2)), m.group(1)
+        if normalize(query) not in normalize(title):
+            continue
+        if PREORDER_RE.search(title) or re.search(r"pr[ée]-?commande|pre-?order", blk, re.I):
+            status = PREORDER
+        elif "tocart-form" in blk and not re.search(r"rupture|out of stock|unavailable", blk, re.I):
+            status = IN_STOCK
+        else:
+            status = OUT_OF_STOCK
+        pm = re.search(r'data-price-amount="([\d.]+)"', blk)
+        out.append({"title": title, "status": status, "price": f"${float(pm.group(1)):.2f}" if pm else None, "link": link})
+    return out
+
+
+def search_greatboardgames(base, query, publisher):
+    html = fetch(f"{base}/search?q={quote(query)}")
+    out = []
+    for blk in _blocks(html, '<div class="product card'):
+        blk = blk.split("<!-- /product-->")[0]
+        m = re.search(r'<h3[^>]*>\s*<a href="([^"]+)"[^>]*>(.*?)</a>', blk, re.S)
+        if not m:
+            continue
+        title, link = _clean(m.group(2)), m.group(1)
+        if normalize(query) not in normalize(title):
+            continue
+        if PREORDER_RE.search(title) or re.search(r"pre-?order", blk, re.I):
+            status = PREORDER
+        elif re.search(r"out of stock|sold out", blk, re.I):
+            status = OUT_OF_STOCK
+        elif "addToCart" in blk:
+            status = IN_STOCK
+        else:
+            status = OUT_OF_STOCK
+        pm = re.search(r"\$\s?([\d,]+\.\d\d)", blk)
+        out.append({"title": title, "status": status, "price": f"${pm.group(1)}" if pm else None, "link": link})
+    return out
+
+
+SEARCHERS = {
+    "shopify": search_shopify,
+    "woocommerce": search_woocommerce,
+    "lightspeed": search_lightspeed,
+    "crystalcommerce": search_crystalcommerce,
+    "magento": search_magento,
+    "greatboardgames": search_greatboardgames,
+}
 
 
 def check_search(watch):
-    """Search a Shopify store's catalogue for the title (and publisher, if given)."""
+    """Search one store's catalogue for the title (and publisher, if given)."""
     base = watch["store"].rstrip("/")
-    query = watch["query"]
+    platform = watch.get("platform", "shopify")
     publisher = watch.get("publisher")
-    must_match = normalize(query)
-    url = f"{base}/search/suggest.json?q={quote(query)}&resources[type]=product&resources[limit]=10"
     try:
-        data = fetch_json(url)
-        found = data["resources"]["results"]["products"]
-    except (HTTPError, URLError, TimeoutError, OSError, ValueError, KeyError, TypeError) as exc:
-        return UNKNOWN, None, None, f"store search failed ({exc}) - is it a Shopify store?"
+        candidates = SEARCHERS[platform](base, watch["query"], publisher)
+    except (HTTPError, URLError, TimeoutError, OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
+        return UNKNOWN, None, None, f"store search failed ({type(exc).__name__}: {str(exc)[:80]})"
 
-    candidates = [p for p in found if must_match in normalize(p.get("title"))]
-    if not candidates:
+    real = [c for c in candidates if c["status"] != "wrong_publisher"]
+    if not real:
+        if candidates:
+            return NOT_LISTED, None, None, f"title found, but not by {publisher}"
         return NOT_LISTED, None, None, "searched store catalogue"
-
-    # A store can list several editions; report the best one.
-    best = None
     rank = {IN_STOCK: 0, OUT_OF_STOCK: 1, PREORDER: 2, UNKNOWN: 3}
-    for p in candidates:
-        handle = p.get("handle") or p.get("url", "").split("/products/")[-1].split("?")[0]
-        try:
-            product = shopify_product(base, handle)
-            if publisher and not publisher_matches(product, publisher):
-                continue
-            status, price = shopify_status(product)
-        except (HTTPError, URLError, TimeoutError, OSError, ValueError):
-            status, price = UNKNOWN, None
-        link = f"{base}/products/{handle}"
-        if best is None or rank[status] < rank[best[0]]:
-            best = (status, price, link, f'found "{p.get("title")}"')
-    return best or (NOT_LISTED, None, None, f"title found, but not by {publisher}")
+    best = min(real, key=lambda c: rank.get(c["status"], 9))
+    return best["status"], best.get("price"), best.get("link"), f'found "{best["title"]}"'
 
 
 # --------------------------------------------------------------------------
@@ -285,10 +438,14 @@ def build_watches(config):
     watches = []
     for game in config.get("games", []):
         for store in config.get("stores", []):
+            if not store.get("platform") or store.get("enabled") is False:
+                continue  # store can't be searched automatically, or switched off
             watches.append({
                 "game": game["title"],
+                "store_name": store["name"],
                 "name": f'{game["title"]} @ {store["name"]}',
                 "store": store["url"],
+                "platform": store["platform"],
                 "query": game["title"],
                 "publisher": game.get("publisher") or None,
             })
@@ -344,28 +501,43 @@ def send_email(subject, body):
     print(f"Email sent to {to}: {subject}")
 
 
+def now_utc():
+    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+
 def run_once(dry_run=False):
     config = load_json(CONFIG_PATH, None)
     watches = build_watches(config or {})
     if not watches:
         raise SystemExit('Nothing to watch yet. Add a game:  python stock_alert.py add "Game Title" --publisher "Publisher"')
     state = load_json(STATE_PATH, {})
+    if "watches" not in state:  # older flat format
+        state = {"watches": {k: v for k, v in state.items() if isinstance(v, dict)}}
+    old = state["watches"]
+    stores_health = state.get("stores", {})
 
-    alerts, alert_games, persistent_failures = [], [], []
-    for watch in watches:
+    # Check every game/store pair, several stores at a time.
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        results = list(pool.map(check_watch, watches))
+
+    alerts, alert_games, new_watches = [], [], {}
+    store_ok = {}
+    for watch, (status, price, link, method) in zip(watches, results):
         key = watch_key(watch)
         name = watch.get("name") or watch.get("query") or watch.get("url")
-        status, price, link, method = check_watch(watch)
-        prev = state.get(key, {})
-
+        prev = old.get(key, {})
         price_note = f" - {price}" if price else ""
         print(f"[{LABELS[status]:>20}] {name}{price_note}  ({method})")
 
+        base = {"game": watch["game"], "store": watch.get("store_name") or watch.get("url"),
+                "store_url": watch.get("store") or watch.get("url"), "checked": now_utc()}
+        if watch.get("store"):
+            store_ok.setdefault(watch["store"], {"name": watch.get("store_name"), "ok": True, "error": None})
         if status == UNKNOWN:
-            fails = prev.get("failures", 0) + 1
-            state[key] = {**prev, "failures": fails}
-            if fails >= FAILURES_BEFORE_ALERT:
-                persistent_failures.append(f"{name}: {method}")
+            if watch.get("store"):
+                store_ok[watch["store"]].update(ok=False, error=method)
+            new_watches[key] = {**prev, **base, "status": prev.get("status", UNKNOWN),
+                                "failures": prev.get("failures", 0) + 1, "error": method}
             continue
 
         # Only in-stock ever notifies, and only on the change into in-stock.
@@ -373,7 +545,14 @@ def run_once(dry_run=False):
             alerts.append(f"{name} is IN STOCK{price_note}\n{link}")
             if watch["game"] not in alert_games:
                 alert_games.append(watch["game"])
-        state[key] = {"status": status, "failures": 0, "link": link, "checked": time.strftime("%Y-%m-%d %H:%M")}
+        new_watches[key] = {**base, "status": status, "price": price, "link": link,
+                            "detail": method, "failures": 0,
+                            "since": prev.get("since") if prev.get("status") == status else now_utc()}
+
+    for url, info in store_ok.items():
+        h = stores_health.get(url, {})
+        stores_health[url] = {"name": info["name"], "ok": info["ok"], "error": info["error"],
+                              "last_ok": now_utc() if info["ok"] else h.get("last_ok"), "checked": now_utc()}
 
     if dry_run:
         print("\n(dry run - no email sent, state not saved)")
@@ -383,11 +562,11 @@ def run_once(dry_run=False):
         subject = "In stock: " + ", ".join(alert_games)
         send_email(subject, "\n\n".join(alerts) + "\n\nGo get it!")
 
-    STATE_PATH.write_text(json.dumps(state, indent=2) + "\n")
-
-    if persistent_failures:
-        print("\nThese checks have failed several times in a row:\n  " + "\n  ".join(persistent_failures))
-        return 2
+    state = {"updated": now_utc(), "watches": new_watches, "stores": stores_health}
+    STATE_PATH.write_text(json.dumps(state, indent=2, ensure_ascii=False) + "\n")
+    bad = [i["name"] for i in store_ok.values() if not i["ok"]]
+    if bad:
+        print(f"\n{len(bad)} store(s) couldn't be checked this time: " + ", ".join(sorted(set(bad))))
     return 0
 
 

@@ -47,4 +47,6 @@ jobs:
           git config user.name "stock-alert-bot"
           git config user.email "stock-alert-bot@users.noreply.github.com"
           git add state.json 2>/dev/null || exit 0
-          git diff --cached --quiet || (git commit -m "Update stock state" && git push)
+          git diff --cached --quiet && exit 0
+          git commit -qm "Update stock state"
+          for i in 1 2 3; do git pull -q --rebase && git push -q && break; sleep 5; done

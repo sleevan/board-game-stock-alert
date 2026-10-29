@@ -7,20 +7,290 @@
   ],
   "stores": [
     {
-      "name": "Board Game Bliss",
-      "url": "https://www.boardgamebliss.com"
+      "name": "401 Games",
+      "url": "https://store.401games.ca",
+      "platform": "shopify"
     },
     {
-      "name": "401 Games",
-      "url": "https://store.401games.ca"
+      "name": "A Muse N Games",
+      "url": "https://amusengames.ca",
+      "platform": "shopify"
+    },
+    {
+      "name": "Across The Board Game Cafe",
+      "url": "https://acrosstheboardcafe.com",
+      "platform": "woocommerce"
+    },
+    {
+      "name": "Always Games",
+      "url": "https://alwaysgames.ca",
+      "platform": "shopify"
+    },
+    {
+      "name": "Amazing Stories",
+      "url": "https://www.amazingstoriescomics.ca",
+      "platform": null,
+      "note": "Blocks automated checks"
+    },
+    {
+      "name": "Amazon CA",
+      "url": "https://www.amazon.ca",
+      "platform": null,
+      "note": "Blocks automated checks"
+    },
+    {
+      "name": "Arctic Board Games",
+      "url": "https://arcticboardgames.ca",
+      "platform": "woocommerce"
+    },
+    {
+      "name": "As Des Jeux",
+      "url": "https://www.asdesjeux.com",
+      "platform": "shopify"
     },
     {
       "name": "Black Knight Games",
-      "url": "https://blackknightgames.ca"
+      "url": "https://blackknightgames.ca",
+      "platform": "shopify"
+    },
+    {
+      "name": "Board Game Bliss",
+      "url": "https://www.boardgamebliss.com",
+      "platform": "shopify"
+    },
+    {
+      "name": "Board Game Emporium",
+      "url": "https://bgemporium.ca",
+      "platform": "shopify"
+    },
+    {
+      "name": "Board Games N More",
+      "url": "https://www.boardgamesnmore.com",
+      "platform": null,
+      "note": "Store search can't be read automatically"
+    },
+    {
+      "name": "Boutique La Revanche",
+      "url": "https://boutique.larevanche.ca",
+      "platform": "lightspeed"
+    },
+    {
+      "name": "Brimstone Games",
+      "url": "https://brimstonegames.ca",
+      "platform": "shopify"
+    },
+    {
+      "name": "C.D. Jeux",
+      "url": "https://cdjeux.ca",
+      "platform": "shopify"
+    },
+    {
+      "name": "Cardboard Memories",
+      "url": "https://www.cardboardmemories.ca",
+      "platform": "shopify"
+    },
+    {
+      "name": "Dragon's Den Games",
+      "url": "https://dragonsdengames.com",
+      "platform": "shopify"
+    },
+    {
+      "name": "F.G. Bradley's",
+      "url": "https://www.fgbradleys.com",
+      "platform": null,
+      "note": "Store search can't be read automatically"
+    },
+    {
+      "name": "Fusion Gaming",
+      "url": "https://www.fusiongamingonline.com",
+      "platform": "shopify"
+    },
+    {
+      "name": "Game Keeper Online",
+      "url": "https://www.gamekeeperonline.com",
+      "platform": "crystalcommerce"
     },
     {
       "name": "Game Shack",
-      "url": "https://www.gameshack.ca"
+      "url": "https://www.gameshack.ca",
+      "platform": "shopify"
+    },
+    {
+      "name": "GameKnight Games",
+      "url": "https://gameknight.ca",
+      "platform": "shopify"
+    },
+    {
+      "name": "Geek Stop Games",
+      "url": "https://geekstopgames.com",
+      "platform": null,
+      "note": "Refuses automated connections"
+    },
+    {
+      "name": "Great Boardgames",
+      "url": "https://www.greatboardgames.ca",
+      "platform": "greatboardgames"
+    },
+    {
+      "name": "Hobbiesville",
+      "url": "https://hobbiesville.com",
+      "platform": "shopify"
+    },
+    {
+      "name": "Imaginaire",
+      "url": "https://imaginaire.com",
+      "platform": null,
+      "note": "Blocks automated checks"
+    },
+    {
+      "name": "J&J Cards & Collectibles",
+      "url": "https://shop.jjcards.com",
+      "platform": null,
+      "note": "Store search can't be read automatically"
+    },
+    {
+      "name": "La Pioche",
+      "url": "https://boutiquelapioche.com",
+      "platform": "shopify"
+    },
+    {
+      "name": "La Ribouldingue",
+      "url": "https://www.laribouldingue.ca",
+      "platform": "shopify"
+    },
+    {
+      "name": "Le Roi des Cartes Valleyfield",
+      "url": "https://leroidescartesvalley.com",
+      "platform": null,
+      "note": "Store search can't be read automatically"
+    },
+    {
+      "name": "Le Valet d'Coeur",
+      "url": "https://levalet.com",
+      "platform": "magento"
+    },
+    {
+      "name": "Legends Warehouse",
+      "url": "https://legendswarehouse.ca",
+      "platform": "shopify"
+    },
+    {
+      "name": "Les Jeux Grillons Givrés",
+      "url": "https://en.crazycrickets.games",
+      "platform": null,
+      "note": "Website's secure connection fails"
+    },
+    {
+      "name": "Lvlup Games",
+      "url": "https://lvlupgames.ca",
+      "platform": "shopify"
+    },
+    {
+      "name": "Magic Stronghold Games",
+      "url": "https://www.magicstronghold.com",
+      "platform": null,
+      "note": "Store search only works in a browser"
+    },
+    {
+      "name": "Meeples and Milkshakes",
+      "url": "https://meeples.ca",
+      "platform": null,
+      "note": "Online store currently unavailable"
+    },
+    {
+      "name": "Mission: Fun & Games",
+      "url": "https://www.boardgames.ca",
+      "platform": null,
+      "note": "Store search only works in a browser"
+    },
+    {
+      "name": "Multizone Comics and Games",
+      "url": "https://multizone.ca",
+      "platform": "shopify"
+    },
+    {
+      "name": "Owls Hollow",
+      "url": "https://www.owlshollow.com",
+      "platform": "lightspeed"
+    },
+    {
+      "name": "Pandora's Boox",
+      "url": "https://www.pandorasboox.ca",
+      "platform": "shopify"
+    },
+    {
+      "name": "Pe Metawe Games",
+      "url": "https://shop.pemetawe.com",
+      "platform": null,
+      "note": "Store search can't be read automatically"
+    },
+    {
+      "name": "Rain City Games",
+      "url": "https://www.raincity.games",
+      "platform": "shopify"
+    },
+    {
+      "name": "Samko and Miko Toy Warehouse",
+      "url": "https://www.samkoandmiko.com",
+      "platform": null,
+      "note": "Store website address not found"
+    },
+    {
+      "name": "Screen Free Games",
+      "url": "https://screenfreegames.com",
+      "platform": "shopify"
+    },
+    {
+      "name": "Studio Staja",
+      "url": "https://staja.ca",
+      "platform": "shopify"
+    },
+    {
+      "name": "Table Top Cafe",
+      "url": "https://www.tabletopcafe.ca",
+      "platform": "shopify"
+    },
+    {
+      "name": "Tadenac Games",
+      "url": "https://tadenacgames.ca",
+      "platform": "woocommerce"
+    },
+    {
+      "name": "The Connection Games & Hobbies",
+      "url": "https://www.theconnectiongames.com",
+      "platform": "crystalcommerce"
+    },
+    {
+      "name": "The Gamers Table",
+      "url": "https://gamerstable.ca",
+      "platform": "shopify"
+    },
+    {
+      "name": "The Mana Lounge",
+      "url": "https://www.manalounge.ca",
+      "platform": "shopify"
+    },
+    {
+      "name": "Toys On Fire",
+      "url": "https://www.toysonfire.ca",
+      "platform": null,
+      "note": "Store search can't be read automatically"
+    },
+    {
+      "name": "Victory Pints Games",
+      "url": "https://www.victorypints.ca",
+      "platform": null,
+      "note": "Store search can't be read automatically"
+    },
+    {
+      "name": "WiredVillage Boardgames",
+      "url": "https://wiredvillagegames.com",
+      "platform": "shopify"
+    },
+    {
+      "name": "Wood For Sheep",
+      "url": "https://www.woodforsheep.ca",
+      "platform": "shopify"
     }
   ],
   "product_urls": []
