@@ -16,6 +16,12 @@ You don't need product links. Give it a title (publisher optional) and it search
 
 Saving changes needs a GitHub token, set up once per browser under **GitHub access** on the page. Make it a fine-grained token with access to only this repository, and these permissions: **Contents: Read and write** and **Actions: Read and write**. The token stays in that browser; it's never stored in the repo.
 
+## How titles are matched
+
+- **Titles of 5 or more characters:** any listing that contains the whole title (as whole words) counts, ignoring capitalization and punctuation. "Blood Rage: Valhalla (EN)" and "Blood Rage: Valhalla – Road to Helheim" both count for *Blood Rage: Valhalla*.
+- **Titles of 4 characters or fewer** (like *ito* or *Root*): only exact titles count, ignoring language tags, pre-order tags and "Board Game". Close titles ("Yuui ito", edition wording) appear on the web page under **Is this the same game?** for you to confirm or ignore; titles mostly made of other words are skipped.
+- Titles you ignore on the web page stay ignored for that game.
+
 ## Stores
 
 The store list comes from [Board Game Oracle's Canadian stores](https://www.boardgameoracle.com/en-CA/store), plus Black Knight Games. They live in `config.json` under `"stores"`. Each store has a `platform` that says how its catalogue is searched:

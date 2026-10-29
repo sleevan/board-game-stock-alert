@@ -114,8 +114,19 @@ def title_has_words(title, query):
     return f" {normalize(query)} " in f" {normalize(title)} "
 
 
+SHORT_TITLE_CHARS = 4   # titles this short use strict matching; longer ones match on containment
+
+
+def is_short_title(query):
+    return len(normalize(query).replace(" ", "")) <= SHORT_TITLE_CHARS
+
+
 def match_kind(query, title):
-    """'exact', 'possible' (ask the user), or None (not this game)."""
+    """'exact', 'possible' (ask the user), or None (not this game).
+    Longer titles: any listing containing the whole title counts.
+    Short titles (4 characters or fewer): only exact titles count; near matches are asked about."""
+    if not is_short_title(query):
+        return "exact" if title_has_words(title, query) else None
     q, _ = title_core(query)
     c, had_edition = title_core(title)
     if c == q:
@@ -613,6 +624,8 @@ def check_search(watch):
     for c in real:
         kind = match_kind(watch["query"], c["title"])
         key = title_core(c["title"])[0]
+        if key in rejected and normalize(c["title"]) != normalize(watch["query"]):
+            continue
         if kind == "exact" or (kind and key in accepted):
             confirmed.append(c)
         elif kind == "possible" and key not in rejected:
