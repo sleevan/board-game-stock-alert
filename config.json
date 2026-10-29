@@ -88,7 +88,13 @@
       "added": "2026-10-29T20:47:27Z",
       "publisher": "Devir",
       "publisher_source": "Board Game Bliss",
-      "publisher_listing": "The White Castle: Matcha"
+      "publisher_listing": "The White Castle: Matcha",
+      "hidden": [
+        {
+          "store": "Board Game Bliss",
+          "title": "The Dicetroyers - The White Castle (Italy Import)"
+        }
+      ]
     }
   ],
   "stores": [
