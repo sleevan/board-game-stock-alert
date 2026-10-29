@@ -653,6 +653,10 @@ def check_search(watch):
     rejected = {title_core(t)[0] for t in watch.get("reject", [])}
     confirmed, possible = [], []
     for c in real:
+        if watch.get("exact"):   # quoted title: exact title only, no "is this the same game?" prompts
+            if title_core(c["title"])[0] == title_core(watch["query"])[0]:
+                confirmed.append(c)
+            continue
         kind = match_kind(watch["query"], c["title"])
         key = title_core(c["title"])[0]
         if key in rejected and normalize(c["title"]) != normalize(watch["query"]):
@@ -781,11 +785,27 @@ def watch_key(watch):
     if watch.get("store"):
         pub = watch.get("publisher")
         pub = pub[0] if isinstance(pub, list) else pub
-        return f'search:{watch["store"].rstrip("/")}|{normalize(watch["query"])}|{normalize(pub)}'
+        key = f'search:{watch["store"].rstrip("/")}|{normalize(watch["query"])}|{normalize(pub)}'
+        return key + ("|exact" if watch.get("exact") else "")
     return watch["url"]
 
 
 DEFAULT_EXCLUDE_WORDS = ["xbox", "switch", "ps4", "ps5"]
+QUOTES = "\"'\u201c\u201d\u2018\u2019\u00ab\u00bb"
+
+
+def parse_title(title):
+    """'"Root"' -> ('Root', True): a title in quotation marks means exact-title matching."""
+    t = (title or "").strip()
+    if len(t) >= 2 and t[0] in QUOTES and t[-1] in QUOTES:
+        return t[1:-1].strip(), True
+    return t, False
+
+
+def game_title(game):
+    """(clean title, exact?) for a game entry; supports "exact": true or a quoted title."""
+    t, quoted = parse_title(game.get("title", ""))
+    return t, bool(game.get("exact")) or quoted
 
 
 def build_watches(config):
@@ -795,14 +815,16 @@ def build_watches(config):
         for store in config.get("stores", []):
             if not store.get("platform") or store.get("enabled") is False:
                 continue  # store can't be searched automatically, or switched off
+            title, exact = game_title(game)
             watches.append({
                 "game": game["title"],
                 "store_name": store["name"],
                 "shipping": store.get("shipping"),
-                "name": f'{game["title"]} @ {store["name"]}',
+                "name": f'{title} @ {store["name"]}',
                 "store": store["url"],
                 "platform": store["platform"],
-                "query": game["title"],
+                "query": title,
+                "exact": exact,
                 # A publisher you type in filters listings. One looked up automatically is shown on the
                 # web page but doesn't filter, because stores often list a distributor instead.
                 "publisher": None if game.get("publisher_source") else (game.get("publishers") or game.get("publisher") or None),
@@ -897,7 +919,7 @@ def fill_missing_publishers(config):
         if last and now - calendar.timegm(time.strptime(last, "%Y-%m-%dT%H:%M:%SZ")) < LOOKUP_RETRY_HOURS * 3600:
             continue
         try:
-            vendor, listing = bliss_publisher(g["title"])
+            vendor, listing = bliss_publisher(game_title(g)[0])
         except Exception as exc:
             print(f'Board Game Bliss lookup failed for "{g["title"]}": {exc}')
             g.update(publisher_lookup="failed", publisher_checked=now_utc(),
@@ -1009,11 +1031,11 @@ def manage_games(args):
     config = load_json(CONFIG_PATH, {"games": [], "stores": []})
     games = config.setdefault("games", [])
     if args.command == "add":
-        title = " ".join(args.title).strip()
+        title, exact = parse_title(" ".join(args.title))
         if any(normalize(g["title"]) == normalize(title) for g in games):
             print(f'Already watching "{title}".')
             return 0
-        entry = {"title": title}
+        entry = {"title": title, **({"exact": True} if exact else {})}
         if args.publisher:
             entry["publisher"] = args.publisher
         games.append(entry)
