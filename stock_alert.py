@@ -649,6 +649,9 @@ def check_search(watch):
     words = watch.get("exclude_words", [])
     candidates = [c for c in candidates
                   if not any(word_count(c["title"], w) > word_count(watch["query"], w) for w in words)]
+    # Listings you removed on the web page (for this store).
+    hidden = set(watch.get("hidden", []))
+    candidates = [c for c in candidates if title_core(c["title"])[0] not in hidden]
     # Your own -word exclusions for this game.
     candidates = [c for c in candidates if not any(excluded_by(c["title"], t) for t in watch.get("exclude_terms", []))]
     real = [c for c in candidates if c["status"] != "wrong_publisher"]
@@ -861,6 +864,7 @@ def build_watches(config):
                 "exclude_words": config.get("exclude_title_words", DEFAULT_EXCLUDE_WORDS),
                 "accept": game.get("accept", []),
                 "reject": game.get("reject", []),
+                "hidden": [title_core(h.get("title", ""))[0] for h in game.get("hidden", []) if h.get("store") == store["name"]],
             })
     for extra in config.get("product_urls", []):
         watches.append({**extra, "game": extra.get("name", extra["url"])})
