@@ -1,0 +1,13 @@
+{
+  "games": [
+    { "title": "Thirty Years of Misery", "publisher": "VUCA Simulations" }
+  ],
+  "stores": [
+    { "name": "Board Game Bliss",   "url": "https://www.boardgamebliss.com" },
+    { "name": "401 Games",          "url": "https://store.401games.ca" },
+    { "name": "Black Knight Games", "url": "https://blackknightgames.ca" },
+    { "name": "Game Shack",         "url": "https://www.gameshack.ca" },
+    { "name": "Meeple Mart",        "url": "https://www.meeplemart.com" }
+  ],
+  "product_urls": []
+}
