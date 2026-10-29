@@ -8,7 +8,7 @@ You don't need product links. Give it a title (publisher optional) and it search
 
 **https://sleevan.github.io/board-game-stock-alert/**
 
-- Add a game (title, plus publisher if you want to rule out similarly named games). Leave the publisher blank and it's looked up on BoardGameGeek.
+- Add a game (title, plus publisher if you want to rule out similarly named games). Leave the publisher blank and it's looked up on Board Game Bliss.
 - See, per game, which stores have it in stock, sold out, or on pre-order, with links and prices.
 - Stop watching a game.
 - Start a check right away with **Check now**.
@@ -69,19 +69,12 @@ For a store that can't be searched, you can watch a single product page once it 
 | `SMTP_PASSWORD` | that account's App Password |
 | `EMAIL_TO` | where alerts go (defaults to `SMTP_USER`) |
 | `SMTP_HOST` / `SMTP_PORT` | optional; default `smtp.gmail.com` / `465` |
-| `BGG_TOKEN` | BoardGameGeek API token, for publisher lookups (optional) |
 
 To test: Actions tab → **Board game stock check** → **Run workflow** → tick **Just send a test email**.
 
-## Publisher lookup (BoardGameGeek)
+## Publisher lookup (Board Game Bliss)
 
-When a game is added without a publisher, the next check looks the title up with BoardGameGeek's official XML API and saves its publishers to `config.json`. A store listing from any of them counts as a match, since many games have regional publishers. If BGG has no match, the game matches any publisher.
-
-BGG requires a registered application for API access:
-1. Sign in to BoardGameGeek and register a non-commercial application at https://boardgamegeek.com/applications. Approval can take a week or more.
-2. Once approved, create a token there and add it as the `BGG_TOKEN` secret.
-
-Until then, games without a publisher are matched by title alone.
+When a game is added without a publisher, the next check looks the title up on Board Game Bliss and saves the publisher from its listing. If Bliss doesn't list the game yet, it tries again every 24 hours. A publisher found this way is shown on the web page but doesn't filter listings, since stores often record a distributor instead. A publisher you type in yourself does filter.
 
 ## How it runs
 

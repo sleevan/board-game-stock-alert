@@ -23,6 +23,7 @@ Usage:
     python stock_alert.py --test-email # send a test email to confirm SMTP works
 """
 import argparse
+import calendar
 import html as htmllib
 import json
 import os
@@ -768,7 +769,9 @@ def build_watches(config):
                 "store": store["url"],
                 "platform": store["platform"],
                 "query": game["title"],
-                "publisher": game.get("publishers") or game.get("publisher") or None,
+                # A publisher you type in filters listings. One looked up automatically is shown on the
+                # web page but doesn't filter, because stores often list a distributor instead.
+                "publisher": None if game.get("publisher_source") else (game.get("publishers") or game.get("publisher") or None),
                 "accept": game.get("accept", []),
                 "reject": game.get("reject", []),
             })
@@ -825,95 +828,56 @@ def send_email(subject, body):
 
 
 # --------------------------------------------------------------------------
-# Publisher lookup on BoardGameGeek (official XML API; needs BGG_TOKEN)
+# Publisher lookup on Board Game Bliss (Shopify "vendor" = publisher)
 # --------------------------------------------------------------------------
-BGG_API = "https://boardgamegeek.com/xmlapi2"
+BLISS = "https://www.boardgamebliss.com"
+LOOKUP_RETRY_HOURS = 24   # a title Bliss doesn't list yet is tried again a day later
 
 
-def bgg_get(path, token):
-    import xml.etree.ElementTree as ET
-    for attempt in range(3):
-        req = Request(f"{BGG_API}/{path}", headers={"Authorization": f"Bearer {token}", "User-Agent": "board-game-stock-alert"})
-        with urlopen(req, timeout=30) as r:
-            body = r.read()
-            if r.status == 202:      # BGG queued the request; ask again shortly
-                time.sleep(3)
-                continue
-        return ET.fromstring(body)
-    raise TimeoutError("BoardGameGeek kept the request queued")
-
-
-def bgg_publishers(title, token):
-    """Return (bgg_id, [publishers]) for the best match, or (None, [])."""
-    ids = []
-    for exact in ("1", "0"):
-        root = bgg_get(f"search?query={quote(title)}&type=boardgame&exact={exact}", token)
-        items = root.findall("item")
-        if exact == "0":
-            items = [i for i in items
-                     if normalize((i.find("name").get("value") if i.find("name") is not None else "")) == normalize(title)] or items[:5]
-        ids = [i.get("id") for i in items][:20]
-        if ids:
-            break
-    if not ids:
-        return None, []
-    root = bgg_get(f"thing?id={','.join(ids)}&stats=1", token)
-    best, best_votes = None, -1
-    for item in root.findall("item"):
-        votes = item.find("statistics/ratings/usersrated")
-        n = int(votes.get("value")) if votes is not None and votes.get("value", "").isdigit() else 0
-        if n > best_votes:
-            best, best_votes = item, n
-    if best is None:
-        return None, []
-    pubs = [l.get("value") for l in best.findall("link") if l.get("type") == "boardgamepublisher"]
-    pubs = [p for p in pubs if p and not p.startswith("(")]       # drop "(Unknown)", "(Self-Published)"
-    return best.get("id"), pubs[:25]
+def bliss_publisher(title):
+    """Publisher of the Board Game Bliss listing that best matches the title, or None."""
+    data = fetch_json(f"{BLISS}/search/suggest.json?q={quote(title)}&resources[type]=product&resources[limit]=10")
+    want = title_core(title)[0]
+    best = None
+    for p in data["resources"]["results"]["products"]:
+        core = title_core(p.get("title", ""))[0]
+        vendor = (p.get("vendor") or "").strip()
+        if not vendor or not title_has_words(p.get("title", ""), title):
+            continue
+        score = 0 if core == want else len(core.split()) - len(want.split())   # exact title first, then closest
+        if best is None or score < best[0]:
+            best = (score, vendor, p.get("title"))
+    return (best[1], best[2]) if best else (None, None)
 
 
 def fill_missing_publishers(config):
-    """Look up publishers for games added without one. Records the outcome on each game.
+    """Fill in publishers for games added without one. Records the outcome on each game.
     Returns True if config changed."""
-    token = os.environ.get("BGG_TOKEN", "").strip()
-    pending = [g for g in config.get("games", [])
-               if not g.get("publisher") and g.get("publisher_lookup") != "not_found"]
     changed = False
-
-    def mark(g, status, error=None):
-        nonlocal changed
-        if g.get("publisher_lookup") != status or g.get("publisher_lookup_error") != error:
-            g["publisher_lookup"] = status
-            if error:
-                g["publisher_lookup_error"] = error
-            else:
-                g.pop("publisher_lookup_error", None)
-            changed = True
-
-    for g in pending:
-        if not token:
-            print(f'Publisher lookup for "{g["title"]}" skipped: no BGG_TOKEN secret.')
-            mark(g, "needs_token")
+    now = time.time()
+    for g in config.get("games", []):
+        if g.get("publisher"):
+            continue
+        last = g.get("publisher_checked")
+        if last and now - calendar.timegm(time.strptime(last, "%Y-%m-%dT%H:%M:%SZ")) < LOOKUP_RETRY_HOURS * 3600:
             continue
         try:
-            bgg_id, pubs = bgg_publishers(g["title"], token)
-        except HTTPError as exc:
-            why = {401: "BoardGameGeek rejected the token (401). Check the BGG_TOKEN secret.",
-                   403: "BoardGameGeek refused access (403). The application may not be approved yet."}.get(
-                exc.code, f"BoardGameGeek answered with an error ({exc.code}).")
-            print(f'Lookup failed for "{g["title"]}": {why}')
-            mark(g, "failed", why)
+            vendor, listing = bliss_publisher(g["title"])
+        except Exception as exc:
+            print(f'Board Game Bliss lookup failed for "{g["title"]}": {exc}')
+            g.update(publisher_lookup="failed", publisher_checked=now_utc(),
+                     publisher_lookup_error=f"Couldn't reach Board Game Bliss ({type(exc).__name__}). Will retry.")
+            changed = True
             continue
-        except Exception as exc:  # network trouble: try again next run
-            print(f'Lookup failed for "{g["title"]}": {exc}')
-            mark(g, "failed", f"Couldn't reach BoardGameGeek ({type(exc).__name__}). Will retry.")
-            continue
-        if pubs:
-            g.update(publisher=pubs[0], publishers=pubs, publisher_source="BoardGameGeek", bgg_id=bgg_id)
-            g.pop("publisher_lookup", None); g.pop("publisher_lookup_error", None)
-            print(f'Publisher for "{g["title"]}" from BoardGameGeek: {pubs[0]}' + (f" (+{len(pubs) - 1} more)" if len(pubs) > 1 else ""))
+        if vendor:
+            g.update(publisher=vendor, publisher_source="Board Game Bliss", publisher_listing=listing)
+            for k in ("publisher_lookup", "publisher_lookup_error", "publisher_checked", "publishers", "bgg_id"):
+                g.pop(k, None)
+            print(f'Publisher for "{g["title"]}" from Board Game Bliss: {vendor} (listing "{listing}")')
         else:
-            mark(g, "not_found")
-            print(f'No BoardGameGeek match for "{g["title"]}"; matching any publisher.')
+            g.update(publisher_lookup="not_found", publisher_checked=now_utc())
+            g.pop("publisher_lookup_error", None)
+            print(f'Board Game Bliss doesn\'t list "{g["title"]}" yet; will try again in {LOOKUP_RETRY_HOURS} hours.')
         changed = True
     return changed
 

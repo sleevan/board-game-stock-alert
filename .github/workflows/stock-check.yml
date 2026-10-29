@@ -40,7 +40,6 @@ jobs:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
-          BGG_TOKEN: ${{ secrets.BGG_TOKEN }}
 
       - name: Save state
         if: always()

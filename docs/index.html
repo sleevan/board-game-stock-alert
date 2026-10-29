@@ -373,15 +373,11 @@ function render() {
 }
 
 function publisherText(g) {
-  if (g.publisher && g.publisher_source === "BoardGameGeek") {
-    const more = (g.publishers || []).length - 1;
-    return `${esc(g.publisher)}${more > 0 ? ` and ${more} other edition publisher${more > 1 ? "s" : ""}` : ""} · from <a href="https://boardgamegeek.com/boardgame/${esc(g.bgg_id)}" target="_blank" rel="noopener">BoardGameGeek</a>`;
-  }
+  if (g.publisher && g.publisher_source) return `${esc(g.publisher)} · found on ${esc(g.publisher_source)}`;
   if (g.publisher) return esc(g.publisher);
-  if (g.publisher_lookup === "not_found") return "Any publisher · not found on BoardGameGeek";
-  if (g.publisher_lookup === "needs_token") return "Any publisher for now · BoardGameGeek lookup needs a BGG_TOKEN secret";
-  if (g.publisher_lookup === "failed") return "Any publisher for now · " + esc(g.publisher_lookup_error || "BoardGameGeek lookup failed");
-  return "Publisher will be looked up on BoardGameGeek at the next check";
+  if (g.publisher_lookup === "not_found") return "Any publisher · Board Game Bliss doesn't list it yet";
+  if (g.publisher_lookup === "failed") return "Any publisher for now · " + esc(g.publisher_lookup_error || "lookup failed");
+  return "Publisher will be looked up on Board Game Bliss at the next check";
 }
 
 $("stores").addEventListener("change", async e => {
@@ -490,7 +486,7 @@ $("addForm").addEventListener("submit", async e => {
       const entry = publisher ? { title, publisher } : { title };
       await writeConfig({ ...config, games: [...(config.games || []), entry] }, `Watch ${title}`);
       $("title").value = ""; $("publisher").value = "";
-      msg.className = "msg ok"; msg.textContent = `Watching "${title}". ${publisher ? "" : "Its publisher will be looked up on BoardGameGeek. "}Every store will be searched on the next check, or press Check now.`;
+      msg.className = "msg ok"; msg.textContent = `Watching "${title}". ${publisher ? "" : "Its publisher will be looked up on Board Game Bliss. "}Every store will be searched on the next check, or press Check now.`;
       render();
     }
   } catch (err) { msg.className = "msg err"; msg.textContent = explain(err); showSetup(err); }
