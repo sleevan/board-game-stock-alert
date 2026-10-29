@@ -553,7 +553,7 @@ $("games").addEventListener("click", async e => {
       await refreshConfig();
       const next = { ...config, games: config.games.filter(x => norm(x.title) !== norm(g.title)) };
       await writeConfig(next, `Stop watching ${g.title}`);
-      render();
+      hardRefresh();
     } catch (err) { wrap.innerHTML = `<span class="msg err">${esc(explain(err))}</span>`; showSetup(err); }
   }
 });
@@ -564,6 +564,10 @@ function showSetup(err) {
   if (err) { $("tokenMsg").className = "msg err"; $("tokenMsg").textContent = explain(err); }
   $("setupSection").scrollIntoView({ behavior: "smooth", block: "start" }); $("token").focus();
 }
+// Reload from the server, skipping the browser's cached copy: a one-time address forces a fresh download.
+function hardRefresh() { location.replace(location.pathname + "?fresh=" + Date.now() + location.hash); }
+try { if (location.search.includes("fresh=")) history.replaceState(null, "", location.pathname + location.hash); } catch {}
+
 function needToken(where) {
   if (getToken()) return true;
   showSetup();
