@@ -37,10 +37,16 @@
       "publisher_listing": "Jibber Jabble"
     },
     {
-      "title": "Kingdom Come Deliverance"
+      "title": "Kingdom Come Deliverance",
+      "publisher": "Czech Games Edition (CGE)",
+      "publisher_source": "Board Game Bliss",
+      "publisher_listing": "Kingdom Come: Deliverance – The Board Game *PRE-ORDER*"
     },
     {
-      "title": "Maria"
+      "title": "Maria",
+      "publisher": "Histogame",
+      "publisher_source": "Board Game Bliss",
+      "publisher_listing": "Maria (Second Edition) (Import)"
     }
   ],
   "stores": [
