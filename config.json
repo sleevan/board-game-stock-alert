@@ -72,6 +72,14 @@
       "publisher": "GMT Games",
       "publisher_source": "Board Game Bliss",
       "publisher_listing": "Men of Iron Tri-Pack (2nd Printing)"
+    },
+    {
+      "title": "The White Castle",
+      "exclude": [
+        "Matcha",
+        "Duel"
+      ],
+      "added": "2026-10-29T20:47:27Z"
     }
   ],
   "stores": [
