@@ -92,7 +92,13 @@
       "added": "2026-10-29T20:56:16Z",
       "publisher": "Druid City Games",
       "publisher_source": "Board Game Bliss",
-      "publisher_listing": "Tidal Blades 2: Rise of the Unfolders"
+      "publisher_listing": "Tidal Blades 2: Rise of the Unfolders",
+      "hidden": [
+        {
+          "store": "Mission: Fun & Games",
+          "title": "Tidal Blades 2: Rise of the Unfolders - Immortal Deck Box & Card Sleeves"
+        }
+      ]
     }
   ],
   "stores": [
