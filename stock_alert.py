@@ -605,6 +605,12 @@ SEARCHERS = {
 }
 
 
+def price_value(price):
+    """'$1,099.00' -> 1099.0; missing or unreadable prices sort last."""
+    m = re.search(r"\d+(?:\.\d+)?", str(price or "").replace(",", ""))
+    return float(m.group(0)) if m else float("inf")
+
+
 def check_search(watch):
     """Search one store's catalogue for the title (and publisher, if given)."""
     base = watch["store"].rstrip("/")
@@ -643,7 +649,7 @@ def check_search(watch):
             return NOT_LISTED, None, None, f"{len(possible)} possible match(es) to confirm"
         return NOT_LISTED, None, None, "only titles you ruled out"
     rank = {IN_STOCK: 0, OUT_OF_STOCK: 1, PREORDER: 2, UNKNOWN: 3}
-    best = min(confirmed, key=lambda c: rank.get(c["status"], 9))
+    best = min(confirmed, key=lambda c: (rank.get(c["status"], 9), price_value(c.get("price"))))
     return best["status"], best.get("price"), best.get("link"), f'found "{best["title"]}"'
 
 

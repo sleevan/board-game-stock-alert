@@ -279,6 +279,9 @@ const priceShip = (price, store) => {
   const icon = sh ? `<button type="button" class="ship" aria-label="Shipping: ${esc(sh)}" aria-expanded="false">${TRUCK}<span class="tip" role="tooltip">${esc(sh)}</span></button>` : "";
   return `<span class="pricewrap">${esc(price || "")}${icon}</span>`;
 };
+const priceNum = p => { const m = String(p || "").replace(/,/g, "").match(/\d+(?:\.\d+)?/); return m ? parseFloat(m[0]) : Infinity; };
+const STATUS_ORDER = ["in_stock", "preorder", "out_of_stock", "not_listed", "unknown"];
+const byStatusThenPrice = (a, b) => (STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status)) || (priceNum(a.price) - priceNum(b.price));
 const norm = s => (s || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 function ago(iso) {
@@ -317,11 +320,11 @@ function render() {
         (asks[k] ||= { key: k, title: pm.title, where: [] }).where.push({ ...pm, store: r.store });
       }));
       const askList = Object.values(asks);
+      askList.forEach(a => a.where.sort(byStatusThenPrice));
       totalAsks += askList.length;
       const count = k => rows.filter(r => r.status === k).length;
       const inStock = rows.filter(r => r.status === "in_stock");
-      const listed = rows.filter(r => ["in_stock", "preorder", "out_of_stock"].includes(r.status))
-        .sort((a, b) => ["in_stock", "out_of_stock", "preorder"].indexOf(a.status) - ["in_stock", "out_of_stock", "preorder"].indexOf(b.status));
+      const listed = rows.filter(r => ["in_stock", "preorder", "out_of_stock"].includes(r.status)).sort(byStatusThenPrice);
       const el = document.createElement("details");
       el.className = "game" + (inStock.length ? " hot" : "");
       if (inStock.length || askList.length) el.open = true;
