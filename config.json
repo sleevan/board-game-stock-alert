@@ -235,12 +235,6 @@
       "shipping": "$14.99 shipping (free over $199)"
     },
     {
-      "name": "Les Jeux Grillons Givrés",
-      "url": "https://en.crazycrickets.games",
-      "platform": null,
-      "note": "Website isn't working (secure connection fails)"
-    },
-    {
       "name": "Lvlup Games",
       "url": "https://lvlupgames.ca",
       "platform": "shopify",
