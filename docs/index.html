@@ -405,7 +405,6 @@ function render() {
           count("in_stock") && `<span class="chip in">${count("in_stock")} in stock</span>`,
           count("out_of_stock") && `<span class="chip out">${count("out_of_stock")} sold out</span>`,
           count("preorder") && `<span class="chip pre">${count("preorder")} pre-order</span>`,
-          `<span class="chip none">${count("not_listed")} not listed</span>`,
           askList.length && `<span class="chip wait">${askList.length} to confirm</span>`,
         ].filter(Boolean).join("");
       }
