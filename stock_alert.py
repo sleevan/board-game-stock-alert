@@ -88,6 +88,43 @@ def normalize(text):
     return re.sub(r"[^a-z0-9]+", " ", text.lower()).strip()
 
 
+# Words stores add to titles that don't change which game it is (compared after normalize()).
+_TITLE_NOISE = re.compile(
+    r"\b(?:pre ?orders?|pre ?sales?|back ?orders?|"
+    r"en|eng|english|anglais|anglaise|version anglaise|fr|french|francais|version francaise|"
+    r"multi|multilingual|multilingue|bilingual|bilingue|"
+    r"the board ?game|board ?game|jeu de societe)\b")
+# Edition wording: still the same title, but worth asking about.
+_TITLE_EDITION = re.compile(
+    r"\b(?:(?:\d+(?:st|nd|rd|th)|new|revised|second|third|anniversary|deluxe|collector s|"
+    r"standard|retail|kickstarter|ks|limited|special|reprint)\s+)?edition\b|\b\d+(?:st|nd|rd|th) ed\b")
+
+
+def title_core(title):
+    """(core words, had_edition_words) for comparing a listing title with a watched title."""
+    t = normalize(title)
+    had_edition = bool(_TITLE_EDITION.search(t))
+    t = _TITLE_EDITION.sub(" ", t)
+    core = re.sub(r"\s+", " ", _TITLE_NOISE.sub(" ", t)).strip()
+    return (core or t), had_edition
+
+
+def title_has_words(title, query):
+    """Whole-word containment: 'ito' is in 'Ito (EN)' but not in 'Splito'."""
+    return f" {normalize(query)} " in f" {normalize(title)} "
+
+
+def match_kind(query, title):
+    """'exact', 'possible' (ask the user), or None (not this game)."""
+    q, _ = title_core(query)
+    c, had_edition = title_core(title)
+    if c == q:
+        return "possible" if had_edition else "exact"
+    if f" {q} " in f" {c} " and len(q.split()) / max(1, len(c.split())) >= 0.5:
+        return "possible"
+    return None
+
+
 # --------------------------------------------------------------------------
 # Shopify helpers
 # --------------------------------------------------------------------------
@@ -154,7 +191,7 @@ def search_shopify(base, query, publisher):
     data = fetch_json(f"{base}/search/suggest.json?q={quote(query)}&resources[type]=product&resources[limit]=10")
     handles, suggested = [], {}
     for p in data["resources"]["results"]["products"]:
-        if normalize(query) in normalize(p.get("title")):
+        if title_has_words(p.get("title"), query):
             h = p.get("handle") or p.get("url", "").split("/products/")[-1].split("?")[0]
             handles.append(h)
             suggested[h] = p
@@ -185,7 +222,7 @@ def search_shopify(base, query, publisher):
                        "vendor": sp.get("vendor", ""), "tags": sp.get("tags") or [], "type": sp.get("type", ""),
                        "variants": []}
         title = product.get("title", "")
-        if normalize(query) not in normalize(title):
+        if not title_has_words(title, query):
             continue
         if publisher and not publisher_matches(product, publisher):
             out.append({"title": title, "status": "wrong_publisher"})
@@ -200,7 +237,7 @@ def search_woocommerce(base, query, publisher):
     out = []
     for it in items:
         title = htmllib.unescape(re.sub(r"<[^>]+>", "", it.get("name", "")))
-        if normalize(query) not in normalize(title):
+        if not title_has_words(title, query):
             continue
         meta = " ".join([it.get("description", ""), it.get("short_description", ""),
                          *[c.get("name", "") for c in it.get("categories", [])],
@@ -233,7 +270,7 @@ def search_lightspeed(base, query, publisher):
     out = []
     for p in (prods.values() if isinstance(prods, dict) else prods):
         title = p.get("title", "")
-        if normalize(query) not in normalize(title):
+        if not title_has_words(title, query):
             continue
         brand = (p.get("brand") or {}).get("title", "") if isinstance(p.get("brand"), dict) else ""
         if publisher and not text_has_publisher(f'{brand} {p.get("fulltitle", "")} {p.get("description", "")}', publisher):
@@ -265,7 +302,7 @@ def search_crystalcommerce(base, query, publisher):
     for blk in _blocks(html, 'class="product" itemscope'):
         m = re.search(r'itemprop="name"[^>]*title="([^"]+)"', blk) or re.search(r'itemprop="name"[^>]*>(.*?)<', blk, re.S)
         title = _clean(m.group(1)) if m else ""
-        if not title or normalize(query) not in normalize(title):
+        if not title or not title_has_words(title, query):
             continue
         link = re.search(r'href="(/catalog/[^"]+)"', blk)
         if PREORDER_RE.search(title) or re.search(r"pre-?order", blk, re.I):
@@ -289,7 +326,7 @@ def search_magento(base, query, publisher):
         if not m:
             continue
         title, link = _clean(m.group(2)), m.group(1)
-        if normalize(query) not in normalize(title):
+        if not title_has_words(title, query):
             continue
         if PREORDER_RE.search(title) or re.search(r"pr[ée]-?commande|pre-?order", blk, re.I):
             status = PREORDER
@@ -311,7 +348,7 @@ def search_greatboardgames(base, query, publisher):
         if not m:
             continue
         title, link = _clean(m.group(2)), m.group(1)
-        if normalize(query) not in normalize(title):
+        if not title_has_words(title, query):
             continue
         if PREORDER_RE.search(title) or re.search(r"pre-?order", blk, re.I):
             status = PREORDER
@@ -340,7 +377,7 @@ def search_woocommerce_html(base, query, publisher):
         for cls, body in re.findall(r'<li[^>]*class="([^"]*\btype-product\b[^"]*)"[^>]*>(.*?)(?=<li[^>]*class="[^"]*\btype-product\b|</ul>)', chunk, re.S):
             m = re.search(r'woocommerce-loop-product__title[^>]*>(.*?)</', body, re.S)
             title = _clean(m.group(1)) if m else ""
-            if not title or normalize(query) not in normalize(title) or title in seen:
+            if not title or not title_has_words(title, query) or title in seen:
                 continue
             seen.add(title)
             classes = cls.split()
@@ -365,7 +402,7 @@ def search_shift4shop(base, query, publisher):
         if not m:
             continue
         title = _clean(m.group(2))
-        if normalize(query) not in normalize(title):
+        if not title_has_words(title, query):
             continue
         avail = re.search(r'class="availability"[^>]*>(.*?)</span>', blk, re.S)
         avail = _clean(avail.group(1)) if avail else ""
@@ -389,7 +426,7 @@ def search_opencart(base, query, publisher):
         if not m:
             continue
         title, link = _clean(m.group(2)), m.group(1).split("?")[0]
-        if normalize(query) not in normalize(title) or link in seen:
+        if not title_has_words(title, query) or link in seen:
             continue
         seen.add(link)
         layout_class = blk.split('"', 1)[0]
@@ -411,7 +448,7 @@ def search_odoo(base, query, publisher):
     for blk in _blocks(page, '<div class="oe_product_cart"'):
         m = re.search(r'itemprop="name"[^>]*>(.*?)</span>', blk, re.S)
         title = _clean(m.group(1)) if m else ""
-        if not title or normalize(query) not in normalize(title):
+        if not title or not title_has_words(title, query):
             continue
         if publisher:
             by = re.search(r'<span>By <span>(.*?)</span>', blk)
@@ -449,7 +486,7 @@ def search_square(base, query, publisher):
     out = []
     for p in data.get("data", []):
         title = htmllib.unescape(p.get("name", ""))
-        if normalize(query) not in normalize(title) or p.get("visibility") not in (None, "visible"):
+        if not title_has_words(title, query) or p.get("visibility") not in (None, "visible"):
             continue
         if publisher and not text_has_publisher(title + " " + re.sub(r"<[^>]+>", " ", p.get("short_description") or ""), publisher):
             out.append({"title": title, "status": "wrong_publisher"})
@@ -526,7 +563,7 @@ def search_sitemap(base, query, publisher):
             continue
         title, availability, price = info
         title = htmllib.unescape(title or "")
-        if normalize(query) not in normalize(title):
+        if not title_has_words(title, query):
             continue
         status = PREORDER if PREORDER_RE.search(title) else (classify([availability]) or OUT_OF_STOCK)
         out.append({"title": title, "status": status,
@@ -570,17 +607,17 @@ def check_search(watch):
 
     # Exact title matches count. Listings with extra words in the title count only once
     # the user has confirmed that listing title on the web page; rejected titles are ignored.
-    want = normalize(watch["query"])
-    accepted = {normalize(t) for t in watch.get("accept", [])}
-    rejected = {normalize(t) for t in watch.get("reject", [])}
+    accepted = {title_core(t)[0] for t in watch.get("accept", [])}
+    rejected = {title_core(t)[0] for t in watch.get("reject", [])}
     confirmed, possible = [], []
     for c in real:
-        t = normalize(c["title"])
-        if t == want or t in accepted:
+        kind = match_kind(watch["query"], c["title"])
+        key = title_core(c["title"])[0]
+        if kind == "exact" or (kind and key in accepted):
             confirmed.append(c)
-        elif t not in rejected:
-            possible.append(c)
-    watch["_possible"] = [{"title": c["title"], "status": c["status"], "price": c.get("price"),
+        elif kind == "possible" and key not in rejected:
+            possible.append({**c, "key": key})
+    watch["_possible"] = [{"title": c["title"], "key": c["key"], "status": c["status"], "price": c.get("price"),
                            "link": c.get("link")} for c in possible[:6]]
     if not confirmed:
         if possible:

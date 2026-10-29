@@ -297,8 +297,8 @@ function render() {
       const decided = new Set([...(g.accept || []), ...(g.reject || [])].map(norm));
       const asks = {};
       rows.forEach(r => (r.possible || []).forEach(pm => {
-        const k = norm(pm.title); if (decided.has(k)) return;
-        (asks[k] ||= { title: pm.title, where: [] }).where.push({ ...pm, store: r.store });
+        const k = norm(pm.key || pm.title); if (decided.has(k)) return;
+        (asks[k] ||= { key: k, title: pm.title, where: [] }).where.push({ ...pm, store: r.store });
       }));
       const askList = Object.values(asks);
       totalAsks += askList.length;
@@ -328,7 +328,7 @@ function render() {
         <div class="gbody">
           ${askList.length ? `<div class="ask"><h3>Is this the same game?</h3>
             <p class="hint" style="margin:0">These titles aren't an exact match for “${esc(g.title)}”, so they don't count until you confirm.</p>
-            ${askList.map((a, j) => `<div class="ask-item" data-game="${idx}" data-title="${esc(a.title)}">
+            ${askList.map((a, j) => `<div class="ask-item" data-game="${idx}" data-title="${esc(a.key)}" data-label="${esc(a.title)}">
               <span class="ask-q">“${esc(a.title)}”</span>
               <span class="ask-where">${a.where.map(w => `<span><span class="chip ${LABEL[w.status]?.[1] || "none"}">${LABEL[w.status]?.[0] || w.status}</span> ${w.link ? `<a href="${esc(w.link)}" target="_blank" rel="noopener">${esc(w.store)}</a>` : esc(w.store)} ${w.price ? `<span class="price">${esc(w.price)}</span>` : ""}</span>`).join("")}</span>
               <span class="ask-btns">
@@ -337,6 +337,7 @@ function render() {
                 <span class="msg" role="status"></span>
               </span>
             </div>`).join("")}
+            ${askList.length > 1 ? `<div class="ask-btns" data-game="${idx}" data-keys="${esc(JSON.stringify(askList.map(a => a.key)))}"><button type="button" class="ghost small" data-decide-all="reject" id="rejall-${idx}">Ignore all of these</button><span class="msg" role="status"></span></div>` : ""}
           </div>` : ""}
           ${listed.length ? `<div class="listing">${listed.map(r => `
               <span class="chip ${LABEL[r.status][1]}">${LABEL[r.status][0]}</span>
@@ -401,9 +402,12 @@ $("stores").addEventListener("change", async e => {
 });
 
 $("games").addEventListener("click", async e => {
-  const btn = e.target.closest("button[data-decide]"); if (!btn) return;
-  const item = btn.closest(".ask-item"), msg = item.querySelector(".msg");
-  const g = config.games[+item.dataset.game], title = item.dataset.title, kind = btn.dataset.decide;
+  const btn = e.target.closest("button[data-decide], button[data-decide-all]"); if (!btn) return;
+  const item = btn.closest(".ask-item") || btn.closest(".ask-btns"), msg = item.querySelector(".msg");
+  const g = config.games[+item.dataset.game];
+  const kind = btn.dataset.decide || btn.dataset.decideAll;
+  const keys = btn.dataset.decideAll ? JSON.parse(item.dataset.keys) : [item.dataset.title];
+  const title = btn.dataset.decideAll ? `${keys.length} titles` : (item.dataset.label || item.dataset.title);
   if (!needToken(msg)) return;
   item.querySelectorAll("button").forEach(b => b.disabled = true); msg.className = "msg"; msg.textContent = "Saving…";
   try {
@@ -411,15 +415,16 @@ $("games").addEventListener("click", async e => {
     const games = config.games.map(x => {
       if (norm(x.title) !== norm(g.title)) return x;
       const y = { ...x, accept: [...(x.accept || [])], reject: [...(x.reject || [])] };
-      y.accept = y.accept.filter(t => norm(t) !== norm(title)); y.reject = y.reject.filter(t => norm(t) !== norm(title));
-      y[kind].push(title);
+      const ks = new Set(keys.map(norm));
+      y.accept = y.accept.filter(t => !ks.has(norm(t))); y.reject = y.reject.filter(t => !ks.has(norm(t)));
+      y[kind].push(...keys);
       if (!y.accept.length) delete y.accept; if (!y.reject.length) delete y.reject;
       return y;
     });
-    await writeConfig({ ...config, games }, `${kind === "accept" ? "Confirm" : "Rule out"} "${title}" for ${g.title}`);
+    await writeConfig({ ...config, games }, `${kind === "accept" ? "Confirm" : "Rule out"} ${btn.dataset.decideAll ? title : `"${title}"`} for ${g.title}`);
     render();
     $("checkMsg").className = "msg ok";
-    $("checkMsg").textContent = kind === "accept" ? `Confirmed. "${title}" counts from the next check.` : `Got it. "${title}" will be ignored.`;
+    $("checkMsg").textContent = kind === "accept" ? `Confirmed. "${title}" counts from the next check.` : (btn.dataset.decideAll ? `Got it. Those ${title} will be ignored.` : `Got it. "${title}" will be ignored.`);
   } catch (err) {
     item.querySelectorAll("button").forEach(b => b.disabled = false);
     msg.className = "msg err"; msg.textContent = explain(err); showSetup(err);
