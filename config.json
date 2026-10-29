@@ -42,6 +42,12 @@
       "publisher": "Histogame",
       "publisher_source": "Board Game Bliss",
       "publisher_listing": "Maria (Second Edition) (Import)"
+    },
+    {
+      "title": "kingdom come deliverance",
+      "exclude": [
+        "metal"
+      ]
     }
   ],
   "stores": [
