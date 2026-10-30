@@ -84,9 +84,25 @@ To test: Actions tab → **Board game stock check** → **Run workflow** → tic
 
 When a game is added without a publisher, the next check looks the title up on Board Game Bliss and saves the publisher from its listing. If Bliss doesn't list the game yet, it tries again every 24 hours. A publisher found this way is shown on the web page but doesn't filter listings, since stores often record a distributor instead. A publisher you type in yourself does filter.
 
+## Reliable 30-minute checks (cron-job.org)
+
+GitHub runs free scheduled workflows on a best-effort basis and often delays or skips them for hours. For dependable checks, a free [cron-job.org](https://cron-job.org) job starts the check every 30 minutes, the same way the web page's **Check now** button does:
+
+1. Create a fine-grained token at https://github.com/settings/personal-access-tokens/new: only the `board-game-stock-alert` repository, permission **Actions: Read and write**.
+2. On cron-job.org, create a job:
+   - URL: `https://api.github.com/repos/sleevan/board-game-stock-alert/actions/workflows/stock-check.yml/dispatches`
+   - Schedule: every 30 minutes
+   - Request method: `POST`
+   - Headers: `Authorization: Bearer <token>`, `Accept: application/vnd.github+json`, `Content-Type: application/json`
+   - Request body: `{"ref":"main"}`
+   - Turn on failure notifications. Success is HTTP 204.
+3. When the token expires, make a new one and paste it into the Authorization header.
+
+The web page also starts a check by itself when it's opened and the results are more than 30 minutes old (using the token saved in that browser).
+
 ## How it runs
 
-The **Board game stock check** workflow runs every 30 minutes on GitHub Actions. It searches every store for every watched game, emails you about anything that came into stock, and saves results to `state.json`, which the web page reads.
+The **Board game stock check** workflow is scheduled every 30 minutes on GitHub Actions (best effort, see above). It searches every store for every watched game, emails you about anything that came into stock, and saves results to `state.json`, which the web page reads.
 
 GitHub pauses scheduled workflows in repos with no activity for 60 days. The results commits usually count as activity, but if you get a "workflow disabled" email, re-enable it in the Actions tab.
 
