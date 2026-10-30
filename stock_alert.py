@@ -23,6 +23,8 @@ Usage:
     python stock_alert.py --test-email # send a test email to confirm SMTP works
 """
 import argparse
+import contextlib
+import threading
 import calendar
 import html as htmllib
 import json
@@ -70,6 +72,21 @@ PREORDER_RE = re.compile(r"\bpre[\s\-]?order|\bpre[\s\-]?sale|\bback[\s\-]?order
 # Fetching
 # --------------------------------------------------------------------------
 def fetch(url, timeout=25):
+    """GET a page; on 'too many requests' (429) or 'busy' (503), wait and retry up to 3 times."""
+    for attempt in range(4):
+        try:
+            return _fetch_once(url, timeout)
+        except HTTPError as exc:
+            if exc.code not in (429, 503) or attempt == 3:
+                raise
+            try:
+                wait = float(exc.headers.get("Retry-After") or 0)
+            except (TypeError, ValueError):
+                wait = 0
+            time.sleep(min(max(wait, 2 * 2 ** attempt), 20))
+
+
+def _fetch_once(url, timeout=25):
     req = Request(url, headers={
         "User-Agent": USER_AGENT,
         "Accept": "text/html,application/json;q=0.9,*/*;q=0.8",
@@ -641,6 +658,8 @@ def price_value(price):
     return float(m.group(0)) if m else float("inf")
 
 
+# Shopify rate-limits by visitor across all the shops it hosts, so only a few Shopify searches run at once.
+PLATFORM_SLOTS = {"shopify": threading.BoundedSemaphore(6)}
 _unreachable = {}   # store -> reason, for stores that timed out or refused to connect during this run
 
 
@@ -652,7 +671,8 @@ def check_search(watch):
     if base in _unreachable:     # don't wait on a store that's already timing out this run
         return UNKNOWN, None, None, _unreachable[base]
     try:
-        candidates = SEARCHERS[platform](base, watch["query"], publisher)
+        with PLATFORM_SLOTS.get(platform, contextlib.nullcontext()):
+            candidates = SEARCHERS[platform](base, watch["query"], publisher)
     except (HTTPError, URLError, TimeoutError, OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
         reason = f"store search failed ({type(exc).__name__}: {str(exc)[:80]})"
         if isinstance(exc, (TimeoutError, ConnectionError)) or (isinstance(exc, URLError) and not isinstance(exc, HTTPError)):
