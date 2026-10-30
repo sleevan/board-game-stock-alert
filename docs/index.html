@@ -690,16 +690,16 @@ $("toggleAll").addEventListener("click", () => {
 });
 
 $("checkNow").addEventListener("click", () => startCheck(false));
-async function startCheck(quiet) {
+async function startCheck(quiet, label) {
   const msg = $("checkMsg");
-  if (!getToken()) { msg.className = "msg err"; msg.textContent = "Starting a check needs a GitHub token. Set it up below."; showSetup(); return; }
+  if (!getToken()) { if (quiet) return; msg.className = "msg err"; msg.textContent = "Starting a check needs a GitHub token. Set it up below."; showSetup(); return; }
   $("checkNow").disabled = true; msg.className = "msg"; msg.textContent = "Starting…";
   try {
     await gh(`/actions/workflows/${WORKFLOW}/dispatches`, { method: "POST", body: JSON.stringify({ ref: BRANCH }) });
-    msg.className = "msg ok"; msg.textContent = "Check started · results in ~2 min"; msg.title = "Results appear here in about 2 minutes.";
+    msg.className = "msg ok"; msg.textContent = label || "Check started · results in ~2 min"; msg.title = "Results appear here in about 2 minutes.";
     setTimeout(load, 120000); setTimeout(load, 200000);
   } catch (err) {
-    if (quiet) { msg.className = "msg"; msg.textContent = "Added. It will be searched on the next scheduled check."; }
+    if (quiet) { if (!label) { msg.className = "msg"; msg.textContent = "Added. It will be searched on the next scheduled check."; } }
     else {
       msg.className = "msg err";
       msg.textContent = err.status === 403 ? "The token needs Actions: Read and write to start a check." : explain(err);
@@ -734,10 +734,28 @@ async function load() {
     await refreshConfig();
     try { state = (await readFile("state.json")).data; if (!state.watches) state = { watches: {}, stores: {} }; } catch { state = { watches: {}, stores: {} }; }
     render();
+    autoCheckIfStale();
   } catch (err) {
     $("games").innerHTML = `<p class="msg err">Couldn't load the watch list from GitHub (${esc(err.message)}). Reload to try again.</p>`;
   }
 }
+// When the page is open and the results are over 30 minutes old, start a check (quietly, at most every 15 min,
+// and not while one is already running). Needs the saved token; without it the page just shows the last results.
+const STALE_MIN = 30;
+async function autoCheckIfStale() {
+  if (!getToken() || !state.updated) return;
+  const ageMin = (Date.now() - Date.parse(state.updated)) / 60000;
+  if (ageMin < STALE_MIN) return;
+  let last = 0; try { last = +localStorage.getItem("gsw_autocheck") || 0; } catch {}
+  if (Date.now() - last < 15 * 60000) return;
+  try {
+    const runs = await gh(`/actions/workflows/${WORKFLOW}/runs?per_page=5`);
+    if ((runs.workflow_runs || []).some(r => r.status === "queued" || r.status === "in_progress")) return;
+  } catch { /* if this can't be read, still try to start a check */ }
+  try { localStorage.setItem("gsw_autocheck", String(Date.now())); } catch {}
+  await startCheck(true, `Results were ${Math.round(ageMin / 60) >= 1 ? Math.round(ageMin / 60) + " h" : Math.round(ageMin) + " min"} old · checking now`);
+}
+
 showTokenState();
 load();
 setInterval(load, 5 * 60 * 1000);
