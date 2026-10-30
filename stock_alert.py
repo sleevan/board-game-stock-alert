@@ -666,7 +666,7 @@ def price_value(price):
 
 
 # Shopify rate-limits by visitor across all the shops it hosts, so only a few Shopify searches run at once.
-PLATFORM_SLOTS = {"shopify": threading.BoundedSemaphore(12)}
+PLATFORM_SLOTS = {"shopify": threading.BoundedSemaphore(6)}
 _unreachable = {}   # store -> reason, for stores that timed out or refused to connect during this run
 
 
