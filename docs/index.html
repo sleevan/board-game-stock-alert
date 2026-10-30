@@ -65,7 +65,7 @@ input[type=text], input[type=password] {
   border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px;
 }
 input:focus-visible, button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-.addform { display: grid; grid-template-columns: 1.4fr 1fr auto; gap: 12px; align-items: end; }
+.addform { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: end; }
 @media (max-width: 640px) { .addform { grid-template-columns: 1fr; } }
 button {
   font: 600 .95rem var(--body); border-radius: 4px; padding: 10px 16px; cursor: pointer;
@@ -213,10 +213,6 @@ footer { color: var(--muted); font-size: .85rem; }
       <div>
         <label for="title">Title</label>
         <input type="text" id="title" placeholder='e.g. Thirty Years of Misery · "Root" for exact title · -Metal to exclude' required>
-      </div>
-      <div>
-        <label for="publisher">Publisher <span class="hint">(optional)</span></label>
-        <input type="text" id="publisher" placeholder="e.g. VUCA Simulations">
       </div>
       <button type="submit" id="addBtn">Start watching</button>
       <p class="msg" id="addMsg" role="status" style="grid-column:1/-1;margin:0"></p>
@@ -653,7 +649,7 @@ function explain(err) {
 $("addForm").addEventListener("submit", async e => {
   e.preventDefault();
   const parsed = splitExcludes($("title").value.trim());
-  let title = parsed.rest; const publisher = $("publisher").value.trim(); const excludes = parsed.terms;
+  let title = parsed.rest; const excludes = parsed.terms;
   const exact = isQuoted(title);
   if (exact) title = title.slice(1, -1).trim();
   const msg = $("addMsg");
@@ -665,10 +661,10 @@ $("addForm").addEventListener("submit", async e => {
     if ((config.games || []).some(g => norm(g.title) === norm(title))) {
       msg.className = "msg err"; msg.textContent = `"${title}" is already on the list.`;
     } else {
-      const entry = { title, ...(publisher ? { publisher } : {}), ...(exact ? { exact: true } : {}), ...(excludes.length ? { exclude: excludes } : {}),
+      const entry = { title, ...(exact ? { exact: true } : {}), ...(excludes.length ? { exclude: excludes } : {}),
                       added: new Date().toISOString().replace(/\.\d+Z$/, "Z") };
       await writeConfig({ ...config, games: [...(config.games || []), entry] }, `Watch ${title}`);
-      $("title").value = ""; $("publisher").value = "";
+      $("title").value = "";
       startCheck(true);
       msg.className = "msg ok"; msg.textContent = `Watching "${title}"${exact ? " (exact title only)" : ""}${excludes.length ? `, excluding ${excludes.map(t => `"${t}"`).join(", ")}` : ""}. Searching every store now; results appear in about 2 minutes.`;
       render();

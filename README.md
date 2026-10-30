@@ -8,7 +8,7 @@ You don't need product links. Give it a title (publisher optional) and it search
 
 **https://sleevan.github.io/board-game-stock-alert/**
 
-- Add a game (title, plus publisher if you want to rule out similarly named games). Leave the publisher blank and it's looked up on Board Game Bliss.
+- Add a game by title. Its publisher is looked up on Board Game Bliss automatically.
 - See, per game, which stores have it in stock, sold out, or on pre-order, with links and prices.
 - Stop watching a game.
 - Start a check right away with **Check now**.
