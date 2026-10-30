@@ -641,15 +641,23 @@ def price_value(price):
     return float(m.group(0)) if m else float("inf")
 
 
+_unreachable = {}   # store -> reason, for stores that timed out or refused to connect during this run
+
+
 def check_search(watch):
     """Search one store's catalogue for the title (and publisher, if given)."""
     base = watch["store"].rstrip("/")
     platform = watch.get("platform", "shopify")
     publisher = watch.get("publisher")
+    if base in _unreachable:     # don't wait on a store that's already timing out this run
+        return UNKNOWN, None, None, _unreachable[base]
     try:
         candidates = SEARCHERS[platform](base, watch["query"], publisher)
     except (HTTPError, URLError, TimeoutError, OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
-        return UNKNOWN, None, None, f"store search failed ({type(exc).__name__}: {str(exc)[:80]})"
+        reason = f"store search failed ({type(exc).__name__}: {str(exc)[:80]})"
+        if isinstance(exc, (TimeoutError, ConnectionError)) or (isinstance(exc, URLError) and not isinstance(exc, HTTPError)):
+            _unreachable[base] = reason + " - skipped for the rest of this check"
+        return UNKNOWN, None, None, reason
 
     # Skip video-game listings (words from config "exclude_title_words") - unless the watched title itself uses the word as often.
     def word_count(text, w):
