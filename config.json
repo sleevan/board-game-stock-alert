@@ -117,12 +117,17 @@
     {
       "title": "Enchanted Ivy",
       "exact": true,
-      "added": "2026-10-30T15:00:25Z"
+      "added": "2026-10-30T15:00:25Z",
+      "publisher_lookup": "not_found",
+      "publisher_checked": "2026-10-30T15:05:24Z"
     },
     {
       "title": "7th Seal",
       "exact": true,
-      "added": "2026-10-30T15:03:23Z"
+      "added": "2026-10-30T15:03:23Z",
+      "publisher": "Devir",
+      "publisher_source": "Board Game Bliss",
+      "publisher_listing": "7th Seal *PRE-ORDER*"
     }
   ],
   "stores": [
