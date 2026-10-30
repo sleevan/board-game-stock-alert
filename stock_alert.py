@@ -981,6 +981,9 @@ def fill_missing_publishers(config):
     return changed
 
 
+WORKERS = 24
+
+
 def now_utc():
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
@@ -998,9 +1001,21 @@ def run_once(dry_run=False):
     old = state["watches"]
     stores_health = state.get("stores", {})
 
-    # Check every game/store pair, several stores at a time.
-    with ThreadPoolExecutor(max_workers=8) as pool:
-        results = list(pool.map(check_watch, watches))
+    # Check every game/store pair. Up to 24 searches run at once; work is interleaved by store so each store
+    # sees only a few requests at a time. Each search's time is recorded per store.
+    def timed(w):
+        t0 = time.time()
+        r = check_watch(w)
+        return r, time.time() - t0
+    t_start = time.time()
+    with ThreadPoolExecutor(max_workers=WORKERS) as pool:
+        timed_results = list(pool.map(timed, watches))
+    results = [r for r, _ in timed_results]
+    store_secs = {}
+    for w, (_, secs) in zip(watches, timed_results):
+        if w.get("store"):
+            store_secs[w["store"]] = store_secs.get(w["store"], 0) + secs
+    print(f"Checked {len(watches)} game/store pairs in {time.time() - t_start:.0f}s")
 
     alerts, alert_games, new_watches, nudges = [], [], {}, []
     store_ok = {}
@@ -1039,7 +1054,7 @@ def run_once(dry_run=False):
 
     for url, info in store_ok.items():
         h = stores_health.get(url, {})
-        stores_health[url] = {"name": info["name"], "ok": info["ok"], "error": info["error"],
+        stores_health[url] = {"name": info["name"], "ok": info["ok"], "error": info["error"], "secs": round(store_secs.get(url, 0), 1),
                               "last_ok": now_utc() if info["ok"] else h.get("last_ok"), "checked": now_utc()}
 
     if dry_run:

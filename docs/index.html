@@ -695,9 +695,10 @@ async function startCheck(quiet, label) {
   if (!getToken()) { if (quiet) return; msg.className = "msg err"; msg.textContent = "Starting a check needs a GitHub token. Set it up below."; showSetup(); return; }
   $("checkNow").disabled = true; msg.className = "msg"; msg.textContent = "Starting…";
   try {
+    const since = new Date(Date.now() - 60000).toISOString();
     await gh(`/actions/workflows/${WORKFLOW}/dispatches`, { method: "POST", body: JSON.stringify({ ref: BRANCH }) });
-    msg.className = "msg ok"; msg.textContent = label || "Check started · results in ~2 min"; msg.title = "Results appear here in about 2 minutes.";
-    setTimeout(load, 120000); setTimeout(load, 200000);
+    msg.className = "msg ok"; msg.title = "";
+    watchRun(since, label || "Checking stores");
   } catch (err) {
     if (quiet) { if (!label) { msg.className = "msg"; msg.textContent = "Added. It will be searched on the next scheduled check."; } }
     else {
@@ -707,6 +708,40 @@ async function startCheck(quiet, label) {
     }
   }
   setTimeout(() => { $("checkNow").disabled = false; }, 15000);
+}
+
+// Follow the check that was just started: show elapsed time, and load the results as soon as it finishes
+// (the results are saved a few seconds after the run ends). Falls back to timed reloads if runs can't be read.
+let watching = null;
+async function watchRun(since, label) {
+  const msg = $("checkMsg"), t0 = Date.now(), token = {};
+  watching = token;
+  const tick = () => { if (watching === token) msg.textContent = `${label} · ${Math.round((Date.now() - t0) / 1000)}s`; };
+  tick(); const timer = setInterval(tick, 1000);
+  const stop = text => { clearInterval(timer); if (watching === token) { watching = null; if (text !== undefined) { msg.className = "msg ok"; msg.textContent = text; } } };
+  const before = state.updated;
+  let runId = null, misses = 0;
+  while (watching === token && Date.now() - t0 < 10 * 60000) {
+    await new Promise(r => setTimeout(r, 5000));
+    try {
+      if (!runId) {
+        const runs = await gh(`/actions/workflows/${WORKFLOW}/runs?event=workflow_dispatch&per_page=5&created=>=${since}`);
+        runId = (runs.workflow_runs || [])[0]?.id || null;
+        continue;
+      }
+      const run = await gh(`/actions/runs/${runId}`);
+      if (run.status === "completed") {
+        for (let i = 0; i < 6; i++) {             // wait for the saved results to show up
+          await load();
+          if (state.updated && state.updated !== before) break;
+          await new Promise(r => setTimeout(r, 3000));
+        }
+        stop(run.conclusion === "success" ? `Updated · took ${Math.round((Date.now() - t0) / 1000)}s` : "The check didn't finish. Try again.");
+        return;
+      }
+    } catch { if (++misses > 3) break; }
+  }
+  if (watching === token) { stop(); setTimeout(load, 60000); setTimeout(load, 150000); }
 }
 
 $("saveToken").addEventListener("click", async () => {
