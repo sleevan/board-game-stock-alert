@@ -384,6 +384,7 @@ function render() {
       return st.has("in_stock") ? 0 : st.has("preorder") ? 1 : st.has("out_of_stock") ? 2 : 3;
     };
     const order = games.map((g, i) => [groupOf(g), i]).sort((a, b) => a[0] - b[0] || a[1] - b[1]).map(p => p[1]);
+    let filteredOut = 0;
     order.forEach(idx => {
       const g = games[idx];
       const rows = rowsFor(g);
@@ -401,6 +402,9 @@ function render() {
       const inStock = visibleRows.filter(r => r.status === "in_stock");
       const allListed = rows.filter(r => ["in_stock", "preorder", "out_of_stock"].includes(r.status) && !isHidden(g, r));
       const listed = allListed.filter(r => shown.has(r.status)).sort(byStatusThenPrice);
+      // Filters: hide the whole game when every listing it has is a status you've switched off
+      // (games waiting for confirmations stay visible so those prompts aren't missed).
+      if (allListed.length && !listed.length && !askList.length) { filteredOut++; return; }
       const el = document.createElement("details");
       el.className = "game" + (inStock.length ? " hot" : "");
       const remembered = openState.get(norm(g.title));
@@ -449,6 +453,7 @@ function render() {
         </div>`;
       box.appendChild(el);
     });
+    if (filteredOut) box.insertAdjacentHTML("beforeend", `<p class="empty">${filteredOut} game${filteredOut > 1 ? "s" : ""} hidden by the filters above.</p>`);
   }
 
   updateToggleAll();
