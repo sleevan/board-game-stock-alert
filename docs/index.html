@@ -424,9 +424,9 @@ function render() {
       if (!rows.length) tally = `<span class="chip wait">Waiting for next check</span>`;
       else {
         tally = [
-          count("in_stock") && `<span class="chip in">${count("in_stock")} in stock</span>`,
-          count("preorder") && `<span class="chip pre">${count("preorder")} pre-order</span>`,
-          count("out_of_stock") && `<span class="chip out">${count("out_of_stock")} sold out</span>`,
+          shown.has("in_stock") && count("in_stock") && `<span class="chip in">${count("in_stock")} in stock</span>`,
+          shown.has("preorder") && count("preorder") && `<span class="chip pre">${count("preorder")} pre-order</span>`,
+          shown.has("out_of_stock") && count("out_of_stock") && `<span class="chip out">${count("out_of_stock")} sold out</span>`,
           askList.length && `<span class="chip wait">${askList.length} to confirm</span>`,
         ].filter(Boolean).join("");
       }
