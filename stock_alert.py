@@ -269,22 +269,29 @@ def search_shopify(base, query, publisher):
         except (HTTPError, URLError, TimeoutError, OSError):
             pass
         handles = handles[:12]
+    def from_suggest(sp):
+        """Product record built from quick-search data (same key fields as the full product data)."""
+        price = sp.get("price")
+        try:
+            price = int(round(float(price) * 100)) if isinstance(price, str) else price
+        except ValueError:
+            price = None
+        return {"title": sp.get("title", ""), "available": sp.get("available"), "price": price,
+                "vendor": sp.get("vendor", ""), "tags": sp.get("tags") or [], "type": sp.get("type", ""),
+                "variants": [{"title": v.get("title", ""), "available": v.get("available")} for v in sp.get("variants") or []]}
+
     out = []
     for handle in handles:
-        try:
-            product = shopify_product(base, handle)
-        except (HTTPError, URLError, ValueError):
-            if handle not in suggested:
-                continue
-            sp = suggested[handle]   # quick-search data has the same key fields
-            price = sp.get("price")
+        sp = suggested.get(handle)
+        if sp is not None and sp.get("available") is False:
+            product = from_suggest(sp)   # sold out: quick-search data is enough, skip the extra request
+        else:
             try:
-                price = int(round(float(price) * 100)) if isinstance(price, str) else price
-            except ValueError:
-                price = None
-            product = {"title": sp.get("title", ""), "available": sp.get("available"), "price": price,
-                       "vendor": sp.get("vendor", ""), "tags": sp.get("tags") or [], "type": sp.get("type", ""),
-                       "variants": []}
+                product = shopify_product(base, handle)   # full data, needed to spot pre-orders on "available" items
+            except (HTTPError, URLError, ValueError):
+                if sp is None:
+                    continue
+                product = from_suggest(sp)
         title = product.get("title", "")
         if not title_has_words(title, query):
             continue
