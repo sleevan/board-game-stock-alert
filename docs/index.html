@@ -376,8 +376,21 @@ function render() {
   else {
     box.innerHTML = "";
     const known = new Set((config.stores || []).filter(s => s.enabled !== false).map(s => s.name));
-    const rowsFor = g => watches.filter(w => norm(w.game) === norm(g.title) && (known.has(w.store) || !w.store_url || (config.product_urls || []).some(u => u.url === w.store_url))
-        && (!g.added || !w.checked || w.checked >= g.added));
+    const RANK = { in_stock: 0, out_of_stock: 1, preorder: 2 };
+    const rowsFor = g => {
+      const accepted = new Set((g.accept || []).map(norm));
+      return watches.filter(w => norm(w.game) === norm(g.title) && (known.has(w.store) || !w.store_url || (config.product_urls || []).some(u => u.url === w.store_url))
+        && (!g.added || !w.checked || w.checked >= g.added))
+        .map(w => {
+          // A "same game?" match you've confirmed shows as that store's listing right away.
+          const yes = (w.possible || []).filter(pm => accepted.has(norm(pm.key || pm.title)))
+            .sort((a, b) => (RANK[a.status] ?? 9) - (RANK[b.status] ?? 9) || priceNum(a.price) - priceNum(b.price))[0];
+          if (!yes) return w;
+          const current = RANK[w.status] ?? 9;
+          if ((RANK[yes.status] ?? 9) > current) return w;
+          return { ...w, status: yes.status, price: yes.price, link: yes.link, detail: `found "${yes.title}"` };
+        });
+    };
     // Card order: any in stock, then any pre-order, then only sold out, then not listed anywhere (your order within each group).
     const groupOf = g => {
       const st = new Set(rowsFor(g).filter(r => !isHidden(g, r)).map(r => r.status));
@@ -522,8 +535,8 @@ $("games").addEventListener("click", async e => {
     });
     await writeConfig({ ...config, games }, `${kind === "accept" ? "Confirm" : "Rule out"} ${btn.dataset.decideAll ? title : `"${title}"`} for ${g.title}`);
     render();
-    $("checkMsg").className = "msg ok";
-    $("checkMsg").textContent = kind === "accept" ? `Confirmed. "${title}" counts from the next check.` : (btn.dataset.decideAll ? `Got it. Those ${title} will be ignored.` : `Got it. "${title}" will be ignored.`);
+    if (kind === "accept") startCheck(true, "Confirmed · updating results");
+    else { $("checkMsg").className = "msg ok"; $("checkMsg").textContent = btn.dataset.decideAll ? `Got it. Those ${title} will be ignored.` : `Got it. "${title}" will be ignored.`; }
   } catch (err) {
     item.querySelectorAll("button").forEach(b => b.disabled = false);
     msg.className = "msg err"; msg.textContent = explain(err); showSetup(err);
