@@ -312,6 +312,9 @@ def fastsimon_search(base, query):
     return out
 
 
+SEARCH_PAGE_STORES = set()   # Shopify stores whose quick search is unreliable; filled from config "search_page": true
+
+
 def search_shopify(base, query, publisher):
     data = fetch_json(cad(f"{base}/search/suggest.json?q={quote(query)}&resources[type]=product&resources[limit]=10"))
     handles, suggested = [], {}
@@ -325,7 +328,7 @@ def search_shopify(base, query, publisher):
         for h, item in fastsimon_search(base, query):
             if h not in handles:
                 handles.append(h)
-    if not handles:
+    if not handles and base in SEARCH_PAGE_STORES:
         # Some stores' quick search returns unrelated products; fall back to the full search page.
         try:
             html = fetch(cad(f"{base}/search?type=product&q={quote(query)}"))
@@ -690,11 +693,13 @@ def search_sitemap(base, query, publisher):
         slug = normalize(u.rstrip("/").rsplit("/", 1)[-1])
         if f" {' '.join(words)} " in f" {slug} ":
             hits.append(u)
-    out = []
+    out, failed = [], 0
     for u in hits[:8]:
         try:
             info = _product_from_jsonld(fetch(u, timeout=60))
-        except (HTTPError, URLError, TimeoutError, OSError):
+        except (HTTPError, URLError, TimeoutError, OSError) as exc:
+            failed += 1
+            last_error = exc
             continue
         if not info:
             continue
@@ -706,6 +711,8 @@ def search_sitemap(base, query, publisher):
         out.append({"title": title, "status": status,
                     "price": f"${float(price):.2f}" if isinstance(price, (int, float, str)) and str(price).replace(".", "", 1).isdigit() else None,
                     "link": u})
+    if hits and failed == len(hits[:8]):
+        raise last_error      # none of the product pages loaded: report a failed check, keep the last result
     return out
 
 
@@ -733,6 +740,8 @@ def price_value(price):
 
 # Shopify rate-limits by visitor across all the shops it hosts, so only a few Shopify searches run at once.
 PLATFORM_SLOTS = {"shopify": threading.BoundedSemaphore(6)}
+_shopify_pause_until = [0.0]
+_pause_lock = threading.Lock()
 _unreachable = {}   # store -> reason, for stores that timed out or refused to connect during this run
 
 
@@ -744,8 +753,21 @@ def check_search(watch):
     if base in _unreachable:     # don't wait on a store that's already timing out this run
         return UNKNOWN, None, None, _unreachable[base]
     try:
-        with PLATFORM_SLOTS.get(platform, contextlib.nullcontext()):
-            candidates = SEARCHERS[platform](base, watch["query"], publisher)
+        for attempt in range(4):
+            # If Shopify said "too many requests", every Shopify search waits out the pause together.
+            if platform == "shopify":
+                wait = _shopify_pause_until[0] - time.time()
+                if wait > 0:
+                    time.sleep(wait)
+            try:
+                with PLATFORM_SLOTS.get(platform, contextlib.nullcontext()):
+                    candidates = SEARCHERS[platform](base, watch["query"], publisher)
+                break
+            except HTTPError as exc:
+                if exc.code != 429 or platform != "shopify" or attempt == 3:
+                    raise
+                with _pause_lock:
+                    _shopify_pause_until[0] = max(_shopify_pause_until[0], time.time() + 30 * (attempt + 1))
     except (HTTPError, URLError, TimeoutError, OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
         reason = f"store search failed ({type(exc).__name__}: {str(exc)[:80]})"
         if isinstance(exc, (TimeoutError, ConnectionError)) or (isinstance(exc, URLError) and not isinstance(exc, HTTPError)):
@@ -1083,6 +1105,7 @@ def fill_missing_publishers(config):
 
 
 WORKERS = 24
+MIN_AUTO_GAP_MIN = 20   # automatic checks (schedule, cron-job.org) skip if the last check was this recent
 
 
 def now_utc():
@@ -1091,12 +1114,19 @@ def now_utc():
 
 def run_once(dry_run=False):
     config = load_json(CONFIG_PATH, None)
+    SEARCH_PAGE_STORES.update(st["url"].rstrip("/") for st in (config or {}).get("stores", []) if st.get("search_page"))
     if config and not dry_run and fill_missing_publishers(config):
         save_config(config)
     watches = build_watches(config or {})
     if not watches:
         raise SystemExit('Nothing to watch yet. Add a game:  python stock_alert.py add "Game Title" --publisher "Publisher"')
     state = load_json(STATE_PATH, {})
+    manual = os.environ.get("CHECK_MANUAL", "").lower() == "true"
+    if not manual and not dry_run and state.get("updated"):
+        age = time.time() - calendar.timegm(time.strptime(state["updated"], "%Y-%m-%dT%H:%M:%SZ"))
+        if age < MIN_AUTO_GAP_MIN * 60:
+            print(f"Last check was {age / 60:.0f} min ago; skipping this automatic check (minimum gap {MIN_AUTO_GAP_MIN} min).")
+            return 0
     if "watches" not in state:  # older flat format
         state = {"watches": {k: v for k, v in state.items() if isinstance(v, dict)}}
     old = state["watches"]

@@ -9,6 +9,10 @@ on:
         description: "Just send a test email (no stock check)"
         type: boolean
         default: false
+      manual:
+        description: "Run even if a check ran in the last 20 minutes"
+        type: boolean
+        default: false
 
 permissions:
   contents: write             # lets the job save results (and looked-up publishers) back to the repo
@@ -40,6 +44,8 @@ jobs:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          # Started from the web page / Actions tab = manual. Schedule and cron-job.org (which sends no inputs) = automatic.
+          CHECK_MANUAL: ${{ github.event_name == 'workflow_dispatch' && inputs.manual == true }}
 
       - name: Save state
         if: always()

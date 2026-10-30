@@ -701,7 +701,7 @@ async function startCheck(quiet, label) {
   $("checkNow").disabled = true; msg.className = "msg"; msg.textContent = "Starting…";
   try {
     const since = new Date(Date.now() - 60000).toISOString();
-    await gh(`/actions/workflows/${WORKFLOW}/dispatches`, { method: "POST", body: JSON.stringify({ ref: BRANCH }) });
+    await gh(`/actions/workflows/${WORKFLOW}/dispatches`, { method: "POST", body: JSON.stringify({ ref: BRANCH, inputs: { manual: true } }) });
     msg.className = "msg ok"; msg.title = "";
     watchRun(since, label || "Checking stores");
   } catch (err) {
