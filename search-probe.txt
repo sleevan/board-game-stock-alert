@@ -1,3 +1,0 @@
-search results: [{"title": "Men of Iron Battles Tri-Pack: Men of Iron, Infidel, Blood & Roses 2nd Print", "status": "in_stock", "price": "$114.95", "link": "https://store.401games.ca/products/men-of-iron-battles-tri-pack-men-of-iron-infidel-blood-roses-2nd-print"}]
-check result: ["not_listed", null, null, "1 possible match(es) to confirm"]
-prompts: [{"title": "Men of Iron Battles Tri-Pack: Men of Iron, Infidel, Blood & Roses 2nd Print", "key": "men of iron battles tri pack men of iron infidel blood roses 2nd print", "status": "in_stock", "price": "$114.95", "link": "https://store.401games.ca/products/men-of-iron-battles-tri-pack-men-of-iron-infidel-blood-roses-2nd-print"}]
