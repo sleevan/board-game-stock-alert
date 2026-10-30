@@ -149,6 +149,34 @@ def title_has_words(title, query):
     return f" {normalize(query)} " in f" {normalize(title)} "
 
 
+MAX_INSERTED_WORDS = 2
+
+
+def title_words_in_order(title, query, max_inserted=MAX_INSERTED_WORDS):
+    """All of the query's words appear in order, with at most a couple of extra words between them:
+    'Men of Iron Tri-Pack' fits 'Men of Iron Battles Tri-Pack: ...' (one extra word)."""
+    q, t = normalize(query).split(), normalize(title).split()
+    if not q:
+        return False
+    for start in (i for i, w in enumerate(t) if w == q[0]):
+        j, inserted = start + 1, 0
+        for word in q[1:]:
+            while j < len(t) and t[j] != word:
+                j += 1
+                inserted += 1
+            if j >= len(t) or inserted > max_inserted:
+                break
+            j += 1
+        else:
+            return True
+    return False
+
+
+def title_candidate(title, query):
+    """Loose gate used when reading search results: the exact words, or the words in order with small gaps."""
+    return title_has_words(title, query) or (len(normalize(query).split()) >= 3 and title_words_in_order(title, query))
+
+
 SHORT_TITLE_CHARS = 4   # titles this short use strict matching; longer ones match on containment
 
 
@@ -161,7 +189,11 @@ def match_kind(query, title):
     Longer titles: any listing containing the whole title counts.
     Short titles (4 characters or fewer): only exact titles count; near matches are asked about."""
     if not is_short_title(query):
-        return "exact" if title_has_words(title, query) else None
+        if title_has_words(title, query):
+            return "exact"
+        if len(normalize(query).split()) >= 3 and title_words_in_order(title, query):
+            return "possible"     # same words in order, with an extra word or two in between: ask
+        return None
     q, _ = title_core(query)
     c, had_edition = title_core(title)
     if c == q:
@@ -251,14 +283,48 @@ def publisher_matches(product, publisher):
 # Each returns a list of candidates: dict(title, status, price, link, publisher_text)
 # publisher_text is None when the platform doesn't expose it in search results.
 # --------------------------------------------------------------------------
+_fastsimon_ids = {}
+
+
+def fastsimon_search(base, query):
+    """[(handle, item)] from a store's Fast Simon search, or [] if the store doesn't use it."""
+    if base not in _fastsimon_ids:
+        try:
+            home = fetch(base + "/")
+            m = re.search(r"fastsimon\.com/[^\"']*?UUID=([0-9a-f\-]{36})[^\"']*?store=(\d+)", home)
+            _fastsimon_ids[base] = (m.group(1), m.group(2)) if m else None
+        except (HTTPError, URLError, TimeoutError, OSError):
+            _fastsimon_ids[base] = None
+    ids = _fastsimon_ids[base]
+    if not ids:
+        return []
+    uuid, store = ids
+    try:
+        d = fetch_json(f"https://api.fastsimon.com/full_text_search?UUID={uuid}&store_id={store}"
+                       f"&q={quote(query)}&products_per_page=20&page_num=1")
+    except (HTTPError, URLError, TimeoutError, OSError, ValueError):
+        return []
+    out = []
+    for item in d.get("items") or []:
+        title, url = item.get("l", ""), item.get("u", "")
+        if "/products/" in url and title_candidate(title, query):
+            out.append((url.split("/products/")[-1].split("?")[0], item))
+    return out
+
+
 def search_shopify(base, query, publisher):
     data = fetch_json(cad(f"{base}/search/suggest.json?q={quote(query)}&resources[type]=product&resources[limit]=10"))
     handles, suggested = [], {}
     for p in data["resources"]["results"]["products"]:
-        if title_has_words(p.get("title"), query):
+        if title_candidate(p.get("title"), query):
             h = p.get("handle") or p.get("url", "").split("/products/")[-1].split("?")[0]
             handles.append(h)
             suggested[h] = p
+    if not handles:
+        # Stores with the Fast Simon search app (e.g. 401 Games): use it, it's what their own search box uses.
+        for h, item in fastsimon_search(base, query):
+            if h not in handles:
+                handles.append(h)
     if not handles:
         # Some stores' quick search returns unrelated products; fall back to the full search page.
         try:
@@ -293,7 +359,7 @@ def search_shopify(base, query, publisher):
                     continue
                 product = from_suggest(sp)
         title = product.get("title", "")
-        if not title_has_words(title, query):
+        if not title_candidate(title, query):
             continue
         if publisher and not publisher_matches(product, publisher):
             out.append({"title": title, "status": "wrong_publisher"})
@@ -308,7 +374,7 @@ def search_woocommerce(base, query, publisher):
     out = []
     for it in items:
         title = htmllib.unescape(re.sub(r"<[^>]+>", "", it.get("name", "")))
-        if not title_has_words(title, query):
+        if not title_candidate(title, query):
             continue
         meta = " ".join([it.get("description", ""), it.get("short_description", ""),
                          *[c.get("name", "") for c in it.get("categories", [])],
@@ -341,7 +407,7 @@ def search_lightspeed(base, query, publisher):
     out = []
     for p in (prods.values() if isinstance(prods, dict) else prods):
         title = p.get("title", "")
-        if not title_has_words(title, query):
+        if not title_candidate(title, query):
             continue
         brand = (p.get("brand") or {}).get("title", "") if isinstance(p.get("brand"), dict) else ""
         if publisher and not text_has_publisher(f'{brand} {p.get("fulltitle", "")} {p.get("description", "")}', publisher):
@@ -373,7 +439,7 @@ def search_crystalcommerce(base, query, publisher):
     for blk in _blocks(html, 'class="product" itemscope'):
         m = re.search(r'itemprop="name"[^>]*title="([^"]+)"', blk) or re.search(r'itemprop="name"[^>]*>(.*?)<', blk, re.S)
         title = _clean(m.group(1)) if m else ""
-        if not title or not title_has_words(title, query):
+        if not title or not title_candidate(title, query):
             continue
         link = re.search(r'href="(/catalog/[^"]+)"', blk)
         if PREORDER_RE.search(title) or re.search(r"pre-?order", blk, re.I):
@@ -397,7 +463,7 @@ def search_magento(base, query, publisher):
         if not m:
             continue
         title, link = _clean(m.group(2)), m.group(1)
-        if not title_has_words(title, query):
+        if not title_candidate(title, query):
             continue
         if PREORDER_RE.search(title) or re.search(r"pr[ée]-?commande|pre-?order", blk, re.I):
             status = PREORDER
@@ -419,7 +485,7 @@ def search_greatboardgames(base, query, publisher):
         if not m:
             continue
         title, link = _clean(m.group(2)), m.group(1)
-        if not title_has_words(title, query):
+        if not title_candidate(title, query):
             continue
         if PREORDER_RE.search(title) or re.search(r"pre-?order", blk, re.I):
             status = PREORDER
@@ -448,7 +514,7 @@ def search_woocommerce_html(base, query, publisher):
         for cls, body in re.findall(r'<li[^>]*class="([^"]*\btype-product\b[^"]*)"[^>]*>(.*?)(?=<li[^>]*class="[^"]*\btype-product\b|</ul>)', chunk, re.S):
             m = re.search(r'woocommerce-loop-product__title[^>]*>(.*?)</', body, re.S)
             title = _clean(m.group(1)) if m else ""
-            if not title or not title_has_words(title, query) or title in seen:
+            if not title or not title_candidate(title, query) or title in seen:
                 continue
             seen.add(title)
             classes = cls.split()
@@ -473,7 +539,7 @@ def search_shift4shop(base, query, publisher):
         if not m:
             continue
         title = _clean(m.group(2))
-        if not title_has_words(title, query):
+        if not title_candidate(title, query):
             continue
         avail = re.search(r'class="availability"[^>]*>(.*?)</span>', blk, re.S)
         avail = _clean(avail.group(1)) if avail else ""
@@ -497,7 +563,7 @@ def search_opencart(base, query, publisher):
         if not m:
             continue
         title, link = _clean(m.group(2)), m.group(1).split("?")[0]
-        if not title_has_words(title, query) or link in seen:
+        if not title_candidate(title, query) or link in seen:
             continue
         seen.add(link)
         layout_class = blk.split('"', 1)[0]
@@ -519,7 +585,7 @@ def search_odoo(base, query, publisher):
     for blk in _blocks(page, '<div class="oe_product_cart"'):
         m = re.search(r'itemprop="name"[^>]*>(.*?)</span>', blk, re.S)
         title = _clean(m.group(1)) if m else ""
-        if not title or not title_has_words(title, query):
+        if not title or not title_candidate(title, query):
             continue
         if publisher:
             by = re.search(r'<span>By <span>(.*?)</span>', blk)
@@ -557,7 +623,7 @@ def search_square(base, query, publisher):
     out = []
     for p in data.get("data", []):
         title = htmllib.unescape(p.get("name", ""))
-        if not title_has_words(title, query) or p.get("visibility") not in (None, "visible"):
+        if not title_candidate(title, query) or p.get("visibility") not in (None, "visible"):
             continue
         if publisher and not text_has_publisher(title + " " + re.sub(r"<[^>]+>", " ", p.get("short_description") or ""), publisher):
             out.append({"title": title, "status": "wrong_publisher"})
@@ -634,7 +700,7 @@ def search_sitemap(base, query, publisher):
             continue
         title, availability, price = info
         title = htmllib.unescape(title or "")
-        if not title_has_words(title, query):
+        if not title_candidate(title, query):
             continue
         status = PREORDER if PREORDER_RE.search(title) else (classify([availability]) or OUT_OF_STOCK)
         out.append({"title": title, "status": status,
