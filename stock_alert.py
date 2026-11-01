@@ -1150,6 +1150,23 @@ def run_once(dry_run=False):
 
     alerts, alert_games, new_watches, nudges = [], [], {}, []
     store_ok = {}
+    # Email only when an in-stock price differs from the last price emailed for that game at that store.
+    # (A listing that drops out of a store's search and comes back at the same price stays quiet.)
+    notified = state.get("notified")
+    if notified is None:      # first run with this rule: treat everything currently in stock as already emailed
+        notified = {}
+        for v in old.values():
+            if v.get("status") == IN_STOCK and v.get("store"):
+                notified[f'{normalize(v["game"])}|{v["store"]}'] = {"price": v.get("price"), "at": now_utc()}
+            for pm in v.get("possible", []):
+                if pm.get("status") == IN_STOCK and v.get("store"):
+                    notified[f'{normalize(v["game"])}|{v["store"]}|{pm.get("key") or normalize(pm["title"])}'] = {"price": pm.get("price"), "at": now_utc()}
+
+    def price_changed(nkey, price):
+        rec = notified.get(nkey)
+        if rec is None:
+            return True, None
+        return price_value(rec.get("price")) != price_value(price), rec.get("price")
     for watch, (status, price, link, method) in zip(watches, results):
         key = watch_key(watch)
         name = watch.get("name") or watch.get("query") or watch.get("url")
@@ -1168,17 +1185,26 @@ def run_once(dry_run=False):
                                 "failures": prev.get("failures", 0) + 1, "error": method}
             continue
 
-        # Only in-stock ever notifies, and only on the change into in-stock.
-        if status == IN_STOCK and prev.get("status") != IN_STOCK:
-            alerts.append(f"{name} is IN STOCK{price_note}\n{link}")
-            if watch["game"] not in alert_games:
-                alert_games.append(watch["game"])
+        store_name = watch.get("store_name") or watch.get("url")
+        if status == IN_STOCK:
+            nkey = f'{normalize(watch["game"])}|{store_name}'
+            changed, was = price_changed(nkey, price)
+            if changed:
+                note = f" (was {was})" if was else ""
+                alerts.append(f"{name} is IN STOCK{price_note}{note}\n{link}")
+                if watch["game"] not in alert_games:
+                    alert_games.append(watch["game"])
+            notified[nkey] = {"price": price, "at": now_utc()}
         possible = watch.get("_possible", [])
-        known = {p["title"] for p in prev.get("possible", []) if p.get("status") == IN_STOCK}
         for pm in possible:
-            if pm["status"] == IN_STOCK and pm["title"] not in known:
-                nudges.append(f'{name}: "{pm["title"]}"' + (f' - {pm["price"]}' if pm.get("price") else "")
+            if pm["status"] != IN_STOCK:
+                continue
+            nkey = f'{normalize(watch["game"])}|{store_name}|{pm.get("key") or normalize(pm["title"])}'
+            changed, was = price_changed(nkey, pm.get("price"))
+            if changed:
+                nudges.append(f'{name}: "{pm["title"]}"' + (f' - {pm["price"]}' if pm.get("price") else "") + (f" (was {was})" if was else "")
                               + (f' | {watch["shipping"]}' if watch.get("shipping") else "") + (f'\n{pm["link"]}' if pm.get("link") else ""))
+            notified[nkey] = {"price": pm.get("price"), "at": now_utc()}
         new_watches[key] = {**base, "status": status, "price": price, "link": link,
                             "detail": method, "failures": 0, "possible": possible,
                             "since": prev.get("since") if prev.get("status") == status else now_utc()}
@@ -1203,7 +1229,7 @@ def run_once(dry_run=False):
         subject = ("In stock: " + ", ".join(alert_games)) if alerts else "Possible match to confirm"
         send_email(subject, "\n\n----------\n\n".join(parts))
 
-    state = {"updated": now_utc(), "watches": new_watches, "stores": stores_health}
+    state = {"updated": now_utc(), "watches": new_watches, "stores": stores_health, "notified": notified}
     STATE_PATH.write_text(json.dumps(state, indent=2, ensure_ascii=False) + "\n")
     bad = [i["name"] for i in store_ok.values() if not i["ok"]]
     if bad:

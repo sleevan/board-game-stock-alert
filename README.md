@@ -2,7 +2,9 @@
 
 Emails you when a board game is **in stock** at a Canadian online store. Pre-orders and backorders never trigger an email.
 
-You don't need product links. Give it a title (publisher optional) and it searches every store's catalogue, so it catches a game as soon as a store lists it. You get one email when a game comes into stock, and another only if it sells out and comes back.
+Each game/store pair emails once at a given price: you hear about it the first time it's in stock at that store, and again only if its in-stock price changes. (The last emailed prices are kept in `state.json` under `notified`.)
+
+You don't need product links. Give it a title (publisher optional) and it searches every store's catalogue, so it catches a game as soon as a store lists it. 
 
 ## The web page
 
