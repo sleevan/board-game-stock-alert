@@ -112,7 +112,7 @@
       "exact": true,
       "added": "2026-10-30T15:00:25Z",
       "publisher_lookup": "not_found",
-      "publisher_checked": "2026-11-01T16:53:59Z"
+      "publisher_checked": "2026-11-02T18:10:41Z"
     },
     {
       "title": "7th Seal",
@@ -135,11 +135,17 @@
     },
     {
       "title": "Schadenfreude",
-      "added": "2026-11-02T17:10:59Z"
+      "added": "2026-11-02T17:10:59Z",
+      "publisher": "Office Dog",
+      "publisher_source": "Board Game Bliss",
+      "publisher_listing": "Schadenfreude *PRE-ORDER*"
     },
     {
       "title": "Nokosu Dice",
-      "added": "2026-11-02T17:12:45Z"
+      "added": "2026-11-02T17:12:45Z",
+      "publisher": "Engames",
+      "publisher_source": "Board Game Bliss",
+      "publisher_listing": "Nokosu Dice (Japan Import)"
     }
   ],
   "stores": [
