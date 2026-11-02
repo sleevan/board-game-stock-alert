@@ -796,6 +796,8 @@ def check_search(watch):
     """Search one store's catalogue for the title (and publisher, if given)."""
     base = watch["store"].rstrip("/")
     platform = watch.get("platform", "shopify")
+    if platform == "shopify" and base in FASTSIMON_STORES:
+        platform = "fastsimon"   # searched through Fast Simon only: Shopify's slow-downs and pauses don't apply
     publisher = watch.get("publisher")
     if base in _unreachable:     # don't wait on a store that's already timing out this run
         return UNKNOWN, None, None, _unreachable[base]
@@ -811,7 +813,7 @@ def check_search(watch):
                     time.sleep(wait)
             try:
                 with PLATFORM_SLOTS.get(platform, contextlib.nullcontext()):
-                    candidates = SEARCHERS[platform](base, watch["query"], publisher)
+                    candidates = SEARCHERS["shopify" if platform == "fastsimon" else platform](base, watch["query"], publisher)
                 break
             except HTTPError as exc:
                 if exc.code != 429 or platform != "shopify" or attempt == 2:
