@@ -1,0 +1,12 @@
+name: Probe Fast Simon (temporary)
+on: workflow_dispatch
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -s "https://api.fastsimon.com/full_text_search?UUID=d3cae9c0-9d9b-4fe3-ad81-873270df14b5&store_id=17041809&q=men%20of%20iron%20tri%20pack&products_per_page=5&page_num=1" | python3 -c "import json,sys; d=json.load(sys.stdin); print(json.dumps({k:v for k,v in d.items() if k!='items'})[:1500]); [print(json.dumps(i,indent=1)[:3000]) for i in d.get('items',[])[:3]]"
+          echo ===== preorder sample
+          curl -s "https://api.fastsimon.com/full_text_search?UUID=d3cae9c0-9d9b-4fe3-ad81-873270df14b5&store_id=17041809&q=dungeon%20crawler%20carl%20unstoppable&products_per_page=3&page_num=1" | python3 -c "import json,sys; d=json.load(sys.stdin); [print(json.dumps(i,indent=1)[:3000]) for i in d.get('items',[])[:2]]"
+          echo ===== sold out sample
+          curl -s "https://api.fastsimon.com/full_text_search?UUID=d3cae9c0-9d9b-4fe3-ad81-873270df14b5&store_id=17041809&q=yinsh&products_per_page=3&page_num=1" | python3 -c "import json,sys; d=json.load(sys.stdin); [print(json.dumps(i,indent=1)[:3000]) for i in d.get('items',[])[:2]]"
