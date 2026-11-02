@@ -59,7 +59,7 @@ jobs:
             git commit -qm "Update stock results"
             ok=""
             for i in 1 2 3 4 5; do
-              if git pull -q --rebase -X theirs && git push -q; then ok=1; break; fi
+              if git pull -q --rebase --autostash -X theirs && git push -q; then ok=1; break; fi
               git rebase --abort 2>/dev/null || true
               sleep $((i * 3))
             done
@@ -69,7 +69,7 @@ jobs:
           git add config.json 2>/dev/null || true
           if ! git diff --cached --quiet; then
             git commit -qm "Fill in publishers"
-            (git pull -q --rebase && git push -q) || { git rebase --abort 2>/dev/null; echo "Publisher update skipped this time"; }
+            (git pull -q --rebase && git push -q) || { git rebase --abort 2>/dev/null; git reset -q --hard @{u} 2>/dev/null; echo "Publisher update skipped this time"; }
           fi
 
       - name: Send alert email
