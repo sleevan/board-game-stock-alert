@@ -1189,11 +1189,13 @@ def run_once(dry_run=False):
         p = old_w.get(watch_key(w))
         if (not w.get("store") or not p or not (p.get("searched") or p.get("checked"))
                 or p.get("status") in (IN_STOCK, PREORDER, OUT_OF_STOCK) or p.get("possible")
-                or p.get("failures") or w["store"].rstrip("/") in FASTSIMON_STORES):
+                or w["store"].rstrip("/") in FASTSIMON_STORES):
             due.append(w)
         else:
             quiet.append(w)
-    quiet.sort(key=lambda w: last_search(w) or 0)
+    # A failed search doesn't make a pair due every check (a pile of retries just brings more "too many
+    # requests"); it keeps its old search time, so it's first in line next time. Never-searched pairs go first.
+    quiet.sort(key=lambda w: (bool(old_w.get(watch_key(w), {}).get("searched")), last_search(w) or 0))
     share = -(-len(quiet) // NOT_LISTED_SPREAD)
     overdue = [w for w in quiet if time.time() - (last_search(w) or 0) > NOT_LISTED_MAX_HOURS * 3600]
     picked = quiet[:share]
