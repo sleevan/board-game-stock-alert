@@ -330,6 +330,20 @@ def fastsimon_search(base, query, ids=None):
     return out
 
 
+def fastsimon_product(item):
+    """A Fast Simon result as a quick-search style product record. "iso" means out of stock; each variant
+    says whether it's "Sellable"; pre-orders are tagged (t_b / s_t) and usually say so in the title."""
+    def attr(v, name):
+        for k, vals in (v[1] if len(v) > 1 else []):
+            if k == name:
+                return vals[0] if vals else None
+    variants = [{"title": attr(v, "Title") or "", "available": attr(v, "Sellable") is True} for v in item.get("vra") or []]
+    sellable = any(v["available"] for v in variants) if variants else True
+    return {"title": item.get("l", ""), "available": (not item.get("iso")) and sellable, "price": item.get("p"),
+            "vendor": item.get("v", ""), "tags": list(dict.fromkeys((item.get("t_b") or []) + (item.get("s_t") or []))),
+            "type": "", "variants": variants, "complete": True}
+
+
 FASTSIMON_STORES = set()     # stores with Fast Simon set in config ("fastsimon": {"uuid": ..., "store": ...})
 SEARCH_PAGE_STORES = set()   # Shopify stores whose quick search is unreliable; filled from config "search_page": true
 
@@ -340,7 +354,11 @@ def search_shopify(base, query, publisher):
     if configured:
         # Store set up with Fast Simon (e.g. 401 Games): it's the store's real search, and it isn't
         # rate-limited like the store's own Shopify search, so use it first.
-        handles = [h for h, _ in fastsimon_search(base, query, configured)]
+        # Its results carry stock, price, vendor and pre-order tags, so no request to the store itself is needed
+        # (401's own store is quick to say "too many requests").
+        for h, item in fastsimon_search(base, query, configured):
+            handles.append(h)
+            suggested[h] = fastsimon_product(item)
     else:
         data = fetch_json(cad(f"{base}/search/suggest.json?q={quote(query)}&resources[type]=product&resources[limit]=10"))
         for p in data["resources"]["results"]["products"]:
@@ -377,7 +395,7 @@ def search_shopify(base, query, publisher):
     out = []
     for handle in handles:
         sp = suggested.get(handle)
-        if sp is not None and sp.get("available") is False:
+        if sp is not None and (sp.get("available") is False or sp.get("complete")):
             product = from_suggest(sp)   # sold out: quick-search data is enough, skip the extra request
         else:
             try:
