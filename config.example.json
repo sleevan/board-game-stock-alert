@@ -10,7 +10,11 @@
       "name": "401 Games",
       "url": "https://store.401games.ca",
       "platform": "shopify",
-      "shipping": "No Flat Rate"
+      "shipping": "No Flat Rate",
+      "fastsimon": {
+        "uuid": "d3cae9c0-9d9b-4fe3-ad81-873270df14b5",
+        "store": "17041809"
+      }
     },
     {
       "name": "A Muse N Games",

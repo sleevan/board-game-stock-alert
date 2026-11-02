@@ -72,18 +72,19 @@ PREORDER_RE = re.compile(r"\bpre[\s\-]?order|\bpre[\s\-]?sale|\bback[\s\-]?order
 # Fetching
 # --------------------------------------------------------------------------
 def fetch(url, timeout=25):
-    """GET a page; on 'too many requests' (429) or 'busy' (503), wait and retry up to 3 times."""
-    for attempt in range(4):
+    """GET a page; on 'too many requests' (429) or 'busy' (503), wait briefly and retry once.
+    (Longer Shopify slow-downs are handled centrally in check_search.)"""
+    for attempt in range(2):
         try:
             return _fetch_once(url, timeout)
         except HTTPError as exc:
-            if exc.code not in (429, 503) or attempt == 3:
+            if exc.code not in (429, 503) or attempt == 1:
                 raise
             try:
                 wait = float(exc.headers.get("Retry-After") or 0)
             except (TypeError, ValueError):
                 wait = 0
-            time.sleep(min(max(wait, 2 * 2 ** attempt), 20))
+            time.sleep(min(max(wait, 3), 10))
 
 
 def _fetch_once(url, timeout=25):
@@ -283,51 +284,74 @@ def publisher_matches(product, publisher):
 # Each returns a list of candidates: dict(title, status, price, link, publisher_text)
 # publisher_text is None when the platform doesn't expose it in search results.
 # --------------------------------------------------------------------------
-_fastsimon_ids = {}
+_fastsimon_ids = {}        # store -> (uuid, store id); from config "fastsimon", or detected on the homepage
 
 
-def fastsimon_search(base, query):
-    """[(handle, item)] from a store's Fast Simon search, or [] if the store doesn't use it."""
+class SearchUnavailable(Exception):
+    """A store's search service didn't answer; the check keeps the last known result instead of 'not listed'."""
+
+
+def fastsimon_ids(base):
     if base not in _fastsimon_ids:
         try:
             home = fetch(base + "/")
-            m = re.search(r"fastsimon\.com/[^\"']*?UUID=([0-9a-f\-]{36})[^\"']*?store=(\d+)", home)
-            _fastsimon_ids[base] = (m.group(1), m.group(2)) if m else None
         except (HTTPError, URLError, TimeoutError, OSError):
-            _fastsimon_ids[base] = None
-    ids = _fastsimon_ids[base]
+            return None              # couldn't tell this time; don't remember a "no"
+        m = re.search(r"fastsimon\.com/[^\"']*?UUID=([0-9a-f\-]{36})[^\"']*?store=(\d+)", home)
+        _fastsimon_ids[base] = (m.group(1), m.group(2)) if m else None
+    return _fastsimon_ids[base]
+
+
+def fastsimon_search(base, query, ids=None):
+    """[(handle, item)] from a store's Fast Simon search, or [] if the store doesn't use it.
+    Raises SearchUnavailable if Fast Simon is set up for the store but doesn't answer."""
+    ids = ids or fastsimon_ids(base)
     if not ids:
         return []
     uuid, store = ids
-    try:
-        d = fetch_json(f"https://api.fastsimon.com/full_text_search?UUID={uuid}&store_id={store}"
-                       f"&q={quote(query)}&products_per_page=20&page_num=1")
-    except (HTTPError, URLError, TimeoutError, OSError, ValueError):
-        return []
+    url = (f"https://api.fastsimon.com/full_text_search?UUID={uuid}&store_id={store}"
+           f"&q={quote(query)}&products_per_page=24&page_num=1")
+    last = None
+    for attempt in range(3):
+        try:
+            d = fetch_json(url)
+            break
+        except (HTTPError, URLError, TimeoutError, OSError, ValueError) as exc:
+            last = exc
+            time.sleep(2 * (attempt + 1))
+    else:
+        raise SearchUnavailable(f"Fast Simon search didn't answer ({type(last).__name__})")
     out = []
     for item in d.get("items") or []:
-        title, url = item.get("l", ""), item.get("u", "")
-        if "/products/" in url and title_candidate(title, query):
-            out.append((url.split("/products/")[-1].split("?")[0], item))
+        title, link = item.get("l", ""), item.get("u", "")
+        if "/products/" in link and title_candidate(title, query):
+            out.append((link.split("/products/")[-1].split("?")[0], item))
     return out
 
 
+FASTSIMON_STORES = set()     # stores with Fast Simon set in config ("fastsimon": {"uuid": ..., "store": ...})
 SEARCH_PAGE_STORES = set()   # Shopify stores whose quick search is unreliable; filled from config "search_page": true
 
 
 def search_shopify(base, query, publisher):
-    data = fetch_json(cad(f"{base}/search/suggest.json?q={quote(query)}&resources[type]=product&resources[limit]=10"))
     handles, suggested = [], {}
-    for p in data["resources"]["results"]["products"]:
-        if title_candidate(p.get("title"), query):
-            h = p.get("handle") or p.get("url", "").split("/products/")[-1].split("?")[0]
-            handles.append(h)
-            suggested[h] = p
-    if not handles:
-        # Stores with the Fast Simon search app (e.g. 401 Games): use it, it's what their own search box uses.
-        for h, item in fastsimon_search(base, query):
-            if h not in handles:
+    configured = _fastsimon_ids.get(base) if base in FASTSIMON_STORES else None
+    if configured:
+        # Store set up with Fast Simon (e.g. 401 Games): it's the store's real search, and it isn't
+        # rate-limited like the store's own Shopify search, so use it first.
+        handles = [h for h, _ in fastsimon_search(base, query, configured)]
+    else:
+        data = fetch_json(cad(f"{base}/search/suggest.json?q={quote(query)}&resources[type]=product&resources[limit]=10"))
+        for p in data["resources"]["results"]["products"]:
+            if title_candidate(p.get("title"), query):
+                h = p.get("handle") or p.get("url", "").split("/products/")[-1].split("?")[0]
                 handles.append(h)
+                suggested[h] = p
+        if not handles:
+            # Other stores might use the Fast Simon search app too: try it if their homepage says so.
+            for h, item in fastsimon_search(base, query):
+                if h not in handles:
+                    handles.append(h)
     if not handles and base in SEARCH_PAGE_STORES:
         # Some stores' quick search returns unrelated products; fall back to the full search page.
         try:
@@ -357,9 +381,11 @@ def search_shopify(base, query, publisher):
         else:
             try:
                 product = shopify_product(base, handle)   # full data, needed to spot pre-orders on "available" items
-            except (HTTPError, URLError, ValueError):
+            except (HTTPError, URLError, ValueError, TimeoutError, OSError) as exc:
                 if sp is None:
-                    continue
+                    # A listing was found but its details didn't load (e.g. the store said "too many requests"):
+                    # report a failed check so the last known result is kept, rather than "not listed".
+                    raise SearchUnavailable(f"product details didn't load ({type(exc).__name__})")
                 product = from_suggest(sp)
         title = product.get("title", "")
         if not title_candidate(title, query):
@@ -739,8 +765,10 @@ def price_value(price):
 
 
 # Shopify rate-limits by visitor across all the shops it hosts, so only a few Shopify searches run at once.
-PLATFORM_SLOTS = {"shopify": threading.BoundedSemaphore(6)}
+PLATFORM_SLOTS = {"shopify": threading.BoundedSemaphore(4)}
 _shopify_pause_until = [0.0]
+_shopify_paused = [0.0]              # seconds spent pausing for Shopify this run
+SHOPIFY_PAUSE_BUDGET = 180           # after this much pausing, remaining Shopify searches keep their last result
 _pause_lock = threading.Lock()
 _unreachable = {}   # store -> reason, for stores that timed out or refused to connect during this run
 
@@ -753,9 +781,12 @@ def check_search(watch):
     if base in _unreachable:     # don't wait on a store that's already timing out this run
         return UNKNOWN, None, None, _unreachable[base]
     try:
-        for attempt in range(4):
-            # If Shopify said "too many requests", every Shopify search waits out the pause together.
+        for attempt in range(3):
+            # If Shopify said "too many requests", every Shopify search waits out the pause together,
+            # up to a total budget per check; after that, Shopify searches keep their last result.
             if platform == "shopify":
+                if _shopify_paused[0] >= SHOPIFY_PAUSE_BUDGET:
+                    return UNKNOWN, None, None, "Shopify asked to slow down; kept the last result"
                 wait = _shopify_pause_until[0] - time.time()
                 if wait > 0:
                     time.sleep(wait)
@@ -764,10 +795,15 @@ def check_search(watch):
                     candidates = SEARCHERS[platform](base, watch["query"], publisher)
                 break
             except HTTPError as exc:
-                if exc.code != 429 or platform != "shopify" or attempt == 3:
+                if exc.code != 429 or platform != "shopify" or attempt == 2:
                     raise
                 with _pause_lock:
-                    _shopify_pause_until[0] = max(_shopify_pause_until[0], time.time() + 30 * (attempt + 1))
+                    if _shopify_pause_until[0] <= time.time():
+                        pause = 20 * (attempt + 1)
+                        _shopify_pause_until[0] = time.time() + pause
+                        _shopify_paused[0] += pause
+    except SearchUnavailable as exc:
+        return UNKNOWN, None, None, f"store search failed ({exc})"
     except (HTTPError, URLError, TimeoutError, OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
         reason = f"store search failed ({type(exc).__name__}: {str(exc)[:80]})"
         if isinstance(exc, (TimeoutError, ConnectionError)) or (isinstance(exc, URLError) and not isinstance(exc, HTTPError)):
@@ -1105,6 +1141,8 @@ def fill_missing_publishers(config):
 
 
 WORKERS = 24
+NOT_LISTED_SPREAD = 6        # "not listed" pairs: about 1/6 of them are searched per check
+NOT_LISTED_MAX_HOURS = 3     # ...and each at least this often
 MIN_AUTO_GAP_MIN = 20   # automatic checks (schedule, cron-job.org) skip if the last check was this recent
 
 
@@ -1115,6 +1153,11 @@ def now_utc():
 def run_once(dry_run=False):
     config = load_json(CONFIG_PATH, None)
     SEARCH_PAGE_STORES.update(st["url"].rstrip("/") for st in (config or {}).get("stores", []) if st.get("search_page"))
+    for st in (config or {}).get("stores", []):
+        fs = st.get("fastsimon")
+        if fs and fs.get("uuid") and fs.get("store"):
+            _fastsimon_ids[st["url"].rstrip("/")] = (fs["uuid"], str(fs["store"]))
+            FASTSIMON_STORES.add(st["url"].rstrip("/"))
     if config and not dry_run and fill_missing_publishers(config):
         save_config(config)
     watches = build_watches(config or {})
@@ -1132,7 +1175,34 @@ def run_once(dry_run=False):
     old = state["watches"]
     stores_health = state.get("stores", {})
 
-    # Check every game/store pair. Up to 24 searches run at once; work is interleaved by store so each store
+    # Which pairs to search this time. Pairs a store actually lists (in stock / pre-order / sold out, or with a
+    # possible match) and new pairs are searched every check. "Not listed" pairs are spread out: about a
+    # sixth of them per check, oldest first, and none goes longer than NOT_LISTED_MAX_HOURS without a search.
+    old_w = state.get("watches", {})
+    def last_search(w):
+        p = old_w.get(watch_key(w), {})
+        t = p.get("searched") or p.get("checked")
+        return calendar.timegm(time.strptime(t, "%Y-%m-%dT%H:%M:%SZ")) if t else None
+    due, quiet = [], []
+    for w in watches:
+        p = old_w.get(watch_key(w))
+        if (not w.get("store") or not p or not (p.get("searched") or p.get("checked"))
+                or p.get("status") in (IN_STOCK, PREORDER, OUT_OF_STOCK) or p.get("possible")
+                or p.get("failures") or w["store"].rstrip("/") in FASTSIMON_STORES):
+            due.append(w)
+        else:
+            quiet.append(w)
+    quiet.sort(key=lambda w: last_search(w) or 0)
+    share = -(-len(quiet) // NOT_LISTED_SPREAD)
+    overdue = [w for w in quiet if time.time() - (last_search(w) or 0) > NOT_LISTED_MAX_HOURS * 3600]
+    picked = quiet[:share]
+    picked += [w for w in overdue if w not in picked]
+    skipped = [w for w in quiet if w not in picked]
+    print(f"Searching {len(due)} listed/new pairs and {len(picked)} of {len(quiet)} 'not listed' pairs ({len(skipped)} rest this time)")
+    order = {id(w): i for i, w in enumerate(watches)}
+    watches = sorted(due + picked, key=lambda w: order[id(w)])   # original order interleaves stores
+
+    # Search the chosen pairs. Up to 24 searches run at once; work is interleaved by store so each store
     # sees only a few requests at a time. Each search's time is recorded per store.
     def timed(w):
         t0 = time.time()
@@ -1205,9 +1275,14 @@ def run_once(dry_run=False):
                 nudges.append(f'{name}: "{pm["title"]}"' + (f' - {pm["price"]}' if pm.get("price") else "") + (f" (was {was})" if was else "")
                               + (f' | {watch["shipping"]}' if watch.get("shipping") else "") + (f'\n{pm["link"]}' if pm.get("link") else ""))
             notified[nkey] = {"price": pm.get("price"), "at": now_utc()}
-        new_watches[key] = {**base, "status": status, "price": price, "link": link,
+        new_watches[key] = {**base, "status": status, "price": price, "link": link, "searched": now_utc(),
                             "detail": method, "failures": 0, "possible": possible,
                             "since": prev.get("since") if prev.get("status") == status else now_utc()}
+
+    for w in skipped:                       # not searched this time: keep what we had
+        k = watch_key(w)
+        if k in old:
+            new_watches[k] = old[k]
 
     for url, info in store_ok.items():
         h = stores_health.get(url, {})
