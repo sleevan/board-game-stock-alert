@@ -45,14 +45,39 @@ jobs:
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
           # Started from the web page / Actions tab = manual. Schedule and cron-job.org (which sends no inputs) = automatic.
+          DEFER_EMAIL: "true"
           CHECK_MANUAL: ${{ github.event_name == 'workflow_dispatch' && inputs.manual == true }}
 
-      - name: Save state
-        if: always()
+      - name: Save results
+        id: save
         run: |
           git config user.name "stock-alert-bot"
           git config user.email "stock-alert-bot@users.noreply.github.com"
-          git add state.json config.json 2>/dev/null || exit 0
-          git diff --cached --quiet && exit 0
-          git commit -qm "Update stock results"
-          for i in 1 2 3; do git pull -q --rebase && git push -q && break; sleep 5; done
+          # 1. results (state.json) - this check's results win any clash with an older save
+          git add state.json 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -qm "Update stock results"
+            ok=""
+            for i in 1 2 3 4 5; do
+              if git pull -q --rebase -X theirs && git push -q; then ok=1; break; fi
+              git rebase --abort 2>/dev/null || true
+              sleep $((i * 3))
+            done
+            [ -n "$ok" ] || { echo "Couldn't save results; no email sent this time (the next check will send it)."; exit 1; }
+          fi
+          # 2. publishers filled in (config.json) - never overwrite your own edits: skip on any clash
+          git add config.json 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -qm "Fill in publishers"
+            (git pull -q --rebase && git push -q) || { git rebase --abort 2>/dev/null; echo "Publisher update skipped this time"; }
+          fi
+
+      - name: Send alert email
+        if: steps.save.outcome == 'success'
+        run: python stock_alert.py --send-outbox
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}

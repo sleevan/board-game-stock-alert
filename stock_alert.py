@@ -45,6 +45,7 @@ HERE = Path(__file__).resolve().parent
 CONFIG_PATH = HERE / "config.json"
 STATE_PATH = HERE / "state.json"
 ENV_PATH = HERE / ".env"
+OUTBOX_PATH = HERE / "outbox.json"
 
 USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -1302,7 +1303,13 @@ def run_once(dry_run=False):
             parts.append("Possible matches in stock. These titles aren't an exact match, so they don't count "
                          f"until you confirm them on the web page ({page}):\n\n" + "\n\n".join(nudges))
         subject = ("In stock: " + ", ".join(alert_games)) if alerts else "Possible match to confirm"
-        send_email(subject, "\n\n----------\n\n".join(parts))
+        body = "\n\n----------\n\n".join(parts)
+        if os.environ.get("DEFER_EMAIL", "").lower() == "true":
+            # On GitHub: the email is sent by a later step, only after these results (and the record of
+            # what was emailed) have been saved. A failed save means no email, so nothing is sent twice.
+            OUTBOX_PATH.write_text(json.dumps({"subject": subject, "body": body}, ensure_ascii=False))
+        else:
+            send_email(subject, body)
 
     state = {"updated": now_utc(), "watches": new_watches, "stores": stores_health, "notified": notified}
     STATE_PATH.write_text(json.dumps(state, indent=2, ensure_ascii=False) + "\n")
@@ -1363,12 +1370,22 @@ def main():
     parser.add_argument("--dry-run", action="store_true", help="check and print, but don't email or save state")
     parser.add_argument("--loop", type=float, metavar="MINUTES", help="keep running, checking every N minutes")
     parser.add_argument("--test-email", action="store_true", help="send a test email and exit")
+    parser.add_argument("--send-outbox", action="store_true", help="send the alert email a check left in outbox.json")
     args = parser.parse_args()
 
     if args.command:
         return manage_games(args)
 
     load_env_file()
+
+    if args.send_outbox:
+        if OUTBOX_PATH.exists():
+            msg = json.loads(OUTBOX_PATH.read_text())
+            send_email(msg["subject"], msg["body"])
+            OUTBOX_PATH.unlink()
+        else:
+            print("No alert to send.")
+        return 0
 
     if args.test_email:
         send_email("Board game alert: test", "If you're reading this, email alerts are working.")
