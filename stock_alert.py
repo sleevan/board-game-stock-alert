@@ -787,7 +787,14 @@ def price_value(price):
 PLATFORM_SLOTS = {"shopify": threading.BoundedSemaphore(4)}
 _shopify_pause_until = [0.0]
 _shopify_paused = [0.0]              # seconds spent pausing for Shopify this run
-SHOPIFY_PAUSE_BUDGET = 180           # after this much pausing, remaining Shopify searches keep their last result
+SHOPIFY_PAUSE_BUDGET = [180]         # after this much pausing, remaining Shopify searches keep their last result
+# Scheduled checks are "patient": fewer Shopify searches at once, a short gap between them, longer and more
+# retries when Shopify says "too many requests", and a much bigger pause budget, capped by a deadline so the
+# check always finishes and saves. "Check now" (manual) checks stay quick.
+SHOPIFY_PACE = {"attempts": 3, "gap": 0.0, "pause_step": 20, "pause_max": 40}
+PATIENT = {"slots": 2, "budget": 1800, "attempts": 6, "gap": 1.0, "pause_step": 30, "pause_max": 120,
+           "deadline_min": 45}
+_deadline = [float("inf")]
 _pause_lock = threading.Lock()
 _unreachable = {}   # store -> reason, for stores that timed out or refused to connect during this run
 
@@ -802,25 +809,30 @@ def check_search(watch):
     if base in _unreachable:     # don't wait on a store that's already timing out this run
         return UNKNOWN, None, None, _unreachable[base]
     try:
-        for attempt in range(3):
+        attempts = SHOPIFY_PACE["attempts"] if platform == "shopify" else 3
+        for attempt in range(attempts):
             # If Shopify said "too many requests", every Shopify search waits out the pause together,
             # up to a total budget per check; after that, Shopify searches keep their last result.
             if platform == "shopify":
-                if _shopify_paused[0] >= SHOPIFY_PAUSE_BUDGET:
+                if _shopify_paused[0] >= SHOPIFY_PAUSE_BUDGET[0]:
                     return UNKNOWN, None, None, "Shopify asked to slow down; kept the last result"
                 wait = _shopify_pause_until[0] - time.time()
+                if time.time() + max(wait, 0) > _deadline[0]:
+                    return UNKNOWN, None, None, "check ran out of time; kept the last result"
                 if wait > 0:
                     time.sleep(wait)
             try:
                 with PLATFORM_SLOTS.get(platform, contextlib.nullcontext()):
                     candidates = SEARCHERS["shopify" if platform == "fastsimon" else platform](base, watch["query"], publisher)
+                    if platform == "shopify" and SHOPIFY_PACE["gap"]:
+                        time.sleep(SHOPIFY_PACE["gap"])   # hold the slot a moment: spaces out requests
                 break
             except HTTPError as exc:
-                if exc.code != 429 or platform != "shopify" or attempt == 2:
+                if exc.code != 429 or platform != "shopify" or attempt == attempts - 1:
                     raise
                 with _pause_lock:
                     if _shopify_pause_until[0] <= time.time():
-                        pause = 20 * (attempt + 1)
+                        pause = min(SHOPIFY_PACE["pause_step"] * (attempt + 1), SHOPIFY_PACE["pause_max"])
                         _shopify_pause_until[0] = time.time() + pause
                         _shopify_paused[0] += pause
     except SearchUnavailable as exc:
@@ -1191,6 +1203,21 @@ def run_once(dry_run=False):
         if age < MIN_AUTO_GAP_MIN * 60:
             print(f"Last check was {age / 60:.0f} min ago; skipping this automatic check (minimum gap {MIN_AUTO_GAP_MIN} min).")
             return 0
+    # Pacing for this check: scheduled checks are patient (see PATIENT); "Check now" stays quick.
+    _shopify_paused[0] = 0.0
+    _shopify_pause_until[0] = 0.0
+    _unreachable.clear()
+    if manual:
+        SHOPIFY_PAUSE_BUDGET[0], _deadline[0] = 180, float("inf")
+        SHOPIFY_PACE.update(attempts=3, gap=0.0, pause_step=20, pause_max=40)
+        PLATFORM_SLOTS["shopify"] = threading.BoundedSemaphore(4)
+    else:
+        SHOPIFY_PAUSE_BUDGET[0] = PATIENT["budget"]
+        _deadline[0] = time.time() + PATIENT["deadline_min"] * 60
+        SHOPIFY_PACE.update(attempts=PATIENT["attempts"], gap=PATIENT["gap"],
+                            pause_step=PATIENT["pause_step"], pause_max=PATIENT["pause_max"])
+        PLATFORM_SLOTS["shopify"] = threading.BoundedSemaphore(PATIENT["slots"])
+        print(f"Patient check: up to {PATIENT['deadline_min']} min, {PATIENT['slots']} Shopify searches at a time")
     if "watches" not in state:  # older flat format
         state = {"watches": {k: v for k, v in state.items() if isinstance(v, dict)}}
     old = state["watches"]
