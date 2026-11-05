@@ -106,6 +106,8 @@ The web page also starts a check by itself when it's opened and the results are 
 
 The **Board game stock check** workflow is scheduled every 30 minutes on GitHub Actions (best effort, see above). It searches every store for every watched game, emails you about anything that came into stock, and saves results to `state.json`, which the web page reads.
 
+Shopify limits how often one visitor can search the stores it hosts, so scheduled checks go easy on them: two Shopify searches at a time, spaced out, waiting and retrying when a store says "too many requests", for up to 45 minutes per check. **Check now** runs a quicker check that gives up on those stores sooner (they keep their last result). 401 Games is searched through its Fast Simon search, which isn't rate-limited.
+
 GitHub pauses scheduled workflows in repos with no activity for 60 days. The results commits usually count as activity, but if you get a "workflow disabled" email, re-enable it in the Actions tab.
 
 ## Running it on your own computer
