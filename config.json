@@ -34,7 +34,13 @@
       ],
       "publisher": "Arcane Wonders",
       "publisher_source": "Board Game Bliss",
-      "publisher_listing": "ito"
+      "publisher_listing": "ito",
+      "hidden": [
+        {
+          "store": "La Pioche",
+          "title": "Ito (français)"
+        }
+      ]
     },
     {
       "title": "Maria",
