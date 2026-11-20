@@ -208,7 +208,13 @@
       "added": "2026-11-20T13:09:29Z",
       "publisher": "Flying Frog Productions",
       "publisher_source": "Board Game Bliss",
-      "publisher_listing": "Shadows of Brimstone: Forbidden Fortress"
+      "publisher_listing": "Shadows of Brimstone: Forbidden Fortress",
+      "hidden": [
+        {
+          "store": "Great Boardgames",
+          "title": "Shadows of Brimstone: Forbidden Fortress: Gateways into Madness"
+        }
+      ]
     }
   ],
   "stores": [
