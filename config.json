@@ -99,7 +99,13 @@
       "added": "2026-10-29T21:50:45Z",
       "publisher": "Pixie Games",
       "publisher_source": "Board Game Bliss",
-      "publisher_listing": "Eternal Decks (French Edition)"
+      "publisher_listing": "Eternal Decks (French Edition)",
+      "hidden": [
+        {
+          "store": "La Pioche",
+          "title": "Eternal Decks (français)"
+        }
+      ]
     },
     {
       "title": "Cosmic Incursion",
